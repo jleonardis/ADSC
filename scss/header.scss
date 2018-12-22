@@ -1,0 +1,26 @@
+header {
+  border-bottom: solid #111 5px;
+  margin-bottom: 20px;
+
+  h1 {
+    display:block;
+    width: 100%;
+    text-align: center;
+  }
+  ul {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0;
+
+    li {
+      display: block;
+
+      a {
+        text-decoration: none;
+        display: block;
+        font-size: 20px;
+      }
+    }
+  }
+}

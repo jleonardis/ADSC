@@ -1,0 +1,61 @@
+html {
+  background-color: #EC9342;
+  height: 100%;
+}
+
+body {
+  margin: 0 auto;
+  font-family: "Poppins";
+  width: 1000px;
+  background-color: white;
+  color: #111;
+  padding: 20px 50px;
+  min-height: 100%;
+}
+
+#logo {
+  width: 200px;
+  height: 200px;
+  margin: 0 auto;
+  display: block;
+}
+
+header {
+  border-bottom: solid #111 5px;
+  margin-bottom: 20px;
+}
+header h1 {
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+header ul {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 0;
+}
+header ul li {
+  display: block;
+}
+header ul li a {
+  text-decoration: none;
+  display: block;
+  font-size: 20px;
+}
+
+#courseList #courseTable {
+  margin: 30px auto;
+  width: 600px;
+  text-align: center;
+}
+#courseList #courseTable .course-row:hover {
+  background-color: orange;
+  cursor: pointer;
+}
+
+#addCourse {
+  margin: 30px auto;
+}
+
+/*# sourceMappingURL=style.css.map */

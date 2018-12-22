@@ -1,0 +1,47 @@
+(function($) {
+
+  $("#isCoordinator").change(function() {
+    if($(this).prop("checked")){
+      $('.program-list').show();
+      $('.administrator-info').attr('disabled', true)
+                              .css("opacity", .5);
+    }
+    else {
+      $('.program-list').hide();
+      $('.administrator-info').attr('disabled', false)
+                              .css("opacity", 1);
+    }
+  });
+
+  $('#isAdministrator').change(function() {
+    if($(this).prop("checked")){
+      $('.coordinator-info').attr('disabled', true)
+                              .css("opacity", .5);
+    }
+    else {
+      $('.coordinator-info').attr('disabled', false)
+                              .css("opacity", 1);
+    }
+  });
+
+  $('#password-repeat').change(function() {
+    if($(this).val() !== $('#password').val()){
+      $('#password-warning').show();
+    }
+    else {
+      $('#password-warning').hide();
+    }
+  });
+
+  $('#registration-form').submit(function() {
+    if($('#password-repeat').val() !== $('#password').val()){
+      alert("Contraseñas tienen que ser iguales");
+      return false;
+    }
+    if(!$('#isAdministrator').prop('checked') && !$('#isCoordinator').prop('checked') && !$('#isTeacher').prop('checked')) {
+      alert("cual será su papel?");
+      return false;
+    }
+  });
+
+})(jQuery)

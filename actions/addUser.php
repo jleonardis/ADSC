@@ -1,0 +1,45 @@
+<?php
+
+require "../common.php";
+
+//change to only work for admins
+if(isset($_POST['submit']) and checkPermission()) {
+
+  $new_user = array(
+    'firstName' => $_POST['firstName'],
+    'lastName' => $_POST['lastName'],
+    'username' => $_POST['username'],
+    'password' => password_hash($_POST['password'], PASSWORD_DEFAULT)
+  );
+  $new_user['isAdministrator'] = 0;
+  $new_user['isCoordinator'] = 0;
+  if(isset($_POST['isAdministrator']) && $_POST['isAdministrator'] == "administrator") {
+    $new_user['isAdministrator'] = 1;
+  } else if(isset($_POST['isCoordinator'])) {
+    $new_user['isCoordinator'] = 1;
+  }
+
+  if(isset($_POST['isTeacher'])) {
+    $new_user['isTeacher'] = 1;
+  }
+  else {
+    $new_user['isTeacher'] = 0;
+  }
+  $sql = makeInsertQuery($new_user, 'users');
+
+  try {
+
+    $statement = $connection->prepare($sql);
+    $statement->execute($new_user);
+
+    header("location:../registration.php?userAdded=1");
+
+  } catch(PDOException $error) {
+
+    handleError($error);
+    header("location:../registration.php?userAdded=0");
+
+  }
+
+  die();
+}
