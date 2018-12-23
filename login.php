@@ -33,6 +33,22 @@ if($_POST && isset($_POST['submit'])) {
           $_SESSION['userId'] = $row['userId'];
           $_SESSION['loggedIn'] = true;
 
+          //load permissions
+
+          $sql = "SELECT * FROM permissions WHERE userId = :userId";
+          $statement = $connection->prepare($sql);
+          $statement->bindParam(":userId", $_SESSION['userId'], PDO::PARAM_INT);
+          $statement->execute();
+
+          $resultsPermissions = $statement->fetchAll();
+          $permissions = array();
+
+          foreach($resultsPermissions as $permission) {
+            array_push($permissions, $permission['courseId']);
+          }
+
+          $_SESSION['permissions'] = $permissions;
+
           header("location: index.php");
         }
         else {
@@ -53,6 +69,6 @@ if($_POST && isset($_POST['submit'])) {
   <label for="username">Username: </label>
   <input type="text" id="username" name="username" /><br>
   <label for="password">Password: </label>
-  <input type="text" id="password" name="password"/><br>
+  <input type="password" id="password" name="password"/><br>
   <input type="submit" name="submit" value="Submit">
 </form>

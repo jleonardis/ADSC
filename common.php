@@ -8,6 +8,8 @@ require "config.php";
 session_start();
 $connection = connectToDatabase($dsn, $username, $password, $options);
 
+$invalidPermissionMessage = "no tienes permiso para usar esta pagina";
+
 function escape($html) {
   return htmlspecialchars($html, ENT_QUOTES | ENT_SUBSTITUTE, "UTF-8");
 }
@@ -43,13 +45,42 @@ function handleError($error) {
 //to be implemented
 function emailOwner(){}
 
-function checkPermission() {
+function hasPermission($courseId = 0) {
+  //as of now, admin can do anything. we could adjust this in the future
+  if(isAdministrator()) {
+    return true;
+  }
+  if($courseId) {
+    $permissions = $_SESSION['permissions'];
+    foreach($permissions as $perm) {
+      if($perm == $courseId) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+function isAdministrator() {
   if(!isset($_SESSION['isAdministrator']) || !$_SESSION['isAdministrator']) {
     return false;
   }
   return true;
 }
 
+function logout() {
+  $_SESSION = array();
+  session_destroy();
+}
+
+function displayActionStatus($getHeaderTag, $successMessage) {
+  if($_GET[$getHeaderTag] == 1) {
+    ?><p class="action-status action-success"> <?php echo $successMessage; ?></p><?php
+  }
+  else {
+    ?><p class="action-status action-failure">Algo falló. Acción no cumplido.</p><?php
+  }
+}
 
 //DATABASE FUNCTIONS
 function makeInsertQuery($array, $tableName) {
@@ -58,4 +89,20 @@ function makeInsertQuery($array, $tableName) {
           $tableName,
           implode(array_keys($array), ", "),
           ":" . implode(array_keys($array), ", :"));
+}
+
+function makeUpdateQuery($idName, $array, $tableName) {
+
+  $keysArray = array_keys($array);
+  $firstKey = array_shift($keysArray);
+  $query = sprintf("UPDATE " . $tableName . " SET %s = :%s",
+                $firstKey,
+                $firstKey);
+  foreach($keysArray as $key) {
+    $query .= ", " . $key . "= :" . $key;
+  }
+  $query .= " WHERE :" . $idName . "=" . $idName . ";";
+
+  return $query;
+
 }

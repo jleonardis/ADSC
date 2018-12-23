@@ -1,0 +1,11 @@
+#participantList{
+
+  margin-top: 10px;
+  .participant-row:hover {
+    background-color: $main_color;
+    cursor: pointer;
+  }
+  #participantTable {
+    margin-top: 30px;
+  }
+}

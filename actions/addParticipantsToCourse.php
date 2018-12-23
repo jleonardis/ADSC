@@ -2,11 +2,9 @@
 
 require "../common.php";
 
-if(isset($_GET['courseId'])) {
-  $courseId = $_GET['courseId'];
-}
+if(isset($_GET['courseId']) && isset($_POST['submit']) && hasPermission()) {
 
-if(isset($_POST['submit']) and checkPermission()) {
+  $courseId = $_GET['courseId'];
 
   $newParticipantIds = array();
   foreach($_POST as $key => $participant) {
@@ -27,13 +25,18 @@ if(isset($_POST['submit']) and checkPermission()) {
       $statement->execute();
     }
 
-    header("location: ../coursePage.php?courseId=" . $courseId . "&courseAdded=1");
+    header("location: ../coursePage.php?courseId=" . $courseId . "&participantsAdded=1");
     die();
+    
   } catch(PDOException $error) {
     handleError($error);
-    header("location: ../coursePage.php?courseId=" . $courseId . "&courseAdded=0");
+    header("location: ../coursePage.php?courseId=" . $courseId . "&participantsAdded=0");
     die();
   }
+}
+else {
+  header('location: index.php');
+  die();
 }
 
  ?>

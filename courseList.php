@@ -5,12 +5,7 @@ checkLogIn();
 require "templates/header.php";
 
 if(isset($_GET['courseAdded'])) {
-  if($_GET['courseAdded'] == 1) {
-    ?><h2>Curso agregado con exito!</h2><?php
-  }
-  else {
-    ?><h2>Algo fállo. Curso no fue agregado.</h2><?php
-  }
+  displayActionStatus('courseAdded', 'Curso agregado con exito!');
 }
 //display input form if nothing has been submitted
 
@@ -23,7 +18,7 @@ try {
   $resultsPrograms = $statement->fetchAll();
 
   //retrieve all courses
-  $sql = "SELECT * FROM courses";
+  $sql = "SELECT * FROM courses ORDER BY endDate";
   $statement = $connection->prepare($sql);
   $statement->execute();
   $resultsCourses = $statement->fetchAll();
@@ -37,9 +32,9 @@ try {
 ?>
 
 <div id="courseList">
-<h1>Buscar Cursos</h1>
+<h2>Buscar Cursos</h2>
 
-<select id="programSelect">
+<select class="orange-dropdown" id="programSelect">
   <option value="">--Elige un programa--</option>
   <?php foreach($resultsPrograms as $row) { ?>
     <option value=<?php echo escape($row["programId"]); ?>><?php echo escape($row["name"]); ?></option>
@@ -57,10 +52,10 @@ try {
   <tbody>
 
     <?php foreach($resultsCourses as $row) { ?>
-      <tr class="course-row" data-href="coursePage.php?courseId=<?php echo $row["courseId"];?>">
-        <td class="table-cell table-<?php echo escape($row["programId"])?>" hidden><?php echo escape($row["name"]); ?></td>
-        <td class="table-cell table-<?php echo escape($row["programId"])?>" hidden><?php echo escape($row["startDate"]); ?></td>
-        <td class="table-cell table-<?php echo escape($row["programId"])?>" hidden><?php echo escape($row["endDate"]); ?></td>
+      <tr class="course-row course-row-<?php echo escape($row["programId"])?>" data-href="coursePage.php?courseId=<?php echo $row["courseId"];?>" hidden>
+        <td><?php echo escape($row["name"]); ?></td>
+        <td><?php echo escape($row["startDate"]); ?></td>
+        <td><?php echo escape($row["endDate"]); ?></td>
       </tr>
     <?php } ?>
   </tbody>
@@ -68,26 +63,28 @@ try {
 
 </div>
 
+<?php if(isAdministrator()) { ?>
 <div id="addCourse">
-  <h1>Agregar Curso Nuevo</h1>
+  <h2>Agregar Curso Nuevo</h2>
 
   <form method="post" action="actions/addCourse.php">
   	<label for="courseName">Nombre de Curso:</label>
-  	<input type="text" name="courseName" id="courseName" required>
+  	<input type="text" name="courseName" id="courseName" required><br>
   	<label for="program">Programa:</label>
-    <select id="program" name="program" required>
+    <select id="program" name="program" required><br>
       <option value="">--Elige una opción--</option>
     <?php foreach($resultsPrograms as $row) { ?>
       <option value=<?php echo escape($row["programId"]); ?>><?php echo escape($row["name"]); ?></option>
     <?php } ?>
-    </select>
+  </select><br>
   	<label for="startDate">Fecha de Inicio:</label>
     <input id = "startDate" name="startDate" type="date"></input>
     <label for="endDate">Fecha de Finalización:</label>
-    <input id="endDate" type="date" name="endDate"></input>
-    <input name="submit" type="submit" value="Submit">
+    <input id="endDate" type="date" name="endDate"></input><br>
+    <input name="submit" type="submit" value="Submit" class="orange-submit">
   </form>
 </div>
+<?php } ?>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="js/courses.js"></script>

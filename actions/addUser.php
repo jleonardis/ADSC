@@ -3,7 +3,7 @@
 require "../common.php";
 
 //change to only work for admins
-if(isset($_POST['submit']) and checkPermission()) {
+if(isset($_POST['submit']) and hasPermission()) {
 
   $new_user = array(
     'firstName' => $_POST['firstName'],
@@ -41,5 +41,10 @@ if(isset($_POST['submit']) and checkPermission()) {
 
   }
 
+  die();
+}
+else
+{
+  header('location: index.php');
   die();
 }

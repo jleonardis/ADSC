@@ -1,0 +1,34 @@
+#courseHeading {
+  width: 75%;
+  float: left;
+  clear: none;
+  text-transform: uppercase;
+}
+
+#editCourse {
+  float: right;
+  clear: none;
+  position: relative;
+  top: 7px;
+}
+
+#courseInfo {
+  margin-top: 50px;
+  float: left;
+  clear: both;
+}
+
+#addParticipants {
+
+  float: left;
+  margin-top: 50px;
+  clear: both;
+  h2 {
+    margin-bottom: 10px;
+  }
+
+  #submit {
+
+    margin-top: 10px;
+  }
+}

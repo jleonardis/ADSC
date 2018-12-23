@@ -1,13 +1,17 @@
 html {
-  background-color: #EC9342;
+  background-color: #fbfbfb;
   height: 100%;
+  box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
 }
 
 body {
   margin: 0 auto;
   font-family: "Poppins";
   width: 1000px;
-  background-color: white;
   color: #111;
   padding: 20px 50px;
   min-height: 100%;
@@ -20,8 +24,64 @@ body {
   display: block;
 }
 
+a {
+  color: #111;
+  display: block;
+  padding: 5px;
+  text-decoration: none;
+}
+a :hover {
+  background-color: #EC9342;
+}
+
+.orange-dropdown {
+  border-radius: 1px;
+  padding: 6px 14px;
+  background-color: #EC9342;
+  color: white;
+  font-family: "Poppins";
+  font-weight: 600;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.orange-submit {
+  border: none;
+  border-radius: 1px;
+  padding: 6px 14px;
+  background-color: #EC9342;
+  color: white;
+  font-family: "Poppins";
+  text-transform: uppercase;
+  font-weight: 600;
+  cursor: pointer;
+  height: 35px;
+}
+
+.orange-search {
+  border: 1px solid black;
+  border-radius: 1px;
+  padding: 6px 14px;
+  font-weight: 600;
+  height: 35px;
+  text-transform: uppercase;
+  display: inline-block;
+}
+
+ul {
+  padding: 0;
+}
+
+li {
+  display: block;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+}
+
 header {
-  border-bottom: solid #111 5px;
+  border-bottom: solid #111 4px;
   margin-bottom: 20px;
 }
 header h1 {
@@ -37,11 +97,11 @@ header ul {
 }
 header ul li {
   display: block;
+  font-size: 30px;
 }
-header ul li a {
-  text-decoration: none;
-  display: block;
-  font-size: 20px;
+
+h1 {
+  margin-bottom: 10px;
 }
 
 #courseList #courseTable {
@@ -50,12 +110,74 @@ header ul li a {
   text-align: center;
 }
 #courseList #courseTable .course-row:hover {
-  background-color: orange;
+  background-color: #EC9342;
   cursor: pointer;
 }
 
 #addCourse {
-  margin: 30px auto;
+  margin: 100px auto;
+}
+
+#courseHeading {
+  width: 75%;
+  float: left;
+  clear: none;
+  text-transform: uppercase;
+}
+
+#editCourse {
+  float: right;
+  clear: none;
+  position: relative;
+  top: 7px;
+}
+
+#courseInfo {
+  margin-top: 50px;
+  float: left;
+  clear: both;
+}
+
+#addParticipants {
+  float: left;
+  margin-top: 50px;
+  clear: both;
+}
+#addParticipants h2 {
+  margin-bottom: 10px;
+}
+#addParticipants #submit {
+  margin-top: 10px;
+}
+
+#participantList {
+  margin-top: 10px;
+}
+#participantList .participant-row:hover {
+  background-color: #EC9342;
+  cursor: pointer;
+}
+#participantList #participantTable {
+  margin-top: 30px;
+}
+
+#participantInfo {
+  width: 100%;
+  margin-top: 40px;
+}
+#participantInfo #profilePic {
+  display: block;
+  float: right;
+  width: 33%;
+  height: auto;
+}
+#participantInfo #attributesList {
+  display: block;
+  float: left;
+  width: 66%;
+  padding: 0;
+  margin: 0;
+  padding-right: 10px;
 }
 
 /*# sourceMappingURL=style.css.map */

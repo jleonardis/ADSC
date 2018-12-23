@@ -1,15 +1,22 @@
 (function($) {
 
+  displayCourses();
+  $("#programSelect").change(displayCourses);
 
-  $("#programSelect").change(function() {
-    var programId = $(this).val();
-    $(".table-cell").hide();
-    $(".table-head").show();
-    $(".table-" + programId).show();
-  });
+  function displayCourses() {
+    var programId = $('#programSelect').val();
+    if(programId) {
+      $(".table-head").show();
+    }
+    else {
+      $('.table-head').hide();
+    }
+    $(".course-row").hide();
+    $(".course-row-" + programId).show();
+  }
 
   $('.course-row').click(function() {
     window.location = $(this).data("href");
   });
-  
+
 })(jQuery);

@@ -1,17 +1,20 @@
-#courseList {
+h1 {
+  margin-bottom: 10px;
+}
 
+#courseList {
   #courseTable {
     margin: 30px auto;
     width: 600px;
     text-align: center;
 
     .course-row:hover {
-      background-color: orange;
+      background-color: $main_color;
       cursor: pointer;
     }
   }
 }
 
 #addCourse {
-  margin: 30px auto;
+  margin: 100px auto;
 }

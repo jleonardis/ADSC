@@ -1,13 +1,17 @@
 html {
-	background-color: $main_color;
+	background-color: rgb(251, 251, 251);
 	height: 100%;
+  box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
 }
 
 body {
 	margin: 0 auto;
-	font-family: "Poppins";
+	font-family: $main_font;
 	width: 1000px;
-	background-color: white;
 	color: #111;
 	padding: 20px 50px;
 	min-height: 100%;
@@ -18,4 +22,60 @@ body {
 	height: 200px;
 	margin: 0 auto;
 	display: block;
+}
+
+a {
+	color: #111;
+	display: block;
+	padding: 5px;
+	:hover {
+		background-color: $main_color;
+	}
+	text-decoration: none;
+}
+
+.orange-dropdown {
+	border-radius: 1px;
+	padding: 6px 14px;
+	background-color: $main_color;
+	color: white;
+	font-family: $main_font;
+	font-weight: 600;
+	text-transform: uppercase;
+	cursor: pointer;
+}
+
+.orange-submit {
+	border: none;
+	border-radius: 1px;
+	padding: 6px 14px;
+	background-color: $main_color;
+	color: white;
+	font-family: $main_font;
+	text-transform: uppercase;
+	font-weight: 600;
+	cursor: pointer;
+	height: 35px;
+}
+
+.orange-search {
+	border: 1px solid black;
+	border-radius: 1px;
+	padding: 6px 14px;
+	font-weight: 600;
+	height: 35px;
+	text-transform: uppercase;
+	display:inline-block;
+}
+
+ul {
+	padding: 0;
+}
+
+li {
+	display: block;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	margin: 0;
 }

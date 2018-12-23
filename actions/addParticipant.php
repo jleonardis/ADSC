@@ -3,7 +3,16 @@
 require "../common.php";
 
 //change to only work for admins
-if(isset($_POST['submit']) && checkPermission()) {
+checkLogin();
+
+if(isset($_FILES['picture']) && isset($_FILES['picture']['error'])) {
+   if($_FILES['picture']['error'] == 2) {
+     echo "Esa foto es muy grande. Vete para atras y intenta con una mas pequeña.";
+     die();
+   }
+}
+
+if(isset($_POST['submit']) && hasPermission()) {
 
   $new_participant = array(
     'firstName' => $_POST['firstName'],
@@ -18,18 +27,35 @@ if(isset($_POST['submit']) && checkPermission()) {
     $statement = $connection->prepare($sql);
     $statement->execute($new_participant);
 
-    header("location: ../participantList.php?participantAdded=1");
+    if(isset($_FILES['picture'])) {
+      $picture = $_FILES['picture'];
+      $fileNameArray = explode('.', $picture['name']); //used in line below
+      $participantId = $connection->lastInsertId();
+      $location = 'uploads/participantPhotos/participant-' . $participantId . '.' . end($fileNameArray);
+      if(move_uploaded_file($picture['tmp_name'], '../' . $location)) {
+        $sql = "UPDATE participants SET imageLocation = :location WHERE participantId = :participantId";
+        $statement = $connection->prepare($sql);
+        $statement->bindParam(':location', $location, PDO::PARAM_STR);
+        $statement->bindParam(':participantId', $participantId, PDO::PARAM_INT);
+        $statement->execute();
+        echo "arrived";
+        die();
+      }
+    }
+    header("location: ../participantRegistration.php?participantAdded=1");
     die();
 
   } catch(PDOException $error) {
 
     handleError($error);
-    echo $sql;
     die();
-    header("location: ../participantList.php?participantAdded=0");
+    header("location: ../participantRegistration.php?participantAdded=0");
     die();
 
   }
 }
 
-echo "<h1>Falló. Que haces aqui?";
+else {
+  header('location: index.php');
+  die();
+}

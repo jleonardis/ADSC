@@ -1,8 +1,8 @@
 <?php
 
-require "common.php";
+require "../common.php";
 
-if(isset($_POST['submit']) and checkPermission()) {
+if(isset($_POST['submit']) and hasPermission()) {
 
   $new_course = array(
     'name' => $_POST['courseName'],
@@ -17,13 +17,17 @@ if(isset($_POST['submit']) and checkPermission()) {
 
     $statement = $connection->prepare($sql);
     $statement->execute($new_course);
-    header("location:courseList.php?courseAdded=1");
+    header("location: ../courseList.php?courseAdded=1");
 
   } catch(PDOException $error) {
 
     handleError($error);
-    header("location:courseList.php?courseAdded=0");
+    header("location: ../courseList.php?courseAdded=0");
 
   }
-  echo "Falló. Que haces aqui?";
+}
+
+else {
+  header('location: courseList.php');
+  die();
 }

@@ -3,21 +3,15 @@
 require "common.php";
 checkLogIn();
 
-if(!checkPermission()) {
+if(!isAdministrator()) {
   echo "<h1>no tienes permiso para usar esta pagina</h1>";
   die();
 }
 
 require "templates/header.php";
 
-
 if(isset($_GET['userAdded'])) {
-  if($_GET['userAdded'] == 1) {
-    ?><h2>Usuario agregado con exito!</h2><?php
-  }
-  else {
-    ?><h2>Algo fállo. Usuario no fue agregado.</h2><?php
-  }
+  displayActionStatus('userAdded', 'Usuario agregado con exito!');
 }
 
 try {
