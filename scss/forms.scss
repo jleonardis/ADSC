@@ -1,0 +1,51 @@
+.submit-form {
+  display: inline-block;
+  margin-top: 20px;
+
+  h2 {
+    margin-bottom: 20px;
+  }
+
+  label {
+    font-weight: bold;
+    text-align: right;
+    display: inline-block;
+    margin-right: 5px;
+  }
+
+  input, select {
+    float: right;
+  }
+  input[type="file"] {
+    float: right;
+    position:relative;
+    left: 80px;
+  }
+  input[type='submit'] {
+    float: right;
+    clear: both;
+  }
+
+  #searchBox {
+    float: none;
+  }
+}
+
+#login-page {
+  text-align: center;
+
+  h2
+  {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+}
+
+#search {
+  margin-bottom: 20px;
+}
+
+.form-parent {
+  display: flex;
+  justify-content: center;
+}

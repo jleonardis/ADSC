@@ -19,15 +19,21 @@ if(isset($_GET['courseId']) && isset($_POST['submit']) && hasPermission()) {
 
       $sql = "INSERT INTO participantCourses (participantId, courseId) VALUES (:participantId, :courseId)";
       $statement = $connection->prepare($sql);
-      $statement->bindParam(':participantId', $participantId, PDO::PARAM_STR);
-      $statement->bindParam(':courseId', $courseId, PDO::PARAM_STR);
+      $statement->bindParam(':participantId', $participantId, PDO::PARAM_INT);
+      $statement->bindParam(':courseId', $courseId, PDO::PARAM_INT);
+
+      $statement->execute();
+
+      $sql = "UPDATE participants SET isActive = 1 WHERE participantId = :participantId";
+      $statement = $connection->prepare($sql);
+      $statement->bindParam(':participantId', $participantId, PDO::PARAM_INT);
 
       $statement->execute();
     }
 
     header("location: ../coursePage.php?courseId=" . $courseId . "&participantsAdded=1");
     die();
-    
+
   } catch(PDOException $error) {
     handleError($error);
     header("location: ../coursePage.php?courseId=" . $courseId . "&participantsAdded=0");
@@ -35,7 +41,7 @@ if(isset($_GET['courseId']) && isset($_POST['submit']) && hasPermission()) {
   }
 }
 else {
-  header('location: index.php');
+  header('location: ../index.php');
   die();
 }
 

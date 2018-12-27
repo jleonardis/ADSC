@@ -1,0 +1,56 @@
+.heading {
+  width: 75%;
+  float: left;
+  clear: none;
+  text-transform: uppercase;
+}
+
+.edit-button {
+  margin-top: 0;
+  float: right;
+  clear: none;
+  position: relative;
+}
+
+#courseInfo {
+  margin-top: 50px;
+  float: left;
+  clear: both;
+}
+
+#addParticipants {
+
+  float: left;
+  margin-top: 50px;
+  margin-bottom: 100px;
+  clear: both;
+  h2 {
+    margin-bottom: 10px;
+  }
+
+  #submit {
+
+    margin-top: 10px;
+  }
+}
+
+#participantInfo {
+  width: 100%;
+  margin-top: 40px;
+  #profilePic {
+    display: block;
+    float: right;
+    width: 33%;
+    height: auto;
+  }
+
+  #attributesList {
+    display: block;
+    float: left;
+    width: 66%;
+    padding: 0;
+    margin: 0;
+    padding-right: 10px;
+  }
+
+}

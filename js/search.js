@@ -5,7 +5,7 @@
     var results = false;
     //change if we move away from spreading names across two td's
     var search = $('#searchBox').val().replace(/ /g, '').toLowerCase();
-    $('.table-row').each(function() {
+    $('.search-group .search-row').each(function() {
       var text = $(this).text().replace(/ /g, '').toLowerCase();
       if (text.indexOf(search) !== -1) {
         $(this).show();
@@ -16,12 +16,11 @@
       }
     });
     if(results){
-      $('.table-head').show();
-      $('#submit').show();
+      $('.search-head').show();
     }
     else {
-      $('.table-head').hide();
-      alert("tu busqueda no encontró nada")
+      $('.search-head').hide();
+      alert("busqueda sin resultados")
     }
   }
 
@@ -39,6 +38,15 @@
   $(document).keypress(function(e) {
     if(e.which === 13 && $('#searchBox').val().length > 3){
       searchNames();
+    }
+  });
+
+  $(".select-checkbox").click(function() {
+    if(this.checked) {
+      $('#submit').show();
+    }
+    else {
+      $('#submit').hide();
     }
   });
 

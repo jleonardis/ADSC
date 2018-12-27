@@ -1,6 +1,7 @@
 (function($) {
 
   displayCourses();
+
   $("#programSelect").change(displayCourses);
 
   function displayCourses() {
@@ -18,5 +19,10 @@
   $('.course-row').click(function() {
     window.location = $(this).data("href");
   });
+
+
+  $('.select-teacher').click(function() {
+    var id = $(this).attr('id');
+  })
 
 })(jQuery);

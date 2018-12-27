@@ -7,7 +7,7 @@ checkLogin();
 
 if(isset($_FILES['picture']) && isset($_FILES['picture']['error'])) {
    if($_FILES['picture']['error'] == 2) {
-     echo "Esa foto es muy grande. Vete para atras y intenta con una mas pequeña.";
+     echo "Esa foto es muy grande. Ve para atras y intenta con una mas pequeña.";
      die();
    }
 }
@@ -18,7 +18,23 @@ if(isset($_POST['submit']) && hasPermission()) {
     'firstName' => $_POST['firstName'],
     'lastName' => $_POST['lastName'],
     'gender' => $_POST['gender'],
+    'age' => $_POST['age'],
+    'dob' => $_POST['dob'],
+    'village' => $_POST['village'],
+    'languages' => ''
   );
+
+  foreach($_POST as $key => $value) {
+    if(substr($key, 0, 8) == 'language' && strlen($value) > 0){
+      if(strlen($new_participant['languages']) == 0) {
+        $new_participant['languages'] .= $value;
+      }
+      else {
+        $new_participant['languages'] .= ", " . $value;
+      }
+    }
+  }
+
 
   $sql = makeInsertQuery($new_participant, "participants");
 
@@ -38,18 +54,15 @@ if(isset($_POST['submit']) && hasPermission()) {
         $statement->bindParam(':location', $location, PDO::PARAM_STR);
         $statement->bindParam(':participantId', $participantId, PDO::PARAM_INT);
         $statement->execute();
-        echo "arrived";
-        die();
       }
     }
-    header("location: ../participantRegistration.php?participantAdded=1");
+    header("location: ../admin/participantRegistration.php?participantAdded=1");
     die();
 
   } catch(PDOException $error) {
 
     handleError($error);
-    die();
-    header("location: ../participantRegistration.php?participantAdded=0");
+    header("location: ../admin/participantRegistration.php?participantAdded=0");
     die();
 
   }

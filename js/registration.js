@@ -1,8 +1,9 @@
 (function($) {
 
+  $('.program-list').hide();
   $("#isCoordinator").change(function() {
     if($(this).prop("checked")){
-      $('.program-list').show();
+      showSpecial('.program-list', 'inline-block');
       $('.administrator-info').attr('disabled', true)
                               .css("opacity", .5);
     }
@@ -35,7 +36,7 @@
 
   $('#registration-form').submit(function() {
     if($('#password-repeat').val() !== $('#password').val()){
-      alert("Contraseñas tienen que ser iguales");
+      alert("Contraseñas no coinciden");
       return false;
     }
     if(!$('#isAdministrator').prop('checked') && !$('#isCoordinator').prop('checked') && !$('#isTeacher').prop('checked')) {

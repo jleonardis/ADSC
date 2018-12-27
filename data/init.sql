@@ -1,5 +1,3 @@
-use jakeleon_amigos;
-
 CREATE TABLE users (
 	userId INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 	firstName VARCHAR(200),
@@ -18,42 +16,13 @@ CREATE TABLE participants (
 	lastName VARCHAR(200),
 	nickName VARCHAR(100),
 	gender VARCHAR(10),
+	isActive BOOLEAN,
 	age INT(11),
 	dob DATE,
+	village VARCHAR(200),
+	languages VARCHAR(255),
 	email VARCHAR(100),
-);
-
-CREATE TABLE programs (
-	
-	programId INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-	name VARCHAR(255),
-	description VARCHAR(255)
-);
-
-CREATE TABLE courses (
-	courseId INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-	programId INT(11) UNSIGNED,
-	name VARCHAR(255),
-	startDate DATE,
-	endDate	DATE,
-	description VARCHAR(255),
-	FOREIGN KEY (programId) REFERENCES programs (programId)
-);
-
-
-CREATE TABLE participantCourses (
-	
-	participantId INT(11),
-	courseId INT(11),
-	FOREIGN KEY (participantId) REFERENCES participants (participantId),
-	FOREIGN KEY (courseId) REFERENCES courses (courseId)
-);
-
-CREATE TABLE permissions (
-	userId INT(11),
-	courseId INT(11),
-	FOREIGN KEY (userId) REFERENCES users (userId),
-	FOREIGN KEY (courseId) REFERENCES courses (courseId)
+	imageLocation VARCHAR(255)
 );
 
 CREATE TABLE teachers (
@@ -65,4 +34,37 @@ CREATE TABLE teachers (
 	email VARCHAR(200)
 );
 
-CREATE TABLE 
+CREATE TABLE programs (
+
+	programId INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+	name VARCHAR(255),
+	description VARCHAR(255)
+);
+
+CREATE TABLE courses (
+	courseId INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+	programId INT(11) UNSIGNED,
+	teacherId INT(11) UNSIGNED,
+	name VARCHAR(255),
+	startDate DATE,
+	endDate	DATE,
+	description VARCHAR(255),
+	FOREIGN KEY (programId) REFERENCES programs (programId),
+	FOREIGN KEY (teacherId) REFERENCES teachers (teacherId)
+);
+
+
+CREATE TABLE participantCourses (
+
+	participantId INT(11) UNSIGNED,
+	courseId INT(11) UNSIGNED,
+	FOREIGN KEY (participantId) REFERENCES participants (participantId),
+	FOREIGN KEY (courseId) REFERENCES courses (courseId)
+);
+
+CREATE TABLE permissions (
+	userId INT(11) UNSIGNED,
+	courseId INT(11) UNSIGNED,
+	FOREIGN KEY (userId) REFERENCES users (userId),
+	FOREIGN KEY (courseId) REFERENCES courses (courseId)
+);

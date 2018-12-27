@@ -9,7 +9,8 @@ if(isset($_POST['submit']) and hasPermission()) {
     'firstName' => $_POST['firstName'],
     'lastName' => $_POST['lastName'],
     'username' => $_POST['username'],
-    'password' => password_hash($_POST['password'], PASSWORD_DEFAULT)
+    'password' => password_hash($_POST['password'], PASSWORD_DEFAULT),
+    'gender' => $_POST['gender']
   );
   $new_user['isAdministrator'] = 0;
   $new_user['isCoordinator'] = 0;
@@ -29,15 +30,33 @@ if(isset($_POST['submit']) and hasPermission()) {
 
   try {
 
+    $connection->beginTransaction();
+
     $statement = $connection->prepare($sql);
     $statement->execute($new_user);
 
-    header("location:../registration.php?userAdded=1");
+    if($new_user['isTeacher']) {
+
+      $new_teacher = array(
+        'firstName' => $new_user['firstName'],
+        'lastName' => $new_user['lastName'],
+        'gender' => $_POST['gender'],
+        'email' => $_POST['email']
+      );
+
+      $sql = makeInsertQuery($new_teacher, 'teachers');
+      $statement = $connection->prepare($sql);
+      $statement->execute($new_teacher);
+    }
+
+    $connection->commit();
+    header("location: ../admin/registration.php?userAdded=1");
 
   } catch(PDOException $error) {
 
+    $connection->rollBack();
     handleError($error);
-    header("location:../registration.php?userAdded=0");
+    header("location: ../admin/registration.php?userAdded=0");
 
   }
 

@@ -1,5 +1,5 @@
 html {
-	background-color: rgb(251, 251, 251);
+	background-color: rgb(252, 252, 252);
 	height: 100%;
   box-sizing: border-box;
 }
@@ -43,6 +43,7 @@ a {
 	font-weight: 600;
 	text-transform: uppercase;
 	cursor: pointer;
+	margin-top: 20px;
 }
 
 .orange-submit {
@@ -56,6 +57,7 @@ a {
 	font-weight: 600;
 	cursor: pointer;
 	height: 35px;
+	margin-top: 20px;
 }
 
 .orange-search {

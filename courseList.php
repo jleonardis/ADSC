@@ -23,6 +23,12 @@ try {
   $statement->execute();
   $resultsCourses = $statement->fetchAll();
 
+  $sql = "SELECT * FROM teachers;";
+  $statement = $connection->prepare($sql);
+  $statement->execute();
+  $resultsTeachers = $statement->fetchAll();
+
+
 } catch(PDOException $error) {
 
   echo $error->getMessage();
@@ -44,9 +50,9 @@ try {
 <table id="courseTable">
   <thead>
     <tr>
-      <th class="table-head" hidden>Nombre de Curso</th>
-      <th class="table-head" hidden>Fecha de Inicio</th>
-      <th class="table-head" hidden>Fecha de Finalización</th>
+      <th class="table-head" hidden>Curso</th>
+      <th class="table-head" hidden>Inicio</th>
+      <th class="table-head" hidden>Finalización</th>
     </tr>
   </thead>
   <tbody>
@@ -64,30 +70,39 @@ try {
 </div>
 
 <?php if(isAdministrator()) { ?>
-<div id="addCourse">
-  <h2>Agregar Curso Nuevo</h2>
-
-  <form method="post" action="actions/addCourse.php">
-  	<label for="courseName">Nombre de Curso:</label>
-  	<input type="text" name="courseName" id="courseName" required><br>
-  	<label for="program">Programa:</label>
-    <select id="program" name="program" required><br>
-      <option value="">--Elige una opción--</option>
-    <?php foreach($resultsPrograms as $row) { ?>
-      <option value=<?php echo escape($row["programId"]); ?>><?php echo escape($row["name"]); ?></option>
-    <?php } ?>
+<form method="post" action="actions/addCourse.php">
+<h2>Agregar Curso</h2>
+	<label for="courseName">Nombre de Curso:</label>
+	<input type="text" name="courseName" id="courseName" required><br>
+	<label for="program">Programa:</label>
+  <select id="program" name="program" required><br>
+    <option value="">--Elige una opción--</option>
+  <?php foreach($resultsPrograms as $row) { ?>
+    <option value=<?php echo escape($row["programId"]); ?>><?php echo escape($row["name"]); ?></option>
+  <?php } ?>
   </select><br>
-  	<label for="startDate">Fecha de Inicio:</label>
-    <input id = "startDate" name="startDate" type="date"></input>
-    <label for="endDate">Fecha de Finalización:</label>
-    <input id="endDate" type="date" name="endDate"></input><br>
-    <input name="submit" type="submit" value="Submit" class="orange-submit">
-  </form>
-</div>
+	<label for="startDate">Inicio: </label>
+  <input id = "startDate" name="startDate" type="date" required>
+  <label for="endDate">Finalización: </label>
+  <input id="endDate" type="date" name="endDate" required><br>
+  <label for="teacher">Maestr@: </label>
+  <input class="orange-search" type="text" id="searchBox">
+  <button type="button" class="orange-submit" id="search">Buscar</button><br>
+  <div class="search-group">
+      <?php foreach($resultsTeachers as $teacher) {?>
+        <div class="search-row" hidden>
+        <label for="teacher-<?php echo escape($teacher['teacherId']);?>"><?php echo escape($teacher['firstName'] . " " . $teacher['lastName']);?></label>
+      <input type="radio" id="teacher-<?php echo escape($teacher['teacherId']);?>" name="<?php echo escape($teacher['teacherId']);?>"><br>
+    </div>
+      <?php } ?>
+    </div>
+  <input id="submit" name="submit" type="submit" value="Agregar" class="orange-submit">
+</form>
 <?php } ?>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="js/courses.js"></script>
+<script src="js/search.js"></script>
 <?php
 
 

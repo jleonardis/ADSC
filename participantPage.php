@@ -16,7 +16,7 @@ if(!isset($_GET['participantId'])) {
 
 $participantId = $_GET['participantId'];
 
-//get course info
+//get participant info
 try {
 
   $sql = "SELECT * FROM participants WHERE participantId= :participantId";
@@ -40,8 +40,15 @@ try {
 
 ?>
 
-<h1><?php echo escape($participant['firstName'] . " " . $participant['lastName']); ?></h1>
 <main>
+<div class="heading">
+<h1><?php echo escape($participant['firstName'] . " " . $participant['lastName']); ?></h1>
+</div>
+<?php if (isAdministrator()) { ?>
+  <form method="post" action="admin/editParticipant.php?participantId=<?php echo escape($participantId);?>">
+    <input type=submit id="editParticipant" class="orange-submit edit-button" value="editar participante">
+  </form>
+  <?php } ?>
   <div id="participantInfo">
     <?php
     $imageFile = $participant['imageLocation'];
@@ -49,14 +56,15 @@ try {
     <img id="profilePic" src="<?php echo escape($imageFile) ?>">
     <?php } ?>
     <ul id="attributesList">
-      <li>Apodo: <?php echo escape($participant['nickName']);?></li>
-      <li>Genero: <?php echo escape($participant['gender']); ?></li>
-      <li>Age: 20</li>
-      <li>Fecha de Nacimiento: <?php echo escape($participant['dob']); ?></li>
-      <li>Email <?php echo escape($participant['email']); ?></li>
+      <li><strong>Apodo: </strong><?php echo escape($participant['nickname']);?></li>
+      <li><strong>Genero: </strong><?php echo escape($participant['gender']); ?></li>
+      <li><strong>Age: </strong>20</li>
+      <li><strong>Fecha de Nacimiento: </strong><?php echo escape($participant['dob']); ?></li>
+      <li><strong>Idiomas: </strong><?php echo escape($participant['languages']); ?> </li>
+      <li><strong>Comunidad de Origen: </strong><?php echo escape($participant['village']); ?></li>
+      <li><strong>Email </strong><?php echo escape($participant['email']); ?></li>
     </ul>
 </div>
-<div id="participantCourses">
 
 </main>
 

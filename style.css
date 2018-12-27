@@ -1,5 +1,5 @@
 html {
-  background-color: #fbfbfb;
+  background-color: #fcfcfc;
   height: 100%;
   box-sizing: border-box;
 }
@@ -43,6 +43,7 @@ a :hover {
   font-weight: 600;
   text-transform: uppercase;
   cursor: pointer;
+  margin-top: 20px;
 }
 
 .orange-submit {
@@ -56,6 +57,7 @@ a :hover {
   font-weight: 600;
   cursor: pointer;
   height: 35px;
+  margin-top: 20px;
 }
 
 .orange-search {
@@ -81,7 +83,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 header {
-  border-bottom: solid #111 4px;
+  border-bottom: solid #111 2px;
   margin-bottom: 20px;
 }
 header h1 {
@@ -98,6 +100,7 @@ header ul {
 header ul li {
   display: block;
   font-size: 30px;
+  font-weight: bold;
 }
 
 h1 {
@@ -114,22 +117,29 @@ h1 {
   cursor: pointer;
 }
 
-#addCourse {
-  margin: 100px auto;
+#participantList {
+  margin-top: 10px;
+}
+#participantList .participant-row:hover {
+  background-color: #EC9342;
+  cursor: pointer;
+}
+#participantList #participantTable {
+  margin-top: 30px;
 }
 
-#courseHeading {
+.heading {
   width: 75%;
   float: left;
   clear: none;
   text-transform: uppercase;
 }
 
-#editCourse {
+.edit-button {
+  margin-top: 0;
   float: right;
   clear: none;
   position: relative;
-  top: 7px;
 }
 
 #courseInfo {
@@ -141,6 +151,7 @@ h1 {
 #addParticipants {
   float: left;
   margin-top: 50px;
+  margin-bottom: 100px;
   clear: both;
 }
 #addParticipants h2 {
@@ -148,17 +159,6 @@ h1 {
 }
 #addParticipants #submit {
   margin-top: 10px;
-}
-
-#participantList {
-  margin-top: 10px;
-}
-#participantList .participant-row:hover {
-  background-color: #EC9342;
-  cursor: pointer;
-}
-#participantList #participantTable {
-  margin-top: 30px;
 }
 
 #participantInfo {
@@ -178,6 +178,52 @@ h1 {
   padding: 0;
   margin: 0;
   padding-right: 10px;
+}
+
+.submit-form {
+  display: inline-block;
+  margin-top: 20px;
+}
+.submit-form h2 {
+  margin-bottom: 20px;
+}
+.submit-form label {
+  font-weight: bold;
+  text-align: right;
+  display: inline-block;
+  margin-right: 5px;
+}
+.submit-form input, .submit-form select {
+  float: right;
+}
+.submit-form input[type=file] {
+  float: right;
+  position: relative;
+  left: 80px;
+}
+.submit-form input[type=submit] {
+  float: right;
+  clear: both;
+}
+.submit-form #searchBox {
+  float: none;
+}
+
+#login-page {
+  text-align: center;
+}
+#login-page h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+#search {
+  margin-bottom: 20px;
+}
+
+.form-parent {
+  display: flex;
+  justify-content: center;
 }
 
 /*# sourceMappingURL=style.css.map */

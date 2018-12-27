@@ -23,19 +23,35 @@ $courseId = $_GET['courseId'];
 //get course info
 try {
 
-  $sql = "SELECT * FROM courses WHERE courseId= :courseId";
+  $sql = "SELECT * FROM courses WHERE courseId = :courseId";
   $statement = $connection->prepare($sql);
   $statement->bindParam(':courseId', $courseId, PDO::PARAM_INT);
   $statement->execute();
 
-  $resultsCourses = $statement->fetchAll();
-
-  if(count($resultsCourses) == 0) {
+  if($statement->rowCount() == 0) {
     echo "ese curso ya no existe";
     die();
   }
 
-  $course = $resultsCourses[0];
+  $course = $statement->fetch(PDO::FETCH_ASSOC);
+
+  if($course['teacherId']) {
+
+    $sql = "SELECT teacherId, firstName, lastName FROM teachers WHERE teacherId = :teacherId";
+    $statement = $connection->prepare($sql);
+    $statement->bindParam(':teacherId', $course['teacherId'], PDO::PARAM_INT);
+
+    $statement->execute();
+    $teacher = $statement->fetch(PDO::FETCH_ASSOC);
+
+  }
+
+  $sql = "SELECT * FROM participants p INNER JOIN participantCourses pc ON p.participantId = pc.participantId WHERE pc.courseId = :courseId;";
+  $statement = $connection->prepare($sql);
+  $statement->bindParam(':courseId', $courseId, PDO::PARAM_INT);
+  $statement->execute();
+
+  $resultsCourseParticipants = $statement->fetchAll();
 
 } catch(PDOException $error) {
   handleError($error);
@@ -43,23 +59,21 @@ try {
 
 //get list of participants
 
-$sql = "SELECT * FROM participants p INNER JOIN participantCourses pc ON p.participantId = pc.participantId WHERE pc.courseId = :courseId;";
-$statement = $connection->prepare($sql);
-$statement->bindParam(':courseId', $courseId, PDO::PARAM_INT);
-$statement->execute();
 
-$resultsCourseParticipants = $statement->fetchAll();
 
 ?>
-<div id="courseHeading">
+<div id="courseHeading" class="heading">
 <h1><?php echo escape($course['name']); ?></h1>
-<p><?php echo escape($course['startDate'] . "   hasta   " . $course['endDate']); ?></p>
+<div><p><?php echo escape($course['startDate'] . "   hasta   " . $course['endDate']); ?></p></div>
+<div><strong>Maestr@:  <?php if (isset($teacher)) {
+  echo escape($teacher['firstName'] . " " . $teacher['lastName']);
+}?></strong></div>
 </div>
 <?php if (isAdministrator()) { ?>
   <form method="post" action="admin/editCourse.php?courseId=<?php echo escape($courseId);?>">
-    <input type=submit id="editCourse" class="orange-submit" value="editar curso">
+    <input type=submit id="editCourse" class="orange-submit edit-button" value="editar">
   </form>
-  <?php } ?>
+<?php } ?>
 
 <div id="courseInfo">
 <h2>Participantes: </h2>
@@ -70,7 +84,7 @@ $resultsCourseParticipants = $statement->fetchAll();
   <thead>
     <th>Nombre</th>
     <th>Apellido</th>
-    <th>Genero</th>
+    <th>Género</th>
   </thead>
   <tbody>
   <?php foreach($resultsCourseParticipants as $participant) { ?>
@@ -97,24 +111,22 @@ $resultsAllParticipants = $statement->fetchAll();
 
  <!-- FOR NOW I'M DOING THIS ON THE BROWSER. COULD BE SWITCHED TO AJAX LATER. DEPENDS ON INTERNET SPEED. -->
  <div id="addParticipants">
- <h2>Agregar Nuevos Participantes</h2>
+ <h2>Agregar Participantes</h2>
 <input class="orange-search" type="text" id="searchBox">
 <button class="orange-submit" id="search">Buscar</button>
 <form method="post" action="actions/addParticipantsToCourse.php?courseId=<?php echo $courseId; ?>">
-  <input class="orange-submit" type="submit" name="submit" id="submit" value="Agregar Participantes Elegidos" hidden>
-   <table id="addParticipantTable">
+  <input class="orange-submit" type="submit" name="submit" id="submit" value="Agregar Participantes" hidden>
+   <table id="addParticipantTable" class="search-group">
        <thead>
-         <tr class="table-head" hidden>
+         <!-- <tr class="search-head" hidden>
            <th>Nombre</th>
-           <th>Apellido</th>
-           <th>Select</th>
-         </tr>
+           <th>Seleccionar</th>
+         </tr> -->
        </thead>
        <tbody>
          <?php foreach($resultsAllParticipants as $participant) {?>
-           <tr class="table-row" hidden>
-             <td class="table-cell"><?php echo escape($participant['firstName']);?></td>
-             <td class="table-cell"><?php echo escape($participant['lastName']);?></td>
+           <tr class="search-row" hidden>
+             <td class="table-cell"><?php echo escape($participant['firstName'] . " " . $participant['lastName']);?></td>
              <td class="table-cell"><input type="checkbox" value="check" class="select-checkbox" name="<?php echo escape($participant['participantId']); ?>"></td>
            </tr>
          <?php } ?>
@@ -124,6 +136,6 @@ $resultsAllParticipants = $statement->fetchAll();
 </div>
 
  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
- <script src="js/participantSearch.js"></script>
+ <script src="js/search.js"></script>
 
 <?php require "templates/footer.php"; ?>

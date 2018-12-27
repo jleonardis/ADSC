@@ -30,7 +30,7 @@ function connectToDatabase($dsn, $username, $password, $options) {
 function checkLogIn() {
   //if this isn't the login page and the user isn't logged in, take them to the login page
   if(!isset($_SESSION['loggedIn']) || !$_SESSION['loggedIn'] ) {
-  	header("location: login.php");
+  	header("location: /login.php");
   	die();
   }
 }
@@ -105,4 +105,12 @@ function makeUpdateQuery($idName, $array, $tableName) {
 
   return $query;
 
+}
+
+function executeSelectQuery($query, $variables) {
+
+  $statement = $connection->prepare($query);
+  $statement->execute($variables);
+
+  return $statement;
 }

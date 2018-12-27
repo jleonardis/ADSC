@@ -1,10 +1,9 @@
 <?php
 require "common.php";
-require "templates/header.php";
 
 if($_POST && isset($_POST['submit'])) {
   if(empty($_POST['username'])) {
-    echo "ingresa tu username";
+    echo "ingresa tu usuario";
   }
   else if(empty($_POST['password'])) {
     echo "ingresa tu contraseña";
@@ -22,13 +21,14 @@ if($_POST && isset($_POST['submit'])) {
       $result = $statement->fetchAll();
 
       if(count($result) == 0) {  //count isn't efficient but result is expected to be small
-        echo "no hay usuario con username " . $username;
+        echo "no hay usuario " . $username;
       }
       else {
         $row = $result[0];
         if(password_verify($password, $row['password'])) {
           $_SESSION['username'] = $username;
           $_SESSION['firstName'] = $row['firstName'];
+          $_SESSION['gender'] = $row['gender'];
           $_SESSION['isAdministrator'] = $row['isAdministrator'];
           $_SESSION['userId'] = $row['userId'];
           $_SESSION['loggedIn'] = true;
@@ -49,7 +49,8 @@ if($_POST && isset($_POST['submit'])) {
 
           $_SESSION['permissions'] = $permissions;
 
-          header("location: index.php");
+          header("location: /index.php");
+          die();
         }
         else {
           echo "you entered the wrong password"; //TRANSLATE!!!
@@ -61,14 +62,17 @@ if($_POST && isset($_POST['submit'])) {
     }
   }
 }
+
+require "templates/header.php";
+
  ?>
-
-<h1>Log In</h1>
-
-<form method="post">
-  <label for="username">Username: </label>
-  <input type="text" id="username" name="username" /><br>
-  <label for="password">Password: </label>
-  <input type="password" id="password" name="password"/><br>
-  <input type="submit" name="submit" value="Submit">
-</form>
+<div id="login-page">
+  <form method="post" class="submit-form">
+    <h2>Iniciar Sesión</h2>
+    <label for="username">Usuario: </label>
+    <input type="text" id="username" name="username" /><br>
+    <label for="password">Contraseña: </label>
+    <input type="password" id="password" name="password"/><br>
+    <input class="orange-submit" type="submit" name="submit" value="Entrar">
+  </form>
+</div>

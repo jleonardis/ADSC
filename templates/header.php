@@ -11,16 +11,20 @@
 	<!--BE CAREFUL WITH RELATIVE STYLE.CSS PATH -->
 	<link rel="stylesheet" type="text/css" href="/style.css">
 	<link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet">
+	
 </head>
 
 <body>
 	<header>
 		<img id="logo" src="/images/AMIGOSLOGO.JPG"/>
 		<h1>Base de Datos</h1>
+		<?php $currentPage = $_SERVER['PHP_SELF'];
+		if($currentPage != '/login.php' && $currentPage != '/index.php') { ?>
 		<nav>
 			<ul>
-				<li><a href="/index.php">Home</a></li>
-				<li><a href="/actions/logout.php">Logout</a></li>
+				<li><a href="/index.php">Inicio</a></li>
+				<li><a href="/actions/logout.php">Salir</a></li>
 			</ul>
 		</nav>
+	<?php } ?>
 	</header>
