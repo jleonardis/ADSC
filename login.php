@@ -30,6 +30,8 @@ if($_POST && isset($_POST['submit'])) {
           $_SESSION['firstName'] = $row['firstName'];
           $_SESSION['gender'] = $row['gender'];
           $_SESSION['isAdministrator'] = $row['isAdministrator'];
+          $_SESSION['isCoordinator'] = $row['isCoordinator'];
+          $_SESSION['isTeacher'] = $row['isTeacher'];
           $_SESSION['userId'] = $row['userId'];
           $_SESSION['loggedIn'] = true;
 

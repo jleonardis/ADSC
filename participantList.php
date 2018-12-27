@@ -18,7 +18,7 @@ try {
 
 
 ?>
-
+<main>
 <h2>Buscar Participantes</h2>
 <div id="participantList">
 <input class="orange-search" type="text" id="searchBox">
@@ -30,7 +30,8 @@ try {
          <th>Apodo</th>
 				 <th>Genero</th>
          <th>Edad</th>
-				 <th>Email</th>
+         <th>Comunidad de Origen</th>
+         <th>Idiomas</th>
        </tr>
      </thead>
      <tbody class="search-group">
@@ -39,13 +40,16 @@ try {
            <td class="table-cell"><?php echo escape($participant['firstName'] . " " . $participant['lastName']);?></td>
            <td class="table-cell"><?php echo escape($participant['nickname']);?></td>
 					 <td class="table-cell"><?php echo escape($participant['gender']);?></td>
-					 <td class="table-cell">20</td>
-					 <td class="table-cell"><?php echo escape($participant['email']);?></td>
+					 <td class="table-cell"><?php echo escape($participant['age']); ?></td>
+           <td class="table-cell"><?php echo escape($participant['village']); ?></td>
+           <td class="table-cell"><?php echo escape($participant['languages']); ?></td>
          </tr>
        <?php } ?>
      </tbody>
    </table>
 </div>
+</main>
+<?php include "templates/sidebar.php"; ?>
  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
  <script src="js/search.js"></script>
 

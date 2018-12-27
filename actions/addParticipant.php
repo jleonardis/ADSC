@@ -5,18 +5,21 @@ require "../common.php";
 //change to only work for admins
 checkLogin();
 
-if(isset($_FILES['picture']) && isset($_FILES['picture']['error'])) {
-   if($_FILES['picture']['error'] == 2) {
-     echo "Esa foto es muy grande. Ve para atras y intenta con una mas pequeña.";
-     die();
-   }
-}
+
 
 if(isset($_POST['submit']) && hasPermission()) {
+
+  if(isset($_FILES['picture']) && isset($_FILES['picture']['error'])) {
+     if($_FILES['picture']['error'] == 2) {
+       echo "Esa foto es muy grande. Ve para atras y intenta con una mas pequeña.";
+       die();
+     }
+  }
 
   $new_participant = array(
     'firstName' => $_POST['firstName'],
     'lastName' => $_POST['lastName'],
+    'nickname' => $_POST['nickname'],
     'gender' => $_POST['gender'],
     'age' => $_POST['age'],
     'dob' => $_POST['dob'],
@@ -25,7 +28,7 @@ if(isset($_POST['submit']) && hasPermission()) {
   );
 
   foreach($_POST as $key => $value) {
-    if(substr($key, 0, 8) == 'language' && strlen($value) > 0){
+    if(substr($key, 0, 8) == 'language' && $value){
       if(strlen($new_participant['languages']) == 0) {
         $new_participant['languages'] .= $value;
       }

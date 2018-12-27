@@ -65,6 +65,7 @@ if(isset($_GET['courseId'])) {
 
 }
  ?>
+ <main>
  <div class="form-parent">
  <form class = "submit-form" method="post" action="../actions/updateCourse.php?courseId=<?php echo escape($courseId); ?>">
    <h2>Editar Curso: <?php echo escape($course['name']);?></h2>
@@ -100,7 +101,8 @@ if(isset($_GET['courseId'])) {
    <input name="submit" type="submit" value="Actualizar" class="orange-submit">
  </form>
 </div>
-
+</main>
+<?php include "../templates/sidebar.php";?>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
  <script src="/js/search.js"></script>
 <?php include "../templates/footer.php"; ?>

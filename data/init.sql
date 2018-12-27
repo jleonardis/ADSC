@@ -14,7 +14,7 @@ CREATE TABLE participants (
 	participantId INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 	firstName VARCHAR(200),
 	lastName VARCHAR(200),
-	nickName VARCHAR(100),
+	nickname VARCHAR(100),
 	gender VARCHAR(10),
 	isActive BOOLEAN,
 	age INT(11),

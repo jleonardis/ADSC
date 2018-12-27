@@ -6,6 +6,11 @@
  */
 require "config.php";
 session_start();
+
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 $connection = connectToDatabase($dsn, $username, $password, $options);
 
 $invalidPermissionMessage = "no tienes permiso para usar esta pagina";
@@ -80,6 +85,10 @@ function displayActionStatus($getHeaderTag, $successMessage) {
   else {
     ?><p class="action-status action-failure">Algo falló. Acción no cumplido.</p><?php
   }
+}
+
+function postTernary($name) {
+  return isset($_POST[$name]) && $_POST[$name] ? $_POST[$name] : null;
 }
 
 //DATABASE FUNCTIONS

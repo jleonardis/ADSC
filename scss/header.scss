@@ -1,22 +1,22 @@
 header {
   border-bottom: solid #111 2px;
   margin-bottom: 20px;
+  overflow: hidden;
 
   h1 {
     display:block;
-    width: 100%;
     text-align: center;
   }
   ul {
     display: flex;
-    flex-direction: row;
     justify-content: space-between;
+    flex-direction: row;
     padding: 0;
+    align-items: baseline;
 
-    li {
-      display: block;
-      font-size: 30px;
-      font-weight: bold;
-      }
+  li {
+    font-size: 25px;
+    font-weight: bold;
     }
   }
+}

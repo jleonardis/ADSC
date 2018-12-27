@@ -16,11 +16,17 @@ if(isset($_GET['userAdded'])) {
 
 try {
 
-  $sql = "SELECT * FROM programs";
+  $sql = "SELECT * FROM programs;";
   $statement = $connection->prepare($sql);
   $statement->execute();
 
   $resultsPrograms = $statement->fetchAll();
+
+  $sql = "SELECT username FROM users;";
+  $statement = $connection->prepare($sql);
+  $statement->execute();
+
+  $resultsUsers = $statement->fetchAll();
 
 } catch(PDOException $error) {
 
@@ -28,7 +34,7 @@ try {
 }
 
 ?>
-
+<main>
 <div class="form-parent">
 <form id="registration-form" class= "submit-form" method="post" action="../actions/addUser.php">
   <h2>Agregar Usuario</h2>
@@ -51,21 +57,16 @@ try {
   </select><br>
   <label for="isAdministrator" class="administrator-info">Administrador(a):</label>
   <input type="checkbox" name="isAdministrator" id="isAdministrator" class="administrator-info" value="administrator"/><br>
-	<!-- <label for="isCoordinator" class="coordinator-info">Coordinador(a) de Programas:</label> -->
-  <!-- <input type="checkbox" name="isCoordinator" id="isCoordinator" value="coordinator" class="coordinator-info"/><br>
-  <label for="programs" class="coordinator-info program-list" hidden>a cuales programas tendrá acceso?:</label>
-  <?php foreach($resultsPrograms as $row) {
-    $programId = $row["programId"];
-    $programName = $row["name"];?>
-  <label class="coordinator-info program-list" for="program-<?php echo $programId;?>"><?php echo $programName;?></label>
-  <input type="checkbox" id="program-<?php echo $programId;?>" name="program-<?php echo $programId;?>" class="coordinator-info program-list" value="program-<?php echo $programId;?>"><br>
-  <?php } ?> -->
+	<label for="isCoordinator" class="coordinator-info">Coordinador(a) de Programa:</label>
+  <input type="checkbox" name="isCoordinator" id="isCoordinator" value="coordinator" class="coordinator-info"/><br>
   <label for="isTeacher">Maestr@:</label>
   <input type="checkbox" name="isTeacher" id="isTeacher" value="teacher"><br>
 	<input type="submit" name="submit" value="Agregar" class="orange-submit">
 </form>
 </div>
-
+</main>
+<?php include "../templates/sidebar.php"; ?>
+<script>var usernames = <?php echo json_encode($resultsUsers); ?>;</script> <!-- this will be used later by registration.js -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="../js/registration.js"></script>
 

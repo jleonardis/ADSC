@@ -62,11 +62,12 @@ try {
 
 
 ?>
+<main>
 <div id="courseHeading" class="heading">
 <h1><?php echo escape($course['name']); ?></h1>
 <div><p><?php echo escape($course['startDate'] . "   hasta   " . $course['endDate']); ?></p></div>
-<div><strong>Maestr@:  <?php if (isset($teacher)) {
-  echo escape($teacher['firstName'] . " " . $teacher['lastName']);
+<div><strong><?php if (isset($teacher)) {
+  echo "Enseñado por " . escape($teacher['firstName'] . " " . $teacher['lastName']);
 }?></strong></div>
 </div>
 <?php if (isAdministrator()) { ?>
@@ -80,7 +81,7 @@ try {
 <?php if(count($resultsCourseParticipants) == 0) { ?>
   <p>Este curso no tiene participantes.</p>
 <?php } else { ?>
-<table id="participantTable">
+<table id="participantList">
   <thead>
     <th>Nombre</th>
     <th>Apellido</th>
@@ -88,7 +89,7 @@ try {
   </thead>
   <tbody>
   <?php foreach($resultsCourseParticipants as $participant) { ?>
-    <tr>
+    <tr class="participant-row" data-href="/participantPage.php?participantId=<?php echo escape($participant['participantId']);?>">
       <td><?php echo $participant['firstName'];?></td>
       <td><?php echo $participant['lastName'];?></td>
       <td><?php echo $participant['gender'];?></td>
@@ -114,7 +115,7 @@ $resultsAllParticipants = $statement->fetchAll();
  <h2>Agregar Participantes</h2>
 <input class="orange-search" type="text" id="searchBox">
 <button class="orange-submit" id="search">Buscar</button>
-<form method="post" action="actions/addParticipantsToCourse.php?courseId=<?php echo $courseId; ?>">
+<form method="post" action="actions/addParticipantsToCourse.php?courseId=<?php echo escape($courseId); ?>">
   <input class="orange-submit" type="submit" name="submit" id="submit" value="Agregar Participantes" hidden>
    <table id="addParticipantTable" class="search-group">
        <thead>
@@ -134,7 +135,9 @@ $resultsAllParticipants = $statement->fetchAll();
      </table>
 </form>
 </div>
+</main>
 
+<?php include "templates/sidebar.php"; ?>
  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
  <script src="js/search.js"></script>
 

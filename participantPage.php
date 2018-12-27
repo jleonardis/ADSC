@@ -24,15 +24,27 @@ try {
   $statement->bindParam(':participantId', $participantId, PDO::PARAM_INT);
   $statement->execute();
 
-  $result = $statement->fetchAll();
 
-  if(count($result) == 0) {
+  if($statement->rowCount() == 0) {
     echo "ese participante ya no esta en la base de datos";
     die();
   }
 
-  //participantId is primary key so there must only be one
-  $participant = $result[0];
+  $participant = $statement->fetch(PDO::FETCH_ASSOC);
+
+  $sql = "SELECT * FROM participantCourses pc INNER JOIN courses c ON pc.courseId = c.courseId
+  WHERE pc.participantId = :participantId AND NOW() < ADDDATE(c.endDate, INTERVAL 1 MONTH)
+  AND NOW() > SUBDATE(c.startDate, INTERVAL 1 MONTH);";
+
+  $statement = $connection->prepare($sql);
+  $statement->bindParam(':participantId', $participantId, PDO::PARAM_INT);
+  $statement->execute();
+  $hasCourses = $statement->rowCount() != 0;
+  $courses = array();
+
+  if($hasCourses){
+    $courses = $statement->fetchAll();
+  }
 
 } catch(PDOException $error) {
   handleError($error);
@@ -65,7 +77,25 @@ try {
       <li><strong>Email </strong><?php echo escape($participant['email']); ?></li>
     </ul>
 </div>
+<div id="participantCourses">
+  <?php if(!$hasCourses) {
+    echo '<p>Por el momento, ' . escape($participant['firstName']) . ' no esta en ningun curso.</p>';
+  }
+  else {
+    echo '<h2>Cursos Actuales</h2>';
+  ?>
+  <ul>
+    <?php foreach($courses as $course) { ?>
+    <li><a href="/coursePage.php?courseId=<?php echo escape($course['courseId']); ?>"><strong><?php echo escape($course['name']); ?></strong></a></li>
+  <?php } ?>
+</ul>
+</div>
+<?php } ?>
+
+
 
 </main>
 
-<?php include "templates/footer.php"; ?>
+<?php
+include "templates/sidebar.php";
+include "templates/footer.php"; ?>

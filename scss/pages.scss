@@ -2,7 +2,9 @@
   width: 75%;
   float: left;
   clear: none;
-  text-transform: uppercase;
+  h1, h2, h3 {
+    text-transform: uppercase;
+  }
 }
 
 .edit-button {
@@ -53,4 +55,10 @@
     padding-right: 10px;
   }
 
+}
+
+#participantCourses {
+  float: left;
+  margin-top: 30px;
+  clear: left;
 }

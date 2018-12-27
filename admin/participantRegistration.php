@@ -16,6 +16,7 @@ if(isset($_GET['participantAdded'])) {
 }
 
 ?>
+<main>
 <div class="form-parent">
 <form enctype="multipart/form-data" id="participant-form" class="submit-form" method="post" action="../actions/addParticipant.php">
   <h2>Agregar Participante</h2>
@@ -54,5 +55,8 @@ if(isset($_GET['participantAdded'])) {
 	<input type="submit" id="submit" name="submit" value="Agregar" class="orange-submit">
 </form>
 </div>
+</main>
+
+<?php include "../templates/sidebar.php";?>
 
 <?php include "../templates/footer.php"; ?>

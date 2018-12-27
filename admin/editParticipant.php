@@ -24,12 +24,12 @@ if(isset($_GET['participantId'])) {
   $statement->bindParam(':participantId', $participantId, PDO::PARAM_INT);
   $statement->execute();
 
-  $result = $statement->fetch(PDO::FETCH_ASSOC);
-
-  if(count($result) == 0) {
+  if($statement->rowCount() == 0) {
     echo "ese participante ya no está en la base de datos";
     die();
   }
+
+  $result = $statement->fetch(PDO::FETCH_ASSOC);
 
   $participant = $result;
 
@@ -40,6 +40,7 @@ if(isset($_GET['participantId'])) {
 
 }
  ?>
+ <main>
 <h2>Editar Participante: <?php echo escape($participant['firstName'] . ' ' . $participant['lastName']);?></h2>
  <form form class="submit-form" enctype="multipart/form-data" method="post" action="../actions/updateParticipant.php?participantId=<?php echo escape($participantId); ?>">
    <label for="firstName">Nombre: </label>
@@ -54,10 +55,12 @@ if(isset($_GET['participantId'])) {
    <input type="date" id="dob" name="dob" value="<?php echo escape($participant['dob']);?>"><br>
    <label for="email">Email: </label>
    <input type="text" id="email" name="email" value="<?php echo escape($participant['email']);?>"><br>
-   <label for="picture">Imagen (esto borrarará la imagen anterior si hay): </label>
+   <label for="picture">Imagen (esto borrará la imagen anterior): </label>
    <input type="hidden" name="MAX_FILE_SIZE" value="1000000" /><!-- Add max size on php side!! -->
    <input type="file" id="picture" name="picture" accept="image"><br>
-   <input name="submit" type="submit" value="Submitir Cambios" class="orange-submit">
+   <input name="submit" type="submit" value="Actualizar" class="orange-submit">
  </form>
-
-<?php include "../templates/footer.php"; ?>
+</main>
+<?php
+include "../templates/sidebar.php";
+include "../templates/footer.php"; ?>

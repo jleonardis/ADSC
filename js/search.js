@@ -25,18 +25,10 @@
   }
 
   //fire search on click or enter but only if the user has submitted more than 3 leters (so the search doesn't  take forever)
-  $('#search').click(function() {
-    if($('#searchBox').val().length > 3){
-      searchNames();
-    }
-    else {
-      if(confirm("Quieres hacer buscar con tan pocas letras?")) {
-        searchNames();
-      }
-    }
-  });
+  $('#search').click(searchNames);
+
   $(document).keypress(function(e) {
-    if(e.which === 13 && $('#searchBox').val().length > 3){
+    if(e.which === 13 && document.activeElement.id === 'searchBox'){
       searchNames();
     }
   });
@@ -48,10 +40,6 @@
     else {
       $('#submit').hide();
     }
-  });
-
-  $('.participant-row').click(function() {
-    window.location = $(this).data("href");
   });
 
 })(jQuery)

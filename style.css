@@ -11,10 +11,15 @@ html {
 body {
   margin: 0 auto;
   font-family: "Poppins";
-  width: 1000px;
+  width: 1200px;
   color: #111;
   padding: 20px 50px;
   min-height: 100%;
+}
+
+main {
+  float: left;
+  width: 60%;
 }
 
 #logo {
@@ -82,24 +87,49 @@ h1, h2, h3, h4, h5, h6 {
   margin: 0;
 }
 
+td, th {
+  padding: 0 15px;
+  text-align: left;
+}
+
+#sidebar {
+  float: right;
+  padding-left: 40px;
+  width: 33%;
+  border-left: 2px solid #111;
+  height: 100%;
+}
+#sidebar div {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  margin-top: 20px;
+}
+#sidebar div h1, #sidebar div h2, #sidebar div h3 {
+  text-align: center;
+}
+#sidebar div button {
+  width: 100%;
+}
+
 header {
   border-bottom: solid #111 2px;
   margin-bottom: 20px;
+  overflow: hidden;
 }
 header h1 {
   display: block;
-  width: 100%;
   text-align: center;
 }
 header ul {
   display: flex;
-  flex-direction: row;
   justify-content: space-between;
+  flex-direction: row;
   padding: 0;
+  align-items: baseline;
 }
 header ul li {
-  display: block;
-  font-size: 30px;
+  font-size: 25px;
   font-weight: bold;
 }
 
@@ -132,6 +162,8 @@ h1 {
   width: 75%;
   float: left;
   clear: none;
+}
+.heading h1, .heading h2, .heading h3 {
   text-transform: uppercase;
 }
 
@@ -180,6 +212,12 @@ h1 {
   padding-right: 10px;
 }
 
+#participantCourses {
+  float: left;
+  margin-top: 30px;
+  clear: left;
+}
+
 .submit-form {
   display: inline-block;
   margin-top: 20px;
@@ -193,7 +231,7 @@ h1 {
   display: inline-block;
   margin-right: 5px;
 }
-.submit-form input, .submit-form select {
+.submit-form input, .submit-form select, .submit-form textarea {
   float: right;
 }
 .submit-form input[type=file] {

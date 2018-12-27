@@ -1,27 +1,49 @@
 (function($) {
 
-  $('.program-list').hide();
-  $("#isCoordinator").change(function() {
-    if($(this).prop("checked")){
-      showSpecial('.program-list', 'inline-block');
+  // $('.program-list').hide();
+  // $("#isCoordinator").change(function() {
+  //   if($(this).prop("checked")){
+  //     showSpecial('.program-list', 'inline-block');
+  //     $('.administrator-info').attr('disabled', true)
+  //                             .css("opacity", .5);
+  //   }
+  //   else {
+  //     $('.program-list').hide();
+  //     $('.administrator-info').attr('disabled', false)
+  //                             .css("opacity", 1);
+  //   }
+  // });
+  //
+  // $('#isAdministrator').change(function() {
+  //   if($(this).prop("checked")){
+  //     $('.coordinator-info').attr('disabled', true)
+  //                             .css("opacity", .5);
+  //   }
+  //   else {
+  //     $('.coordinator-info').attr('disabled', false)
+  //                             .css("opacity", 1);
+  //   }
+  // });
+
+  $('#isCoordinator').change(function() {
+    if($(this).prop('checked')) {
       $('.administrator-info').attr('disabled', true)
-                              .css("opacity", .5);
+                              .css('opacity', .5);
     }
     else {
-      $('.program-list').hide();
       $('.administrator-info').attr('disabled', false)
-                              .css("opacity", 1);
+                              .css('opacity', 1);
     }
   });
 
   $('#isAdministrator').change(function() {
-    if($(this).prop("checked")){
+    if($(this).prop('checked')) {
       $('.coordinator-info').attr('disabled', true)
-                              .css("opacity", .5);
+                              .css('opacity', .5);
     }
     else {
       $('.coordinator-info').attr('disabled', false)
-                              .css("opacity", 1);
+                              .css('opacity', 1);
     }
   });
 
@@ -43,6 +65,17 @@
       alert("cual será su papel?");
       return false;
     }
+  });
+
+  $('#username').change(function() {
+    usernames.forEach(function(elem) {
+      console.log(elem);
+      if(elem.username === $('#username').val()) {
+        $('#username').val('');
+        alert('usuario ya existe');
+        document.isActive = document.getElementById('username');
+      }
+    });
   });
 
 })(jQuery)
