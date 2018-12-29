@@ -85,6 +85,14 @@ try {
     <input id = "startDate" name="startDate" type="date" required><br>
     <label for="endDate">Finalización: </label>
     <input id="endDate" type="date" name="endDate" required><br>
+    <label for="schedule">Horario: </label><br>
+    <label for="sunday">D <input type="checkbox" id="sunday" name="sunday" value="sunday"></label>
+    <label for="monday">L <input type="checkbox" id="monday" name="monday" value="monday"></label>
+    <label for="tuesday">Ma <input type="checkbox" id="tuesday" name="tuesday" value="tuesday"></label>
+    <label for="wednesday">Mi <input type="checkbox" id="wednesday" name="wednesday" value="wednesday"></label>
+    <label for="thursday">J <input type="checkbox" id="thursday" name="thursday" value="thursday"></label>
+    <label for="friday">V <input type="checkbox" id="friday" name="friday" value="friday"></label>
+    <label for="saturday">S <input type="checkbox" id="saturday" name="saturday" value="saturday"></label><br>
     <label for="teacher">Maestr@: </label>
     <input class="orange-search" type="text" id="searchBox">
     <button type="button" class="orange-submit" id="search">Buscar</button><br>

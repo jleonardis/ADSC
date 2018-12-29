@@ -1,0 +1,27 @@
+#attendance {
+  position: relative;
+  #attendanceTableWrapper {
+    overflow: auto;
+    #attendanceTable {
+      margin-left: 150px;
+      padding-bottom: 20px;
+      th.fixed-column {
+        position: absolute;
+        top: auto;
+        left: 0px;
+        width: 150px;
+        height: inherit;
+        background-color: rgb(252, 252, 252);
+      }
+      tr {
+        height: 60px;
+      }
+      td {
+        border: 1px solid #111;
+        margin: 0;
+        text-align: center;
+        vertical-align: center;
+      }
+    }
+  }
+}

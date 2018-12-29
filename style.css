@@ -111,6 +111,10 @@ td, th {
 #sidebar div button {
   width: 100%;
 }
+#sidebar div a {
+  width: 100%;
+  text-align: center;
+}
 
 header {
   border-bottom: solid #111 2px;
@@ -180,17 +184,33 @@ h1 {
   clear: both;
 }
 
-#addParticipants {
+#courseActions {
   float: left;
   margin-top: 50px;
-  margin-bottom: 100px;
   clear: both;
+  width: 100%;
 }
-#addParticipants h2 {
+#courseActions h2 {
   margin-bottom: 10px;
+  text-align: center;
+  width: 100%;
+  display: block;
 }
-#addParticipants #submit {
+#courseActions #addParticipants {
+  float: left;
+  border-right: 1px solid #111;
+  padding-right: 20px;
+}
+#courseActions #addParticipants #submit {
   margin-top: 10px;
+}
+#courseActions #courseManagement {
+  float: right;
+}
+#courseActions #courseManagement #courseManagementButtons {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
 }
 
 #participantInfo {
@@ -262,6 +282,34 @@ h1 {
 .form-parent {
   display: flex;
   justify-content: center;
+}
+
+#attendance {
+  position: relative;
+}
+#attendance #attendanceTableWrapper {
+  overflow: auto;
+}
+#attendance #attendanceTableWrapper #attendanceTable {
+  margin-left: 150px;
+  padding-bottom: 20px;
+}
+#attendance #attendanceTableWrapper #attendanceTable th.fixed-column {
+  position: absolute;
+  top: auto;
+  left: 0px;
+  width: 150px;
+  height: inherit;
+  background-color: #fcfcfc;
+}
+#attendance #attendanceTableWrapper #attendanceTable tr {
+  height: 60px;
+}
+#attendance #attendanceTableWrapper #attendanceTable td {
+  border: 1px solid #111;
+  margin: 0;
+  text-align: center;
+  vertical-align: center;
 }
 
 /*# sourceMappingURL=style.css.map */

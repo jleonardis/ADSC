@@ -27,18 +27,22 @@ CREATE TABLE participants (
 
 CREATE TABLE teachers (
 	teacherId INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+	userId INT(11) UNSIGNED,
 	firstName VARCHAR(200),
 	lastName VARCHAR(200),
 	gender VARCHAR(10),
 	village VARCHAR(200),
-	email VARCHAR(200)
+	email VARCHAR(200),
+	FOREIGN KEY (userId) REFERENCES users (userId)
 );
 
 CREATE TABLE programs (
 
 	programId INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+	coordinatorId INT(11) UNSIGNED,
 	name VARCHAR(255),
-	description VARCHAR(255)
+	description VARCHAR(255),
+	FOREIGN KEY (coordinatorId) REFERENCES users (userId)
 );
 
 CREATE TABLE courses (
@@ -68,3 +72,10 @@ CREATE TABLE permissions (
 	FOREIGN KEY (userId) REFERENCES users (userId),
 	FOREIGN KEY (courseId) REFERENCES courses (courseId)
 );
+
+CREATE TABLE courseSessions (
+	sessionId INT(11) UNSIGNED PRIMARY KEY,
+	courseId INT(11) UNSIGNED,
+	date DATE,
+	FOREIGN KEY (courseId) REFERENCES courses (courseId)
+)

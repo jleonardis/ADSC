@@ -51,6 +51,29 @@ if($_POST && isset($_POST['submit'])) {
 
           $_SESSION['permissions'] = $permissions;
 
+          $courses = array();
+
+          if($_SESSION['isTeacher']) {
+
+            $sql = "SELECT * FROM courses c INNER JOIN teachers t ON c.teacherId = t.teacherId
+            WHERE t.userId = :userId
+            AND NOW() < ADDDATE(c.endDate, INTERVAL 1 MONTH)
+            AND NOW() > SUBDATE(c.startDate, INTERVAL 1 MONTH);";
+            $statement = $connection->prepare($sql);
+            $statement->bindParam(":userId", $_SESSION['userId'], PDO::PARAM_INT);
+            $statement->execute();
+
+            $resultsCourses = $statement->fetchAll();
+
+            foreach($resultsCourses as $course) {
+              echo "here";
+              array_push($courses, array( 'name' => $course['name'], 'courseId' => $course['courseId']));
+            }
+
+          }
+
+          $_SESSION['courses'] = $courses;
+
           header("location: /index.php");
           die();
         }

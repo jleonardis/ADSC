@@ -24,12 +24,15 @@
     }
   }
 
+
   //fire search on click or enter but only if the user has submitted more than 3 leters (so the search doesn't  take forever)
   $('#search').click(searchNames);
 
   $(document).keypress(function(e) {
     if(e.which === 13 && document.activeElement.id === 'searchBox'){
       searchNames();
+      e.preventDefault();
+      return false;
     }
   });
 

@@ -37,9 +37,12 @@ if(isset($_POST['submit']) and hasPermission()) {
 
     if($new_user['isTeacher']) {
 
+      $userId = $connection->lastInsertId();
+      
       $new_teacher = array(
         'firstName' => $new_user['firstName'],
         'lastName' => $new_user['lastName'],
+        'userId' =>   $userId,
         'gender' => $_POST['gender'],
         'email' => $_POST['email']
       );

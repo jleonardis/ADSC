@@ -73,17 +73,26 @@ function isAdministrator() {
   return true;
 }
 
+function isTeacher() {
+  if(!isset($_SESSION['isTeacher']) || !$_SESSION['isTeacher']) {
+    return false;
+  }
+  return true;
+}
+
 function logout() {
   $_SESSION = array();
   session_destroy();
 }
 
 function displayActionStatus($getHeaderTag, $successMessage) {
-  if($_GET[$getHeaderTag] == 1) {
+  if(isset($_GET) && isset($_GET[$getHeaderTag])) {
+    if($_GET[$getHeaderTag] == 1) {
     ?><p class="action-status action-success"> <?php echo $successMessage; ?></p><?php
-  }
-  else {
-    ?><p class="action-status action-failure">Algo falló. Acción no cumplido.</p><?php
+    }
+    else {
+      ?><p class="action-status action-failure">Algo falló. Acción no cumplido.</p><?php
+    }
   }
 }
 

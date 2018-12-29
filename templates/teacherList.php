@@ -14,7 +14,7 @@ $resultsTeachers = $statement->fetchAll();
 <input type="text" name="teacher" id="teacher" readonly><br>
 <input class="orange-search" type="text" id="searchBox">
 <button class="orange-submit" id="search">Buscar</button>
-<form method="post" action="actions/addTeacherToCourse.php?courseId=<?php echo $courseId; ?>">
+<form method="post" action="actions/addTeacherToCourse.php?co">
  <input class="orange-submit" type="submit" name="submit" id="submit" value="Agregar Maestr@" hidden>
   <table id="addParticipantTable">
       <thead>

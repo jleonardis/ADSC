@@ -9,9 +9,9 @@ if(!hasPermission()) {
   die();
 }
 
-if(isset($_GET['participantsAdded'])) {
-  displayActionStatus('participantsAdded', 'Participante(s) agregado con exito!');
-}
+displayActionStatus('participantsAdded', 'Participante(s) agregado con exito!');
+displayActionStatus('attendanceUpdated', "asistencia actualizado con exito!");
+
 
 if(!isset($_GET['courseId'])) {
   echo "no hay curso seleccionado";
@@ -53,19 +53,48 @@ try {
 
   $resultsCourseParticipants = $statement->fetchAll();
 
+
+  $sql = "SELECT * FROM attendance a INNER JOIN participantCourses pc
+  ON a.participantId = pc.participantId INNER JOIN courseSessions cs
+  ON a.sessionId = cs.sessionId WHERE pc.courseId = :courseId AND
+  cs.sessionDate < NOW();";
+
+  $statement = $connection->prepare($sql);
+  $statement->bindParam(':courseId', $courseId, PDO::PARAM_INT);
+  $statement->execute();
+
+  $attendanceScores = array();
+
+  if($statement->rowCount() != 0) {
+    $resultsAttendance = $statement->fetchAll();
+    //used to calculate percentage attendance (calculated in the html)
+    foreach($resultsAttendance as $row) {
+      $parId = $row['participantId'];
+      if(!isset($attendanceScores[$parId])){
+        $attendanceScores[$parId] = array(
+          'attended' => 0,
+          'total' => 0);
+      }
+      if($row['attended']) {
+        $attendanceScores[$parId]['attended']++;
+      }
+      $attendanceScores[$parId]['total']++;
+      }
+    }
+
 } catch(PDOException $error) {
   handleError($error);
+  die();
 }
 
 //get list of participants
-
 
 
 ?>
 <main>
 <div id="courseHeading" class="heading">
 <h1><?php echo escape($course['name']); ?></h1>
-<div><p><?php echo escape($course['startDate'] . "   hasta   " . $course['endDate']); ?></p></div>
+<div><p><?php echo escape(date('d/m/Y', strtotime($course['startDate'])) . "   hasta   " . date('d/m/Y', strtotime($course['endDate']))); ?></p></div>
 <div><strong><?php if (isset($teacher)) {
   echo "Enseñado por " . escape($teacher['firstName'] . " " . $teacher['lastName']);
 }?></strong></div>
@@ -86,13 +115,20 @@ try {
     <th>Nombre</th>
     <th>Apellido</th>
     <th>Género</th>
+    <th>Asistencia</th>
   </thead>
   <tbody>
   <?php foreach($resultsCourseParticipants as $participant) { ?>
     <tr class="participant-row" data-href="/participantPage.php?participantId=<?php echo escape($participant['participantId']);?>">
-      <td><?php echo $participant['firstName'];?></td>
-      <td><?php echo $participant['lastName'];?></td>
-      <td><?php echo $participant['gender'];?></td>
+      <td><?php echo escape($participant['firstName']);?></td>
+      <td><?php echo escape($participant['lastName']);?></td>
+      <td><?php echo escape($participant['gender']);?></td>
+      <td><?php if(count($attendanceScores) == 0 || $attendanceScores[$participant['participantId']]['total'] === 0) {
+        echo "-";
+      }
+      else {
+        echo escape(round((($attendanceScores[$participant['participantId']]['attended']/$attendanceScores[$participant['participantId']]['total']) * 100)) . "%");
+      }?></td>
     </tr>
   <?php } ?>
 </tbody>
@@ -111,29 +147,42 @@ $resultsAllParticipants = $statement->fetchAll();
  ?>
 
  <!-- FOR NOW I'M DOING THIS ON THE BROWSER. COULD BE SWITCHED TO AJAX LATER. DEPENDS ON INTERNET SPEED. -->
- <div id="addParticipants">
- <h2>Agregar Participantes</h2>
-<input class="orange-search" type="text" id="searchBox">
-<button class="orange-submit" id="search">Buscar</button>
-<form method="post" action="actions/addParticipantsToCourse.php?courseId=<?php echo escape($courseId); ?>">
-  <input class="orange-submit" type="submit" name="submit" id="submit" value="Agregar Participantes" hidden>
-   <table id="addParticipantTable" class="search-group">
-       <thead>
-         <!-- <tr class="search-head" hidden>
-           <th>Nombre</th>
-           <th>Seleccionar</th>
-         </tr> -->
-       </thead>
-       <tbody>
-         <?php foreach($resultsAllParticipants as $participant) {?>
-           <tr class="search-row" hidden>
-             <td class="table-cell"><?php echo escape($participant['firstName'] . " " . $participant['lastName']);?></td>
-             <td class="table-cell"><input type="checkbox" value="check" class="select-checkbox" name="<?php echo escape($participant['participantId']); ?>"></td>
-           </tr>
-         <?php } ?>
-       </tbody>
-     </table>
-</form>
+ <div id="courseActions">
+   <div id="addParticipants">
+   <h2>Agregar Participantes</h2>
+  <input class="orange-search" type="text" id="searchBox">
+  <button class="orange-submit" id="search">Buscar</button>
+  <form method="post" action="actions/addParticipantsToCourse.php?courseId=<?php echo escape($courseId); ?>">
+    <input class="orange-submit" type="submit" name="submit" id="submit" value="Agregar Participantes" hidden>
+     <table id="addParticipantTable" class="search-group">
+         <thead>
+           <!-- <tr class="search-head" hidden>
+             <th>Nombre</th>
+             <th>Seleccionar</th>
+           </tr> -->
+         </thead>
+         <tbody>
+           <?php foreach($resultsAllParticipants as $participant) {?>
+             <tr class="search-row" hidden>
+               <td class="table-cell"><?php echo escape($participant['firstName'] . " " . $participant['lastName']);?></td>
+               <td class="table-cell"><input type="checkbox" value="check" class="select-checkbox" name="<?php echo escape($participant['participantId']); ?>"></td>
+             </tr>
+           <?php } ?>
+         </tbody>
+       </table>
+     </form>
+  </div>
+  <div id="courseManagement">
+    <h2> Acciones de Maestr@ </h2>
+    <div id="courseManagementButtons">
+      <a href="/attendance.php?courseId=<?php echo escape($courseId);?>">
+        <button type="button" id="attendanceButton" class="orange-submit">Actualizar Asistencia</button>
+      </a>
+      <a href="/assignments.php?courseId=<?php echo escape($courseId);?>">
+        <button type="button" id="assignmentsButton" class="orange-submit">Ver Tareas</button>
+      </a>
+    </div>
+  </div>
 </div>
 </main>
 

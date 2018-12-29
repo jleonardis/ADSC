@@ -20,20 +20,38 @@
   clear: both;
 }
 
-#addParticipants {
-
+#courseActions {
   float: left;
   margin-top: 50px;
-  margin-bottom: 100px;
   clear: both;
+  width: 100%;
+
   h2 {
     margin-bottom: 10px;
+    text-align: center;
+    width: 100%;
+    display: block;
   }
 
-  #submit {
-
-    margin-top: 10px;
+  #addParticipants {
+    float: left;
+    border-right: 1px solid #111;
+    padding-right: 20px;
+    #submit {
+      margin-top: 10px;
+    }
   }
+
+  #courseManagement {
+    float: right;
+
+    #courseManagementButtons {
+      display: flex;
+      justify-content: space-between;
+      flex-direction: row;
+    }
+  }
+
 }
 
 #participantInfo {
