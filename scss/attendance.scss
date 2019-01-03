@@ -1,8 +1,8 @@
-#attendance {
+.scrollDiv {
   position: relative;
-  #attendanceTableWrapper {
+  .scrollTableWrapper {
     overflow: auto;
-    #attendanceTable {
+    .scrollTable {
       margin-left: 150px;
       padding-bottom: 20px;
       th.fixed-column {

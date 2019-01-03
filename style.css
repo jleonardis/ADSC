@@ -238,6 +238,14 @@ h1 {
   clear: left;
 }
 
+.program-list {
+  float: left;
+  width: 100%;
+}
+.program-list select {
+  float: left;
+}
+
 .submit-form {
   display: inline-block;
   margin-top: 20px;
@@ -284,17 +292,17 @@ h1 {
   justify-content: center;
 }
 
-#attendance {
+.scrollDiv {
   position: relative;
 }
-#attendance #attendanceTableWrapper {
+.scrollDiv .scrollTableWrapper {
   overflow: auto;
 }
-#attendance #attendanceTableWrapper #attendanceTable {
+.scrollDiv .scrollTableWrapper .scrollTable {
   margin-left: 150px;
   padding-bottom: 20px;
 }
-#attendance #attendanceTableWrapper #attendanceTable th.fixed-column {
+.scrollDiv .scrollTableWrapper .scrollTable th.fixed-column {
   position: absolute;
   top: auto;
   left: 0px;
@@ -302,14 +310,18 @@ h1 {
   height: inherit;
   background-color: #fcfcfc;
 }
-#attendance #attendanceTableWrapper #attendanceTable tr {
+.scrollDiv .scrollTableWrapper .scrollTable tr {
   height: 60px;
 }
-#attendance #attendanceTableWrapper #attendanceTable td {
+.scrollDiv .scrollTableWrapper .scrollTable td {
   border: 1px solid #111;
   margin: 0;
   text-align: center;
   vertical-align: center;
+}
+
+.assignments input[type=number] {
+  width: 45px;
 }
 
 /*# sourceMappingURL=style.css.map */

@@ -19,7 +19,7 @@ $participantId = $_GET['participantId'];
 //get participant info
 try {
 
-  $sql = "SELECT * FROM participants WHERE participantId= :participantId";
+  $sql = "SELECT * FROM participants WHERE participantId = :participantId";
   $statement = $connection->prepare($sql);
   $statement->bindParam(':participantId', $participantId, PDO::PARAM_INT);
   $statement->execute();
@@ -71,7 +71,7 @@ try {
       <li><strong>Apodo: </strong><?php echo escape($participant['nickname']);?></li>
       <li><strong>Genero: </strong><?php echo escape($participant['gender']); ?></li>
       <li><strong>Age: </strong>20</li>
-      <li><strong>Fecha de Nacimiento: </strong><?php echo escape($participant['dob']); ?></li>
+      <li><strong>Fecha de Nacimiento: </strong><?php echo escape(date('d/m/Y', strtotime($participant['dob']))); ?></li>
       <li><strong>Idiomas: </strong><?php echo escape($participant['languages']); ?> </li>
       <li><strong>Comunidad de Origen: </strong><?php echo escape($participant['village']); ?></li>
       <li><strong>Email </strong><?php echo escape($participant['email']); ?></li>

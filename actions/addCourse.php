@@ -18,6 +18,30 @@ if(isset($_POST['submit']) and hasPermission()) {
     'teacherId' => $teacherId
   );
 
+  $courseSessions = array(); //we'll use this to add coursesessions later
+  $courseDays = array();
+  $courseDayNames = array();
+  $startDay = strtolower(date('l', strtotime($new_course['startDate']))); //gets the day of the week of the start date
+  $daysOfWeek = array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday');
+  $spanishDaysOfWeek = array('Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sabado');
+
+  //manually go through the days of the days of the week
+  //add any days the class will fall on and also record the integer value for
+  //the starting day (this may be cleaner but less concise with a case statement)
+  //these integer values will be used below
+
+  foreach($daysOfWeek as $key => $value) {
+    if(isset($_POST[$value])) {
+      array_push($courseDays, $key);
+      array_push($courseDayNames, $spanishDaysOfWeek[$key]);
+    }
+    if($startDay === $value) {
+      $startInt = $key;
+    }
+  }
+
+  $new_course['daysOfWeek'] = implode(", ", $courseDayNames);
+
   $sql = makeInsertQuery($new_course, 'courses');
 
   try {
@@ -34,25 +58,6 @@ if(isset($_POST['submit']) and hasPermission()) {
   }
 
   //add rows to courseSessions for each class meeting
-  $courseSessions = array();
-  $courseDays = array();
-  $startDay = strtolower(date('l', strtotime($new_course['startDate']))); //gets the day of the week of the start date
-  $daysOfWeek = array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday');
-
-  //manually go through the days of the days of the week
-  //add any days the class will fall on and also record the integer value for
-  //the starting day (this may be cleaner but less concise with a case statement)
-  //these integer values will be used below
-
-  foreach($daysOfWeek as $key => $value) {
-    if(isset($_POST[$value])) {
-      array_push($courseDays, $key);
-    }
-    if($startDay == $value) {
-      $startInt = $key;
-    }
-  }
-
   $startDate = new DateTime($new_course['startDate']);
   $endDate = new DateTime($new_course['endDate']);
 
@@ -86,18 +91,23 @@ if(isset($_POST['submit']) and hasPermission()) {
 
   usort($courseSessions, 'dateOrderHelper');
 
-  $sql = "INSERT INTO courseSessions (courseId, sessionDate) VALUES (:courseId, :sessionDate);";
+  try {
+    $sql = "INSERT INTO courseSessions (courseId, sessionDate) VALUES (:courseId, :sessionDate);";
 
-  $statement = $connection->prepare($sql);
-  $statement->bindParam(':courseId', $courseId, PDO::PARAM_INT);
-  foreach($courseSessions as $session) {
-    $dateString = $session->format('Y-m-d');
-    $statement->bindParam(':sessionDate', $dateString, PDO::PARAM_STR);
-    $statement->execute();
+    $statement = $connection->prepare($sql);
+    $statement->bindParam(':courseId', $courseId, PDO::PARAM_INT);
+    foreach($courseSessions as $session) {
+      $dateString = $session->format('Y-m-d');
+      $statement->bindParam(':sessionDate', $dateString, PDO::PARAM_STR);
+      $statement->execute();
+    }
+
+    header("location: ../coursePage.php?courseId=" . $courseId);
+    die();
+  } catch (PDOException $error) {
+    handleError($error);
+    die();
   }
-
-  header("location: ../coursePage.php?courseId=" . $courseId);
-  die();
 }
 
 else {

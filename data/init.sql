@@ -1,13 +1,6 @@
 CREATE TABLE users (
-	userId INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-	firstName VARCHAR(200),
-	lastName VARCHAR(200),
-	username VARCHAR(30),
-	password VARCHAR(255),
-	gender VARCHAR(10),
-	isAdministrator BOOLEAN,
-	isCoordinator BOOLEAN,
-	isTeacher BOOLEAN
+	username VARCHAR(100) PRIMARY KEY,
+	password VARCHAR(255)
 );
 
 CREATE TABLE participants (
@@ -27,13 +20,12 @@ CREATE TABLE participants (
 
 CREATE TABLE teachers (
 	teacherId INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-	userId INT(11) UNSIGNED,
+	username VARCHAR(100),
 	firstName VARCHAR(200),
 	lastName VARCHAR(200),
 	gender VARCHAR(10),
 	village VARCHAR(200),
-	email VARCHAR(200),
-	FOREIGN KEY (userId) REFERENCES users (userId)
+	FOREIGN KEY (username) REFERENCES users (username)
 );
 
 CREATE TABLE programs (

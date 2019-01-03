@@ -1,6 +1,6 @@
 <?php
 
-require "common.php";
+require "../common.php";
 
 checkLogin();
 if(!hasPermission()) {
@@ -29,17 +29,20 @@ try {
   $dates = array();
 
   foreach($results as $row) {
+    $participantId = $row['participantId'];
     $participantName = $row['firstName'] . " " . $row['lastName'];
-    if(!isset($attendanceTable[$participantName])) {
-      $attendanceTable[$participantName] = array();
+    if(!isset($attendanceTable[$participantId])) {
+      $attendanceTable[$participantId] = array();
+      $attendanceTable[$participantId]['participantName'] = $participantName;
+      $attendanceTable[$participantId]['dates'] = array();
     }
     $date = $row['sessionDate'];
     if(array_search($date, $dates) === false) {
       array_push($dates, $date);
     }
-    $attendanceTable[$participantName][$date] = array();
-    $attendanceTable[$participantName][$date]['attended'] = $row['attended'];
-    $attendanceTable[$participantName][$date]['attendanceId'] = $row['attendanceId'];
+    $attendanceTable[$participantId]['dates'][$date] = array();
+    $attendanceTable[$participantId]['dates'][$date]['attended'] = $row['attended'];
+    $attendanceTable[$participantId]['dates'][$date]['attendanceId'] = $row['attendanceId'];
   }
 
   function dateStringOrderHelper($a, $b) {
@@ -51,16 +54,16 @@ try {
     handleError($error);
 }
 
-include "templates/header.php";
+include "../templates/header.php";
 
 
  ?>
  <main>
    <h1>Actualizar Asistencia</h1>
-   <div id="attendance">
+   <div id="attendance" class="scrollDiv">
      <form method="post" action="/actions/updateAttendance.php?courseId=<?php echo escape($courseId);?>">
-       <div id="attendanceTableWrapper">
-         <table id="attendanceTable">
+       <div id="attendanceTableWrapper" class="scrollTableWrapper">
+         <table id="attendanceTable" class="scrollTable">
            <thead>
              <tr class="attendance-head-row">
                <th class="fixed-column"> </th>
@@ -70,10 +73,11 @@ include "templates/header.php";
              </tr>
            </thead>
            <tbody>
-             <?php foreach($attendanceTable as $participantName => $participant) { ?>
+             <?php foreach($attendanceTable as $participantId => $participant) { ?>
                <tr>
-                 <th class="fixed-column"><?php echo escape($participantName); ?></th>
-                 <?php foreach($participant as $sessionInfo) { ?>
+                 <th class="fixed-column"><?php echo escape($participant['participantName']); ?></th>
+                 <?php foreach($dates as $date) {
+                   $sessionInfo = $participant['dates'][$date];?>
                    <td>
                      <input type="hidden" name="<?php echo escape($sessionInfo['attendanceId']); ?>" value="0">
                      <input type="checkbox" name="<?php echo escape($sessionInfo['attendanceId']); ?>" value ="1" <?php
@@ -91,5 +95,5 @@ include "templates/header.php";
    </div>
  </main>
 
- <?php include "templates/sidebar.php";
- include "templates/footer.php"; ?>
+ <?php include "../templates/sidebar.php";
+ include "../templates/footer.php"; ?>

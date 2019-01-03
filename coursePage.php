@@ -56,7 +56,7 @@ try {
 
   $sql = "SELECT * FROM attendance a INNER JOIN participantCourses pc
   ON a.participantId = pc.participantId INNER JOIN courseSessions cs
-  ON a.sessionId = cs.sessionId WHERE pc.courseId = :courseId AND
+  ON a.sessionId = cs.sessionId WHERE cs.courseId = :courseId AND
   cs.sessionDate < NOW();";
 
   $statement = $connection->prepare($sql);
@@ -82,6 +82,36 @@ try {
       }
     }
 
+  $sql = "SELECT * FROM grades g INNER JOIN assignments a
+  ON a.assignmentId = g.assignmentId INNER JOIN participants p
+  ON g.participantId = p.participantId WHERE a.courseId = :courseId;";
+
+  $statement = $connection->prepare($sql);
+  $statement->bindParam(':courseId', $courseId, PDO::PARAM_INT);
+  $statement->execute();
+
+  $assignmentsScores = array();
+
+  if($statement->rowCount() != 0) {
+    $resultsAssignments = $statement->fetchAll();
+    //used to calculate percentage attendance (calculated in the html)
+    foreach($resultsAssignments as $row) {
+      $parId = $row['participantId'];
+      if(!isset($assignmentsScores[$parId])){
+        $assignmentsScores[$parId] = array(
+          'score' => 0,
+          'total' => 0);
+      }
+      if($row['grade']) {
+        $assignmentsScores[$parId]['score'] += $row['grade'];
+      }
+      $assignmentsScores[$parId]['total'] += 100;
+      }
+    }
+
+
+
+
 } catch(PDOException $error) {
   handleError($error);
   die();
@@ -94,6 +124,7 @@ try {
 <main>
 <div id="courseHeading" class="heading">
 <h1><?php echo escape($course['name']); ?></h1>
+<div><p><?php echo escape($course['daysOfWeek']); ?></p></div>
 <div><p><?php echo escape(date('d/m/Y', strtotime($course['startDate'])) . "   hasta   " . date('d/m/Y', strtotime($course['endDate']))); ?></p></div>
 <div><strong><?php if (isset($teacher)) {
   echo "Enseñado por " . escape($teacher['firstName'] . " " . $teacher['lastName']);
@@ -116,6 +147,7 @@ try {
     <th>Apellido</th>
     <th>Género</th>
     <th>Asistencia</th>
+    <th>Punteo</th>
   </thead>
   <tbody>
   <?php foreach($resultsCourseParticipants as $participant) { ?>
@@ -128,6 +160,12 @@ try {
       }
       else {
         echo escape(round((($attendanceScores[$participant['participantId']]['attended']/$attendanceScores[$participant['participantId']]['total']) * 100)) . "%");
+      }?></td>
+      <td><?php if(count($assignmentsScores) == 0 || $assignmentsScores[$participant['participantId']]['total'] === 0) {
+        echo "-";
+      }
+      else {
+        echo escape(round((($assignmentsScores[$participant['participantId']]['score']/$assignmentsScores[$participant['participantId']]['total']) * 100)) . "%");
       }?></td>
     </tr>
   <?php } ?>
@@ -175,10 +213,10 @@ $resultsAllParticipants = $statement->fetchAll();
   <div id="courseManagement">
     <h2> Acciones de Maestr@ </h2>
     <div id="courseManagementButtons">
-      <a href="/attendance.php?courseId=<?php echo escape($courseId);?>">
+      <a href="/teachers/attendance.php?courseId=<?php echo escape($courseId);?>">
         <button type="button" id="attendanceButton" class="orange-submit">Actualizar Asistencia</button>
       </a>
-      <a href="/assignments.php?courseId=<?php echo escape($courseId);?>">
+      <a href="/teachers/assignments.php?courseId=<?php echo escape($courseId);?>">
         <button type="button" id="assignmentsButton" class="orange-submit">Ver Tareas</button>
       </a>
     </div>

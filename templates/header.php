@@ -21,19 +21,8 @@
 		<?php $currentPage = $_SERVER['PHP_SELF'];
 		if($currentPage != '/login.php') { ?>
 			<ul>
-				<li>Bienvenid<?php
-				switch($_SESSION['gender']) {
-					case 'F':
-						echo 'a, ';
-						break;
-					case 'M':
-						echo 'o, ';
-						break;
-					default:
-						echo '@, ';
-						break;
-				}
-				echo escape($_SESSION['firstName']);?></li>
+				<li>Hola, <?php
+				echo escape($_SESSION['username']);?></li>
 				<li><a href="/actions/logout.php">Salir</a></li>
 	<?php } ?>
 	</header>

@@ -5,27 +5,13 @@ require "../common.php";
 //change to only work for admins
 if(isset($_POST['submit']) and hasPermission()) {
 
-  $new_user = array(
-    'firstName' => $_POST['firstName'],
-    'lastName' => $_POST['lastName'],
-    'username' => $_POST['username'],
-    'password' => password_hash($_POST['password'], PASSWORD_DEFAULT),
-    'gender' => $_POST['gender']
-  );
-  $new_user['isAdministrator'] = 0;
-  $new_user['isCoordinator'] = 0;
-  if(isset($_POST['isAdministrator']) && $_POST['isAdministrator'] == "administrator") {
-    $new_user['isAdministrator'] = 1;
-  } else if(isset($_POST['isCoordinator'])) {
-    $new_user['isCoordinator'] = 1;
-  }
+  $username = $_POST['username'];
 
-  if(isset($_POST['isTeacher'])) {
-    $new_user['isTeacher'] = 1;
-  }
-  else {
-    $new_user['isTeacher'] = 0;
-  }
+  $new_user = array(
+    'username' => $_POST['username'],
+    'password' => password_hash($_POST['password'], PASSWORD_DEFAULT)
+  );
+
   $sql = makeInsertQuery($new_user, 'users');
 
   try {
@@ -34,22 +20,67 @@ if(isset($_POST['submit']) and hasPermission()) {
 
     $statement = $connection->prepare($sql);
     $statement->execute($new_user);
+    $participantId = $connection->lastInsertId();
+
+    $roles = array();
+
+    if($_POST['isAdministrator']) {
+
+      $new_administrator = array(
+        'username' => $username,
+        'participantId' => $participantId
+      );
+
+      $sql = makeInsertQuery($new_administrator, 'administrators');
+      $statement = $connection->prepare($sql);
+      $statement->execute($new_administrator);
+
+      array_push($roles, 'administrator');
+    }
+
+    else if($_POST['isCoordinator']) {
+
+      $new_coordinator = array(
+        'username' =>   $userId,
+        'participantId' => $participantId
+      );
+
+      $sql = makeInsertQuery($new_coordinator, 'coordinators');
+      $statement = $connection->prepare($sql);
+      $statement->execute($new_coordinator);
+
+      array_push($roles, 'coordinator');
+
+      $programs = array();
+
+      //come back to add coordinator programs
+    }
 
     if($new_user['isTeacher']) {
 
-      $userId = $connection->lastInsertId();
-      
       $new_teacher = array(
-        'firstName' => $new_user['firstName'],
-        'lastName' => $new_user['lastName'],
-        'userId' =>   $userId,
-        'gender' => $_POST['gender'],
-        'email' => $_POST['email']
+        'username' =>   $new_user['username'],
+        'participantId' => $participantId
       );
 
       $sql = makeInsertQuery($new_teacher, 'teachers');
       $statement = $connection->prepare($sql);
       $statement->execute($new_teacher);
+
+      array_push($roles, 'teacher');
+    }
+
+    $sql = "INSERT INTO participantRoles (particpantId, roleId)
+    SELECT ':participantId', r.roleId
+    FROM roles AS r
+    WHERE r.name = :name;";
+
+    $statement = $connection->prepare($sql);
+    $statement->bindParam(':participantId', $participantId, PDO::PARAM_INT);
+
+    foreach($roles as $role) {
+      $statement->bindParam(':name', $role, PDO::PARAM_STR);
+      $statement->execute();
     }
 
     $connection->commit();
