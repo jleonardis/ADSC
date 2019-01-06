@@ -4,8 +4,8 @@ require "../common.php";
 require "../data/localVariables.php";
 
 checkLogIn();
-if(!isAdministrator()) {
-  header("location: ../index.php");
+if(!hasAdminPermission()) {
+  echo $invalidPermissionMessage;
   die();
 }
 
@@ -51,7 +51,7 @@ if(isset($_GET['participantAdded'])) {
   <label for="nickname">Apodo: </label>
   <input class="names" type="text" id="nickname" name="nickname"><br>
   <label for="dpi">DPI: </label>
-  <input type="text" id="dpi" name="dpi"><br>
+  <input type="text" id="dpi" name="dpi" required><br>
   <label for="gender" required>Genero: </label>
   <select id="gender" name="gender" required>
 		<option value="">--Elige género--</option>
@@ -63,6 +63,12 @@ if(isset($_GET['participantAdded'])) {
   <input type="number" id="age" name="age"><br>
   <label for="dob">Fecha de Nacimiento: </label>
   <input type="date" id="dob" name="dob"><br>
+  <label for="email">Email: </label>
+  <input type="text" id="email" name="email"><br>
+  <label for="phoneNumber">Numero de Teléfono: </label>
+  <input type="text" id="phoneNumber" name="phoneNumber"><br>
+  <label for="phoneNumber_2">Numero de Teléfono 2: </label>
+  <input type="text" id="phoneNumber_2" name="phoneNumber_2"><br>
   <label for="village">Comunidad de Origen: </label>
   <select id="village" name="village">
     <option value="">--Elige aldea--</option>
@@ -78,6 +84,7 @@ if(isset($_GET['participantAdded'])) {
   <label for="picture">Imagen: </label>
   <input type="hidden" name="MAX_FILE_SIZE" value="1000000" /><!-- Add max size on php side!! -->
   <input type="file" id="picture" name="picture" accept="image"><br>
+  <?php if(isAdministrator()) { ?>
   <label for="isAdministrator" class="administrator-info">Administrador(a):</label>
   <input type="checkbox" name="isAdministrator" id="isAdministrator" class="administrator-info role-select" value="administrator"/><br>
 	<label for="isCoordinator" class="coordinator-info">Coordinador(a) de Programa:</label>
@@ -90,16 +97,22 @@ if(isset($_GET['participantAdded'])) {
       <?php } ?>
     </select>
 </div>
+<?php } ?>
   <label for="isTeacher">Maestr@:</label>
   <input type="checkbox" name="isTeacher" id="isTeacher" value="teacher" class="role-select"><br>
+  <label for="isTechnician">Tecnic@:</label>
+  <input type="checkbox" name="isTechnician" id="isTechnician" value="technician" class="role-select"><br>
   <div class="user-info" hidden>
     <label for="username" required>Usuario:</label>
-    <input type="text" name="username" id="username" required><br>
+    <input type="text" name="username" id="username"><br>
     <label for="password" required>Contraseña:</label>
-    <input type="password" name="password" id="password" required><br>
+    <input type="password" name="password" id="password" class="password-box"><br>
     <label for="password-repeat">Repite Contraseña:</label>
-    <input type="password" id="password-repeat" required><span id="password-warning" style="color: red" hidden>  Contraseñas no coinciden</span><br>
+    <input type="password" id="password-repeat" class="password-box"><br>
+    <span id="password-warning" style="color: red" hidden>  Contraseñas no coinciden</span><br>
   </div>
+  <label for="comments">Comentarios: </label>
+  <textarea id="comments" name="comments"></textarea>
 	<input type="submit" id="submit" name="submit" value="Agregar" class="orange-submit">
 </form>
 </div>

@@ -146,7 +146,8 @@ h1 {
   width: 600px;
   text-align: center;
 }
-#courseList #courseTable .course-row:hover {
+
+.course-link:hover {
   background-color: #EC9342;
   cursor: pointer;
 }
@@ -199,13 +200,14 @@ h1 {
 #courseActions #addParticipants {
   float: left;
   border-right: 1px solid #111;
-  padding-right: 20px;
+  padding-right: 30px;
 }
 #courseActions #addParticipants #submit {
   margin-top: 10px;
 }
 #courseActions #courseManagement {
-  float: right;
+  float: left;
+  padding-left: 30px;
 }
 #courseActions #courseManagement #courseManagementButtons {
   display: flex;
@@ -232,7 +234,7 @@ h1 {
   padding-right: 10px;
 }
 
-#participantCourses {
+.participantCourses {
   float: left;
   margin-top: 30px;
   clear: left;
@@ -241,9 +243,6 @@ h1 {
 .program-list {
   float: left;
   width: 100%;
-}
-.program-list select {
-  float: left;
 }
 
 .submit-form {
@@ -302,6 +301,15 @@ h1 {
   margin-left: 150px;
   padding-bottom: 20px;
 }
+.scrollDiv .scrollTableWrapper .scrollTable th .remove-session {
+  margin: 0 auto;
+  background-color: pink;
+  width: 20px;
+  text-align: center;
+}
+.scrollDiv .scrollTableWrapper .scrollTable th .remove-session:hover {
+  cursor: pointer;
+}
 .scrollDiv .scrollTableWrapper .scrollTable th.fixed-column {
   position: absolute;
   top: auto;
@@ -319,9 +327,30 @@ h1 {
   text-align: center;
   vertical-align: center;
 }
+.scrollDiv .scrollTableWrapper .scrollTable td select {
+  width: 50px;
+}
+.scrollDiv input[type=submit] {
+  margin-top: 30px;
+}
+
+#addCourseSession {
+  margin-top: 50px;
+}
 
 .assignments input[type=number] {
   width: 45px;
+}
+
+#addAssignment {
+  margin-top: 50px;
+}
+
+.footer {
+  margin-top: 100px;
+  padding-top: 100px;
+  width: 100%;
+  clear: both;
 }
 
 /*# sourceMappingURL=style.css.map */

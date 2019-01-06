@@ -2,7 +2,7 @@
 
 require "../common.php";
 
-if(isset($_GET['courseId']) && isset($_POST['submit']) && hasPermission()) {
+if(isset($_GET['courseId']) && isset($_POST['submit']) && hasPermission($_GET['courseId'])) {
 
   $courseId = $_GET['courseId'];
 
@@ -13,6 +13,8 @@ if(isset($_GET['courseId']) && isset($_POST['submit']) && hasPermission()) {
   );
 
   try {
+
+    $connection->beginTransaction();
 
     $sql = makeInsertQuery($newAssignment, 'assignments');
     $statement = $connection->prepare($sql);
@@ -39,11 +41,12 @@ if(isset($_GET['courseId']) && isset($_POST['submit']) && hasPermission()) {
       }
     }
 
+    $connection->commit();
     header("location: /teachers/assignments.php?courseId=" . $courseId . "&assignmentAdded=1");
     die();
 
   } catch (PDOException $error) {
-
+    $connection->rollBack();
     handleError($error);
     die();
 

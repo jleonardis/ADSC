@@ -3,10 +3,6 @@
 require "../common.php";
 
 checkLogIn();
-if(!hasPermission()) {
-  echo $invalidPermissionMessage;
-  die();
-}
 
 if(isset($_GET) && isset($_GET['courseId'])) {
   $courseId = $_GET['courseId'];
@@ -16,9 +12,16 @@ else {
   die();
 }
 
+if(!hasPermission($courseId)) {
+  echo $invalidPermissionMessage;
+  die();
+}
+
 if(isset($_POST['submit'])) {
 
   try {
+
+    $connection->beginTransaction();
 
     $sql = "UPDATE grades SET grade = :grade WHERE gradeId = :gradeId;";
     $statement = $connection->prepare($sql);
@@ -30,10 +33,12 @@ if(isset($_POST['submit'])) {
       $statement->execute();
     }
 
+    $connection->commit();
     header("location: /coursePage.php?courseId=" . escape($courseId) . "&assignmentUpdated=1");
     die();
 
   } catch(PDOException $error) {
+    $connection->rollBack();
     handleError($error);
     die();
   }

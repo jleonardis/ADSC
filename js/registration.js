@@ -1,5 +1,5 @@
 (function($) {
-
+  console.log(names);
   hideAdminOrCoord('#isCoordinator', '.administrator-info');
   hideAdminOrCoord('#isAdministrator', '.administrator-info');
   showUserInfo();
@@ -8,14 +8,23 @@
       var firstName = $('#firstName').val();
       var lastName = $('#lastName').val();
       var nickname = $('#nickname').val();
+      var parFirstName;
+      var parLastName;
+      var parNickName;
 
-      if(nickName && lastName && firstName) {
+      if(nickname && lastName && firstName) {
         names.forEach(function(elem) {
-          if(elem['lastName'].toLowerCase() === lastName.toLowerCase() &&
+          parFirstName = elem['firstName'];
+          parLastName = elem['lastName'];
+          parNickname = elem['nickname'];
+
+          if(parNickname && parLastName && parFirstName &&
+          elem['lastName'].toLowerCase() === lastName.toLowerCase() &&
           elem['firstName'].toLowerCase() === firstName.toLowerCase() &&
           elem['nickname'].toLowerCase() === nickname.toLowerCase()) {
-            confirm() // come back when we have INTERNET
-            window.open('/participantPage.php?participantId=' + elem['participantId']);
+            if(window.confirm('hay otro participante con ese nombre. Quisieras ver su perfil?')){
+              window.open('/participantPage.php?participantId=' + elem['participantId']);
+            }
 
           }
         })
@@ -29,9 +38,9 @@
       if(dpi) {
         names.forEach(function(elem) {
           if(elem['dpi'] === dpi) {
-            confirm() // come back when we have INTERNET
-            window.open('/participantPage.php?participantId=' + elem['participantId']);
-
+            if(window.confirm('hay otro participante con ese numero de DPI. Quisieras ver su perfil?')){
+              window.open('/participantPage.php?participantId=' + elem['participantId']);
+            }
           }
         })
       }
@@ -44,7 +53,7 @@
 
 
   $('#isAdministrator').change(function() {
-    hideAdminOrCoord('#isAdministrator', '.administrator-info');
+    hideAdminOrCoord('#isAdministrator', '.coordinator-info');
   });
 
   $('.role-select').change(showUserInfo);
@@ -69,9 +78,11 @@
   function showUserInfo() {
     if($('.role-select:checked').length) {
       $('.user-info').show();
+      $('.user-info input').prop('required', true)
     }
     else {
       $('.user-info').hide();
+      $('.user-info input').prop('required', false)
     }
   }
 
@@ -86,8 +97,8 @@
     });
   });
 
-  $('#password-repeat').change(function() {
-    if($(this).val() !== $('#password').val()){
+  $('.password-box').change(function() {
+    if($('#password-repeat').val() !== '' && $('#password-repeat').val() !== $('#password').val()){
       $('#password-warning').show();
     }
     else {

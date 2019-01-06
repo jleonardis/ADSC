@@ -3,15 +3,16 @@
 require "../common.php";
 
 checkLogin();
-if(!hasPermission()) {
-  echo $invalidPermissionMessage;
-}
-
 
 if(isset($_GET) && isset($_GET["courseId"])) {
   $courseId = $_GET['courseId'];
 } else {
   echo "no hay curso seleccionado";
+}
+
+if(!hasPermission($courseId)) {
+  echo $invalidPermissionMessage;
+  die();
 }
 
 try {
@@ -26,6 +27,7 @@ try {
   $hasAssignments = $statement->rowCount() != 0;
   $assignmentsTable = array();
   $assignmentNames = array();
+  $assignmentInfos = array();
 
   if($hasAssignments) {
 
@@ -40,7 +42,9 @@ try {
         $assignmentsTable[$participantId]['assignments'] = array();
       }
       $name = $row['name'];
+      $description = $row['description'];
       if(array_search($name, $assignmentNames) === false) {
+        array_push($assignmentInfos, array('name' => $name, 'description' => $description));
         array_push($assignmentNames, $name);
       }
       $assignmentsTable[$participantId]['assignments'][$name] = array();
@@ -68,8 +72,8 @@ include "../templates/header.php";
           <thead>
             <tr>
               <th class="fixed-column"> </th>
-              <?php foreach($assignmentNames as $name) { ?>
-                <th><?php echo escape($name); ?></th>
+              <?php foreach($assignmentInfos as $name) { ?>
+                <th title="<?php echo escape($name['description']); ?>"><?php echo escape($name['name']); ?></th>
               <?php } ?>
             </tr>
           </thead>
@@ -77,10 +81,10 @@ include "../templates/header.php";
             <?php foreach($assignmentsTable as $participantId => $participant) { ?>
               <tr>
                 <th class="fixed-column"><?php echo escape($participant['participantName']); ?></th>
-                <?php foreach($assignmentNames as $assignmentName) {
-                  $assignmentInfo = $participant['assignments'][$assignmentName];?>
+                <?php foreach($assignmentInfos as $assignmentName) {
+                  $assignmentInfo = $participant['assignments'][$assignmentName['name']];?>
                   <td>
-                    <input type="number" name="<?php echo escape($assignmentInfo['gradeId']); ?>" value ="<?php echo escape($assignmentInfo['grade']);?>"></td>
+                    <input type="number" max="100" name="<?php echo escape($assignmentInfo['gradeId']); ?>" value ="<?php echo escape($assignmentInfo['grade']);?>"></td>
                 <?php } ?>
               </tr>
             <?php } ?>

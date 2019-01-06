@@ -11,7 +11,7 @@
 	<!--BE CAREFUL WITH RELATIVE STYLE.CSS PATH -->
 	<link rel="stylesheet" type="text/css" href="/style.css">
 	<link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet">
-
+	<?php header('Content-Type: text/html; charset=utf-8'); ?>
 </head>
 
 <body>
@@ -21,8 +21,7 @@
 		<?php $currentPage = $_SERVER['PHP_SELF'];
 		if($currentPage != '/login.php') { ?>
 			<ul>
-				<li>Hola, <?php
-				echo escape($_SESSION['username']);?></li>
+				<li>Bienvenid<?php echo getGenderEnding($_SESSION['gender']); ?>, <?php echo escape($_SESSION['nickname']); ?></li>
 				<li><a href="/actions/logout.php">Salir</a></li>
 	<?php } ?>
 	</header>

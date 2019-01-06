@@ -13,25 +13,53 @@ if($_POST && isset($_POST['submit'])) {
     $password = $_POST['password'];
 
     try {
-      $sql = "SELECT * FROM users WHERE username = :username";
+      $sql = "SELECT * FROM users u INNER JOIN participants p
+      ON u.participantId = p.participantId WHERE username = :username LIMIT 1";
       $statement = $connection->prepare($sql);
       $statement->bindParam(":username", $username, PDO::PARAM_STR);
       $statement->execute();
 
-      $result = $statement->fetchAll();
 
-      if(count($result) == 0) {  //count isn't efficient but result is expected to be small
+      if($statement->rowCount() === 0) {
         echo "no hay usuario " . $username;
       }
       else {
-        $row = $result[0];
+        $row = $statement->fetch(PDO::FETCH_ASSOC);
         if(password_verify($password, $row['password'])) {
 
           $_SESSION['username'] = $username;
-          $_SESSION['isAdministrator'] = $row['isAdministrator'];
-          $_SESSION['isCoordinator'] = $row['isCoordinator'];
-          $_SESSION['isTeacher'] = $row['isTeacher'];
+          $_SESSION['nickname'] = $row['nickname'];
+          $_SESSION['gender'] = $row['gender'];
           $_SESSION['loggedIn'] = true;
+
+          $participantId = $row['participantId'];
+
+          $_SESSION['participantId'] = $participantId;
+
+          $sql = "SELECT name FROM roles r INNER JOIN participantRoles pr
+          ON r.roleId = pr.roleId WHERE pr.participantId = :participantId;";
+
+          $statement = $connection->prepare($sql);
+          $statement->bindParam(':participantId', $participantId, PDO::PARAM_INT);
+          $statement->execute();
+
+          $resultsRoles = $statement->fetchAll();
+
+          $roleNames = array_map('getNameString', $resultsRoles); //getNameString defined in common.php
+
+          if(in_array('administrator', $roleNames)){
+            $_SESSION['isAdministrator'] = $username;
+          }
+          else if (in_array('coordinator', $roleNames)) {
+            $_SESSION['isCoordinator'] = $username;
+          }
+          if(in_array('teacher', $roleNames)) {
+            $_SESSION['isTeacher'] = $username;
+          }
+
+          if(in_array('technician', $roleNames)) {
+            $_SESSION['isTechnician'] = $username;
+          }
 
           $courses = array();
           $coordinatorProgramId = null;

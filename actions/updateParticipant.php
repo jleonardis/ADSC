@@ -5,7 +5,7 @@ include "../common.php";
 if(isset($_GET['participantId'])) {
   $participantId = $_GET['participantId'];
 
-  if(isset($_POST['submit'])) {
+  if(isset($_POST['submit']) && hasAdminPermission()) {
 
     if(isset($_FILES['picture']) && isset($_FILES['picture']['error'])) {
        if($_FILES['picture']['error'] == 2) {
@@ -19,15 +19,30 @@ if(isset($_GET['participantId'])) {
       'firstName' => $_POST['firstName'],
       'lastName' => $_POST['lastName'],
       'nickname' => $_POST['nickname'],
+      'dpi' => preg_replace("/[^0-9]/", "", $_POST['dpi']), //this to remove all hyphens and spaces
+      'email'=> postTernary('email'),
+      'phoneNumber' => (isset($_POST['phoneNumber']) && $_POST['phoneNumber']?preg_replace("/[^0-9]/", "", $_POST['phoneNumber']):null),
+      'phoneNumber_2' => (isset($_POST['phoneNumber_2']) && $_POST['phoneNumber_2']?preg_replace("/[^0-9]/", "", $_POST['phoneNumber_2']):null),
       'age' => postTernary('age'),
       'dob' => postTernary('dob'),
-      'email' => $_POST['email']
+      'comments' => postTernary('comments'),
+      'village' => postTernary('village'),
+      'languages' => ''
     );
 
+    $languages = array();
+    foreach($_POST as $key => $value) {
+      if(substr($key, 0, 8) == 'language' && $value){
+        array_push($languages, $value);
+      }
+    }
+    $participantArray['languages'] = implode(", ", $languages);
 
     $sql = makeUpdateQuery('participantId', $participantArray, 'participants');
 
     try {
+
+      $connection->beginTransaction();
 
       $statement = $connection->prepare($sql);
       $statement->execute($participantArray);
@@ -45,12 +60,13 @@ if(isset($_GET['participantId'])) {
         }
       }
 
-      header("location: ../admin/editParticipant.php?participantId=" . $participantId . "&participantUpdated=1");
+      $connection->commit();
+      header("location: /participantPage.php?participantId=" . $participantId . "&participantUpdated=1");
       die();
     }
     catch (PDOException $error){
+      $connection->rollBack();
       handleError($error);
-      header("location: ../admin/editParticipant.php?participantId=" . $participantId . "&participantUpdated=0");
       die();
     }
   }

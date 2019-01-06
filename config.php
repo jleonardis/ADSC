@@ -8,8 +8,8 @@
  $host = "localhost";
  $username = "homestead";
  $password = "secret";
- $dbname = "amigos";
- $dsn = "mysql:host=$host;dbname=$dbname";
+ $dbname = "amigos_final_test";
+ $dsn = "mysql:host=$host;dbname=$dbname;charset=utf8";
  $options = array(
       PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
  );

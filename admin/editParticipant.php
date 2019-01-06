@@ -1,7 +1,7 @@
 <?php
 
 require "../common.php";
-
+require "../data/localVariables.php";
 include "../templates/header.php";
 
 checkLogIn();
@@ -49,15 +49,37 @@ if(isset($_GET['participantId'])) {
    <input type="text" name="lastName" id="lastName" value="<?php echo escape($participant['lastName']);?>"><br>
    <label for="nickname">Apodo: </label>
    <input type="text" id="nickname" name="nickname" value="<?php echo escape($participant['nickname']);?>"><br>
+   <label for="dpi">DPI: </label>
+   <input type="text" id="dpi" name="dpi" value="<?php echo escape($participant['dpi']); ?>"><br>
    <label for="age">Edad: </label>
    <input type="number" id="age" name="age" value="<?php echo escape($participant['age']);?>"><br>
    <label for="dob">Fecha de Nacimiento: </label>
    <input type="date" id="dob" name="dob" value="<?php echo escape($participant['dob']);?>"><br>
    <label for="email">Email: </label>
    <input type="text" id="email" name="email" value="<?php echo escape($participant['email']);?>"><br>
+   <label for="phoneNumber">Numero de Teléfono: </label>
+   <input type="text" id="phoneNumber" name="phoneNumber" value="<?php echo escape($participant['phoneNumber']);?>"><br>
+   <label for="phoneNumber_2">Numero de Teléfono 2: </label>
+   <input type="text" id="phoneNumber_2" name="phoneNumber_2" value="<?php echo escape($participant['phoneNumber_2']);?>"><br>
+   <label for="village">Comunidad de Origen: </label>
+   <select id="village" name="village">
+     <option value="">--Elige aldea--</option>
+     <?php foreach($towns as $town) { ?>
+       <option value="<?php echo escape($town);?>" <?php echo $town === $participant['village']?'selected':'';?>><?php echo escape($town);?></option>
+     <?php } ?>
+   <select><br>
+     <label>Idiomas: </label><br>
+     <?php foreach($languages as $language) { ?>
+       <label for="language-<?php echo escape($language); ?>"><?php echo escape($language);?>:
+         <input type="checkbox" id="language-<?php echo escape($language); ?>" name="language-<?php echo escape($language); ?>" value="<?php echo escape($language); ?>"
+         <?php echo (strpos($participant['languages'], $language) !== false)?'checked':''; ?>></label>
+     <?php } ?><br>
+     <label for="language-other">Otros Idiomas: <input type="text" id="language-other" name="language-other"></label><br>
    <label for="picture">Imagen (esto borrará la imagen anterior): </label>
    <input type="hidden" name="MAX_FILE_SIZE" value="1000000" /><!-- Add max size on php side!! -->
    <input type="file" id="picture" name="picture" accept="image"><br>
+   <label for="comments">Comentarios: </label>
+   <textarea id="comments" name="comments"><?php echo escape($participant['comments']); ?></textarea>
    <input name="submit" type="submit" value="Actualizar" class="orange-submit">
  </form>
 </main>

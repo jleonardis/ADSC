@@ -4,14 +4,6 @@ require "common.php";
 checkLogIn();
 
 include "templates/header.php";
-if(!hasPermission()) {
-  echo "No tienes permiso para ver este curso";
-  die();
-}
-
-displayActionStatus('participantsAdded', 'Participante(s) agregado con exito!');
-displayActionStatus('attendanceUpdated', "asistencia actualizado con exito!");
-
 
 if(!isset($_GET['courseId'])) {
   echo "no hay curso seleccionado";
@@ -19,6 +11,15 @@ if(!isset($_GET['courseId'])) {
 }
 
 $courseId = $_GET['courseId'];
+
+if(!hasPermission($courseId)) {
+  echo "No tienes permiso para ver este curso";
+  die();
+}
+
+displayActionStatus('participantsAdded', 'Participante(s) agregado con exito!');
+displayActionStatus('attendanceUpdated', "asistencia actualizado con exito!");
+displayActionStatus('assignmentsUpdated', 'tareas actualizadas con exito!');
 
 //get course info
 try {
@@ -37,7 +38,8 @@ try {
 
   if($course['teacherId']) {
 
-    $sql = "SELECT teacherId, firstName, lastName FROM teachers WHERE teacherId = :teacherId";
+    $sql = "SELECT participantId, firstName, lastName FROM participants
+    WHERE participantId = :teacherId";
     $statement = $connection->prepare($sql);
     $statement->bindParam(':teacherId', $course['teacherId'], PDO::PARAM_INT);
 
@@ -46,7 +48,8 @@ try {
 
   }
 
-  $sql = "SELECT * FROM participants p INNER JOIN participantCourses pc ON p.participantId = pc.participantId WHERE pc.courseId = :courseId;";
+  $sql = "SELECT * FROM participants p INNER JOIN participantCourses pc
+  ON p.participantId = pc.participantId WHERE pc.courseId = :courseId;";
   $statement = $connection->prepare($sql);
   $statement->bindParam(':courseId', $courseId, PDO::PARAM_INT);
   $statement->execute();
@@ -75,12 +78,14 @@ try {
           'attended' => 0,
           'total' => 0);
       }
-      if($row['attended']) {
+      if($row['attended'] === 'present') {
         $attendanceScores[$parId]['attended']++;
       }
-      $attendanceScores[$parId]['total']++;
+      if($row['attended'] !== 'excused'){
+        $attendanceScores[$parId]['total']++;
       }
     }
+  }
 
   $sql = "SELECT * FROM grades g INNER JOIN assignments a
   ON a.assignmentId = g.assignmentId INNER JOIN participants p
@@ -105,9 +110,11 @@ try {
       if($row['grade']) {
         $assignmentsScores[$parId]['score'] += $row['grade'];
       }
-      $assignmentsScores[$parId]['total'] += 100;
+      if($row['grade'] !== null){
+        $assignmentsScores[$parId]['total'] += 100;
       }
     }
+  }
 
 
 
@@ -119,18 +126,34 @@ try {
 
 //get list of participants
 
+if(hasAdminPermission()) {
+  try {
+    $sql = "SELECT participantId, firstName, lastName FROM participants;";
+    $statement = $connection->prepare($sql);
+    $statement->execute();
+
+    $resultsAllParticipants = $statement->fetchAll();
+  } catch(PDOException $error) {
+    handleError($error);
+    die();
+  }
+}
+
 
 ?>
 <main>
 <div id="courseHeading" class="heading">
+<div>
 <h1><?php echo escape($course['name']); ?></h1>
-<div><p><?php echo escape($course['daysOfWeek']); ?></p></div>
-<div><p><?php echo escape(date('d/m/Y', strtotime($course['startDate'])) . "   hasta   " . date('d/m/Y', strtotime($course['endDate']))); ?></p></div>
-<div><strong><?php if (isset($teacher)) {
-  echo "Enseñado por " . escape($teacher['firstName'] . " " . $teacher['lastName']);
-}?></strong></div>
+<div><strong><?php echo escape($course['description']); ?></strong></div>
 </div>
-<?php if (isAdministrator()) { ?>
+<div><p><?php echo escape($course['daysOfWeek']); ?><br><?php echo escape(date('d/m/Y', strtotime($course['startDate'])) . "   hasta   " . date('d/m/Y', strtotime($course['endDate']))); ?></p></div>
+<?php if (isset($teacher)) { ?>
+<a href="/participantPage.php?participantId=<?php echo escape($teacher['participantId']);?>"><strong><?php
+  echo "Enseñado por " . escape($teacher['firstName'] . " " . $teacher['lastName']);?></strong></a>
+<?php } ?>
+</div>
+<?php if (isCoordinator() || isAdministrator()) { ?>
   <form method="post" action="admin/editCourse.php?courseId=<?php echo escape($courseId);?>">
     <input type=submit id="editCourse" class="orange-submit edit-button" value="editar">
   </form>
@@ -173,25 +196,16 @@ try {
 </table>
 </div>
 <?php } ?>
-<?php
-//ADD participants
-
-$sql = "SELECT participantId, firstName, lastName FROM participants;";
-$statement = $connection->prepare($sql);
-$statement->execute();
-
-$resultsAllParticipants = $statement->fetchAll();
-
- ?>
 
  <!-- FOR NOW I'M DOING THIS ON THE BROWSER. COULD BE SWITCHED TO AJAX LATER. DEPENDS ON INTERNET SPEED. -->
  <div id="courseActions">
+   <?php if (isCoordinator() || isAdministrator()){ ?>
    <div id="addParticipants">
    <h2>Agregar Participantes</h2>
   <input class="orange-search" type="text" id="searchBox">
   <button class="orange-submit" id="search">Buscar</button>
   <form method="post" action="actions/addParticipantsToCourse.php?courseId=<?php echo escape($courseId); ?>">
-    <input class="orange-submit" type="submit" name="submit" id="submit" value="Agregar Participantes" hidden>
+    <input class="orange-submit addParticipants" type="submit" name="submit" id="submit" value="Agregar Participantes" hidden>
      <table id="addParticipantTable" class="search-group">
          <thead>
            <!-- <tr class="search-head" hidden>
@@ -210,8 +224,9 @@ $resultsAllParticipants = $statement->fetchAll();
        </table>
      </form>
   </div>
+<?php } ?>
   <div id="courseManagement">
-    <h2> Acciones de Maestr@ </h2>
+    <h2> Acciones de Maestr<?php echo escape(getGenderEnding($_SESSION['gender']));?></h2>
     <div id="courseManagementButtons">
       <a href="/teachers/attendance.php?courseId=<?php echo escape($courseId);?>">
         <button type="button" id="attendanceButton" class="orange-submit">Actualizar Asistencia</button>

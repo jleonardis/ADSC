@@ -16,7 +16,7 @@
     $(".course-row-" + programId).show();
   }
 
-  $('.course-row').click(function() {
+  $('.course-link').click(function() {
     window.location = $(this).data("href");
   });
 

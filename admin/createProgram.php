@@ -9,7 +9,9 @@ if(!hasPermission()){
 
 try {
 
-  $sql = "SELECT * FROM users WHERE isCoordinator = 1";
+  $sql = "SELECT p.* FROM participants p INNER JOIN participantRoles pr
+  ON p.participantId = pr.participantId INNER JOIN roles r
+  ON pr.roleId = r.roleId WHERE r.name = 'coordinator'";
   $statement = $connection->prepare($sql);
   $statement->execute();
 
@@ -35,10 +37,10 @@ include "../templates/header.php";
     <select id="coordinator" name="coordinator">
       <option value="">--Elige Coordinador(a)--</option>
       <?php foreach($coordinators as $coordinator) { ?>
-        <option value="<?php echo escape($coordinator['userId']); ?>"><?php echo escape($coordinator['firstName'] . ' ' . $coordinator['lastName']); ?></option>
+        <option value="<?php echo escape($coordinator['participantId']); ?>"><?php echo escape($coordinator['firstName'] . ' ' . $coordinator['lastName']); ?></option>
       <?php } ?>
     </select><br>
-    <input type="submit" name="submit" id="submit" class="orange-submit">
+    <input type="submit" name="submit" id="submit" class="orange-submit" value="Agregar">
   </form>
 </div>
 </main>

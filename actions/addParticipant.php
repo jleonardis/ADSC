@@ -7,7 +7,7 @@ checkLogin();
 
 
 
-if(isset($_POST['submit']) && hasPermission()) {
+if(isset($_POST['submit']) && hasAdminPermission()) {
 
   if(isset($_FILES['picture']) && isset($_FILES['picture']['error'])) {
      if($_FILES['picture']['error'] == 2) {
@@ -20,10 +20,15 @@ if(isset($_POST['submit']) && hasPermission()) {
     'firstName' => $_POST['firstName'],
     'lastName' => $_POST['lastName'],
     'nickname' => $_POST['nickname'],
+    'dpi' => preg_replace("/[^0-9]/", "", $_POST['dpi']), //this to remove all hyphens and spaces
     'gender' => postTernary('gender'),
+    'email'=> postTernary('email'),
+    'phoneNumber' => (isset($_POST['phoneNumber']) && $_POST['phoneNumber']?preg_replace("/[^0-9]/", "", $_POST['phoneNumber']):NULL),
+    'phoneNumber_2' => (isset($_POST['phoneNumber_2']) && $_POST['phoneNumber_2']?preg_replace("/[^0-9]/", "", $_POST['phoneNumber_2']):NULL),
     'age' => postTernary('age'),
     'dob' => postTernary('dob'),
     'village' => postTernary('village'),
+    'comments' => $_POST['comments'],
     'languages' => ''
   );
   $languages = array();
@@ -32,11 +37,14 @@ if(isset($_POST['submit']) && hasPermission()) {
       array_push($languages, $value);
     }
   }
+  echo var_dump($new_participant);
   $new_participant['languages'] = implode(", ", $languages);
 
   $sql = makeInsertQuery($new_participant, "participants");
 
   try {
+
+    $connection->beginTransaction();
 
     $statement = $connection->prepare($sql);
     $statement->execute($new_participant);
@@ -54,7 +62,7 @@ if(isset($_POST['submit']) && hasPermission()) {
         $statement->execute();
       }
     }
-    if(isset($_POST['isAdministrator']) || isset($_POST['isCoordinator']) || isset($_POST['isTeacher'])) {
+    if(isset($_POST['isAdministrator']) || isset($_POST['isCoordinator']) || isset($_POST['isTeacher']) || isset($_POST['isTechnician'])) {
       $new_user = array(
         'username' => $_POST['username'],
         'password' => password_hash($_POST['password'], PASSWORD_DEFAULT),
@@ -93,6 +101,10 @@ if(isset($_POST['submit']) && hasPermission()) {
         array_push($roles, 'teacher');
       }
 
+      if(isset($_POST['isTechnician'])) {
+        array_push($roles, 'technician');
+      }
+
       $sql = "INSERT INTO participantRoles (participantId, roleId)
       SELECT :participantId AS participantId, r.roleId
       FROM roles AS r
@@ -109,11 +121,14 @@ if(isset($_POST['submit']) && hasPermission()) {
       header("location: ../admin/registration.php?userAdded=1");
     }
 
+    $connection->commit();
+
     header("location: ../admin/participantRegistration.php?participantAdded=1");
     die();
 
   } catch(PDOException $error) {
 
+    $connection->rollBack();
     handleError($error);
     die();
 

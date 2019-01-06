@@ -2,7 +2,7 @@
 
 require "../common.php";
 
-if(isset($_POST['submit']) and hasPermission()) {
+if(isset($_POST['submit']) && hasPermission(0, $_POST['program'])) {
 
   $teacherId = null;
   foreach($_POST as $key => $value) {
@@ -13,6 +13,7 @@ if(isset($_POST['submit']) and hasPermission()) {
   $new_course = array(
     'name' => $_POST['courseName'],
     'programId' => $_POST['program'],
+    'description' => $_POST['description'],
     'startDate' => $_POST['startDate'],
     'endDate' => $_POST['endDate'],
     'teacherId' => $teacherId
@@ -46,14 +47,28 @@ if(isset($_POST['submit']) and hasPermission()) {
 
   try {
 
+    $connection->beginTransaction();
+
     $statement = $connection->prepare($sql);
     $statement->execute($new_course);
-    $courseId = $connection->lastInsertId(); //for use in courseSessions Inserts
+    $courseId = $connection->lastInsertId(); //for use in later Inserts
+
+    if($teacherId) {
+      //update permissions table so teacher has access to course
+      $new_permission = array(
+        'participantId' => $teacherId,
+        'courseId' => $courseId
+      );
+      $sql = makeInsertQuery($new_permission, 'permissions');
+      $statement = $connection->prepare($sql);
+      $statement->execute($new_permission);
+    }
 
   } catch(PDOException $error) {
 
+    $connection->rollBack();
     handleError($error);
-    header("location: ../courseList.php?courseAdded=0");
+    die();
 
   }
 
@@ -102,15 +117,11 @@ if(isset($_POST['submit']) and hasPermission()) {
       $statement->execute();
     }
 
+    $connection->commit();
     header("location: ../coursePage.php?courseId=" . $courseId);
     die();
   } catch (PDOException $error) {
     handleError($error);
     die();
   }
-}
-
-else {
-  header('location: courseList.php');
-  die();
 }

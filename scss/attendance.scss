@@ -5,6 +5,17 @@
     .scrollTable {
       margin-left: 150px;
       padding-bottom: 20px;
+      th{
+        .remove-session{
+          margin: 0 auto;
+          background-color: pink;
+          width: 20px;
+          text-align: center;
+        }
+         .remove-session:hover {
+            cursor: pointer;
+          }
+      }
       th.fixed-column {
         position: absolute;
         top: auto;
@@ -21,7 +32,18 @@
         margin: 0;
         text-align: center;
         vertical-align: center;
+
+        select {
+          width: 50px;
+        }
       }
     }
   }
+  input[type='submit'] {
+    margin-top: 30px;
+  }
+}
+
+#addCourseSession {
+  margin-top: 50px;
 }
