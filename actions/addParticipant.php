@@ -20,12 +20,11 @@ if(isset($_POST['submit']) && hasAdminPermission()) {
     'firstName' => $_POST['firstName'],
     'lastName' => $_POST['lastName'],
     'nickname' => $_POST['nickname'],
-    'dpi' => preg_replace("/[^0-9]/", "", $_POST['dpi']), //this to remove all hyphens and spaces
+    'dpi' => preg_replace('/[^\da-z]/i', "", $_POST['dpi']), //this to remove all hyphens and spaces
     'gender' => postTernary('gender'),
     'email'=> postTernary('email'),
     'phoneNumber' => (isset($_POST['phoneNumber']) && $_POST['phoneNumber']?preg_replace("/[^0-9]/", "", $_POST['phoneNumber']):NULL),
     'phoneNumber_2' => (isset($_POST['phoneNumber_2']) && $_POST['phoneNumber_2']?preg_replace("/[^0-9]/", "", $_POST['phoneNumber_2']):NULL),
-    'age' => postTernary('age'),
     'dob' => postTernary('dob'),
     'village' => postTernary('village'),
     'comments' => $_POST['comments'],
@@ -37,7 +36,6 @@ if(isset($_POST['submit']) && hasAdminPermission()) {
       array_push($languages, $value);
     }
   }
-  echo var_dump($new_participant);
   $new_participant['languages'] = implode(", ", $languages);
 
   $sql = makeInsertQuery($new_participant, "participants");
@@ -118,7 +116,6 @@ if(isset($_POST['submit']) && hasAdminPermission()) {
         $statement->execute();
       }
 
-      header("location: ../admin/registration.php?userAdded=1");
     }
 
     $connection->commit();

@@ -28,45 +28,8 @@ if(isAdministrator()) {
 		die();
 	}
 }
-// else if(isCoordinator()) {
-//
-// 	try {
-// 		$sql = "SELECT c.*, p.name as programName FROM courses c INNER JOIN programCoordinators pc
-// 		ON c.programId = pc.programId INNER JOIN programs p
-// 		ON p.programId = pc.programId WHERE pc.coordinatorId = :participantId
-// 		AND c.alive = 1;";
-// 		$statement = $connection->prepare($sql);
-// 		$statement->bindParam(':participantId', $_SESSION['participantId'], PDO::PARAM_INT);
-// 		$statement->execute();
-//
-// 		$currentProgramCourses = array();
-// 		$otherProgramCourses = array();
-// 		$programName = "";
-//
-// 		if($statement->rowCount() !== 0) {
-// 			$courses = $statement->fetchAll();
-// 			$programName = $courses[0]['programName'];
-// 			$now = new DateTime();
-// 			$month = new DateInterval('P1M');
-//
-// 			foreach($courses as $course) {
-// 				$startDate = new DateTime($course['startDate']);
-// 				$endDate = new DateTime($course['endDate']);
-// 				if($startDate->sub($month) < $now && $endDate->add($month) > $now){
-// 					array_push($currentProgramCourses, $course);
-// 				} else {
-// 					array_push($otherProgramCourses, $course);
-// 				}
-// 			}
-// 		}
-// 	}
-// 	catch(PDOException $error) {
-// 		handleError($error);
-// 		die();
-// 	}
-// }
 
-if(isTeacher()) {
+if(isTeacher() || isTechnician()) {
 
 		try {
 			$sql = "SELECT c.* FROM courses c INNER JOIN participants p

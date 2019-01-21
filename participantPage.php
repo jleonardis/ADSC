@@ -20,11 +20,10 @@ if(!hasPermission(0, 0, $participantId)) {
 //get participant info
 try {
 
-  $sql = "SELECT * FROM participants WHERE participantId = :participantId";
+  $sql = "SELECT * FROM participants WHERE participantId = :participantId;";
   $statement = $connection->prepare($sql);
   $statement->bindParam(':participantId', $participantId, PDO::PARAM_INT);
   $statement->execute();
-
 
   if($statement->rowCount() == 0) {
     echo "ese participante ya no esta en la base de datos";
@@ -32,6 +31,7 @@ try {
   }
 
   $participant = $statement->fetch(PDO::FETCH_ASSOC);
+  $participant['age'] = getAge(new DateTime($participant['dob']));
 
   $sql = "SELECT * FROM participantCourses pc INNER JOIN courses c ON pc.courseId = c.courseId
   WHERE pc.participantId = :participantId AND NOW() < ADDDATE(c.endDate, INTERVAL 1 MONTH)
@@ -49,7 +49,7 @@ try {
 
   $sql = "SELECT * FROM courses WHERE teacherId = :participantId
   AND NOW() < ADDDATE(endDate, INTERVAL 1 MONTH)
-  AND NOW() > SUBDATE(startDate, INTERVAL 1 MONTH)";
+  AND NOW() > SUBDATE(startDate, INTERVAL 1 MONTH) AND alive = 1";
   $statement = $connection->prepare($sql);
   $statement->bindParam(':participantId', $participantId, PDO::PARAM_INT);
 
@@ -77,6 +77,7 @@ try {
 
 } catch(PDOException $error) {
   handleError($error);
+  die();
 }
 
 ?>

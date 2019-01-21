@@ -6,7 +6,7 @@ include "../templates/header.php";
 
 checkLogIn();
 
-if(!isAdministrator()) {
+if(!hasAdminPermission()) {
   echo $invalidPermissionMessage;
   die();
 }
@@ -33,6 +33,12 @@ if(isset($_GET['participantId'])) {
 
   $participant = $result;
 
+  $sql = "SELECT * FROM roles WHERE name <> 'student';";
+  $statement = $connection->prepare($sql);
+  $statement->execute();
+
+  $roles = $statement->fetchAll();
+
 } else {
 
   echo "no hay participante seleccionado";
@@ -51,9 +57,7 @@ if(isset($_GET['participantId'])) {
    <input type="text" id="nickname" name="nickname" value="<?php echo escape($participant['nickname']);?>"><br>
    <label for="dpi">DPI: </label>
    <input type="text" id="dpi" name="dpi" value="<?php echo escape($participant['dpi']); ?>"><br>
-   <label for="age">Edad: </label>
-   <input type="number" id="age" name="age" value="<?php echo escape($participant['age']);?>"><br>
-   <label for="dob">Fecha de Nacimiento: </label>
+   <label for="age">Fecha de Nacimiento: </label>
    <input type="date" id="dob" name="dob" value="<?php echo escape($participant['dob']);?>"><br>
    <label for="email">Email: </label>
    <input type="text" id="email" name="email" value="<?php echo escape($participant['email']);?>"><br>
@@ -75,6 +79,12 @@ if(isset($_GET['participantId'])) {
          <?php echo (strpos($participant['languages'], $language) !== false)?'checked':''; ?>></label>
      <?php } ?><br>
      <label for="language-other">Otros Idiomas: <input type="text" id="language-other" name="language-other"></label><br>
+  <label for="role">Agregar Papel</label>
+  <select id="role" name="role">
+    <?php foreach($roles as $role) { ?>
+      <option value="<?php echo escape($role['roleId']); ?>"><?php echo escape($role['name']); ?></option>
+    <?php } ?>
+  </select>
    <label for="picture">Imagen (esto borrará la imagen anterior): </label>
    <input type="hidden" name="MAX_FILE_SIZE" value="1000000" /><!-- Add max size on php side!! -->
    <input type="file" id="picture" name="picture" accept="image"><br>

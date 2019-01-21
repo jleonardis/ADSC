@@ -23,7 +23,6 @@ if(isset($_GET['participantId'])) {
       'email'=> postTernary('email'),
       'phoneNumber' => (isset($_POST['phoneNumber']) && $_POST['phoneNumber']?preg_replace("/[^0-9]/", "", $_POST['phoneNumber']):null),
       'phoneNumber_2' => (isset($_POST['phoneNumber_2']) && $_POST['phoneNumber_2']?preg_replace("/[^0-9]/", "", $_POST['phoneNumber_2']):null),
-      'age' => postTernary('age'),
       'dob' => postTernary('dob'),
       'comments' => postTernary('comments'),
       'village' => postTernary('village'),

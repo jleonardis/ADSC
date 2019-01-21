@@ -35,7 +35,8 @@ try {
        </tr>
      </thead>
      <tbody class="search-group">
-       <?php foreach($resultsAllParticipants as $participant) {?>
+       <?php foreach($resultsAllParticipants as $participant) {
+         $participant['age'] = getAge(new DateTime($participant['dob']));?>
          <tr class="search-row participant-row" data-href="participantPage.php?participantId=<?php echo $participant["participantId"];?>" hidden>
            <td class="table-cell"><?php echo escape($participant['firstName'] . " " . $participant['lastName']);?></td>
            <td class="table-cell"><?php echo escape($participant['nickname']);?></td>

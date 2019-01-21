@@ -58,7 +58,7 @@ if(isset($_GET['courseId'])) {
 
   $sql = "SELECT * FROM participants p INNER JOIN participantRoles pr
   ON p.participantId = pr.participantId INNER JOIN roles r
-  ON r.roleId = pr.roleId WHERE r.name = 'teacher';";
+  ON r.roleId = pr.roleId WHERE r.name = 'teacher' OR r.name = 'technician';";
   $statement = $connection->prepare($sql);
   $statement->execute();
   $resultsTeachers = $statement->fetchAll();
@@ -87,10 +87,10 @@ if(isset($_GET['courseId'])) {
    <?php } ?>
  </select><br>
 <?php } ?>
-   <label for="startDate">Inicio:</label>
+   <!-- <label for="startDate">Inicio:</label>
    <input id = "startDate" name="startDate" type="date" value="<?php echo escape($course['startDate']); ?>"></input><br>
    <label for="endDate">Finalización:</label>
-   <input id="endDate" type="date" name="endDate" value="<?php echo escape($course['endDate']); ?>"></input><br>
+   <input id="endDate" type="date" name="endDate" value="<?php echo escape($course['endDate']); ?>"></input><br> -->
    <label for="description">Descripción: </label>
    <textarea id="description" name="description" maxlength="255"><?php echo escape($course['description']); ?></textarea><br>
    <input class="orange-search" type="text" id="searchBox" value="<?php echo escape(isset($currentTeacher)?$currentTeacher['firstName'] . ' ' . $currentTeacher['lastName']:'');?>">
@@ -99,16 +99,15 @@ if(isset($_GET['courseId'])) {
        <?php foreach($resultsTeachers as $teacher) {?>
          <div class="search-row" hidden>
          <label for="teacher-<?php echo escape($teacher['participantId']);?>"><?php echo escape($teacher['firstName'] . " " . $teacher['lastName']);?></label>
-       <input type="radio" id="teacher-<?php echo escape($teacher['participantId']);?>" name="<?php echo escape($teacher['participantId']);?>"
+       <input type="radio" id="teacher-<?php echo escape($teacher['participantId']);?>" name="teacherId" value="<?php echo escape($teacher['participantId']);?>"
        <?php echo escape(isset($currentTeacher) && $teacher['participantId'] === $currentTeacher['participantId']?'checked':'');?>><br>
      </div>
        <?php } ?>
      </div>
    <input name="submit" type="submit" value="Actualizar" class="orange-submit">
+   <button id="cancelCourse" type="button" class="orange-submit" data-href="/actions/cancelCourse.php?courseId=<?php echo escape($courseId)?>">Eliminar Curso</button>
  </form>
 </div>
-<div>
-  <button id="cancelCourse" type="button" class="orange-submit" data-href="/actions/cancelCourse.php?courseId=<?php echo escape($courseId)?>">Eliminar Curso</button>
 </main>
 <?php include "../templates/sidebar.php";?>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>

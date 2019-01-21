@@ -37,7 +37,7 @@ try {
 
     $sql = "SELECT * FROM participants p INNER JOIN participantRoles pr
     ON p.participantId = pr.participantId INNER JOIN roles r
-    ON r.roleId = pr.roleId WHERE r.name = 'teacher';";
+    ON r.roleId = pr.roleId WHERE r.name = 'teacher' OR r.name = 'technician';";
     $statement = $connection->prepare($sql);
     $statement->execute();
     $resultsTeachers = $statement->fetchAll();
@@ -90,7 +90,7 @@ include "../templates/header.php";
           <?php foreach($resultsTeachers as $teacher) {?>
             <div class="search-row" hidden>
               <label for="teacher-<?php echo escape($teacher['participantId']);?>"><?php echo escape($teacher['firstName'] . " " . $teacher['lastName']);?></label>
-              <input type="radio" id="teacher-<?php echo escape($teacher['participantId']);?>" name="<?php echo escape($teacher['participantId']);?>"><br>
+              <input type="radio" id="teacher-<?php echo escape($teacher['participantId']);?>" name="teacherId" value="<?php echo escape($teacher['participantId']);?>"><br>
             </div>
           <?php } ?>
         </div>

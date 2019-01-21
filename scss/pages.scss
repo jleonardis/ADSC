@@ -34,9 +34,9 @@
   }
 
   #addParticipants {
-    float: left;
-    border-right: 1px solid #111;
-    padding-right: 30px;
+    float: right;
+    border-left: 1px solid #111;
+    padding-left: 30px;
     #submit {
       margin-top: 10px;
     }
@@ -44,12 +44,15 @@
 
   #courseManagement {
     float: left;
-    padding-left: 30px;
 
     #courseManagementButtons {
       display: flex;
       justify-content: space-between;
       flex-direction: row;
+      button {
+        max-width: 150px;
+        height: 50px;
+      }
     }
   }
 

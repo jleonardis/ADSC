@@ -4,10 +4,6 @@ require "../common.php";
 
 checkLogIn();
 
-echo hasPermission($_GET['courseId']) . 'a';
-echo isset($_POST['submit']) . 'b';
-echo isset($_POST['date']) . 'c';
-
 if(isset($_GET['courseId']) && hasPermission($_GET['courseId']) && isset($_POST['submit']) && isset($_POST['date'])) {
 
   $courseId = $_GET['courseId'];
@@ -75,6 +71,28 @@ if(isset($_GET['courseId']) && hasPermission($_GET['courseId']) && isset($_POST[
 
         $statement->execute();
       }
+    }
+
+    //check to see if we need to change start and end dates
+    $sql = "SELECT startDate, endDate FROM courses WHERE courseId = :courseId LIMIT 1";
+    $statement = $connection->prepare($sql);
+    $statement->bindParam(':courseId', $courseId, PDO::PARAM_INT);
+    $statement->execute();
+
+    $dates = $statement->fetch(PDO::FETCH_ASSOC);
+
+    if($date < $dates['startDate']) {
+      $sql = "UPDATE courses SET startDate = :startDate WHERE courseId = :courseId";
+      $statement = $connection->prepare($sql);
+      $statement->bindParam(':courseId', $courseId, PDO::PARAM_INT);
+      $statement->bindParam(':startDate', $date, PDO::PARAM_STR);
+      $statement->execute();
+    } else if ($date > $dates['endDate']) {
+      $sql = "UPDATE courses SET endDate = :endDate WHERE courseId = :courseId";
+      $statement = $connection->prepare($sql);
+      $statement->bindParam(':courseId', $courseId, PDO::PARAM_INT);
+      $statement->bindParam(':endDate', $date, PDO::PARAM_STR);
+      $statement->execute();
     }
 
     $connection->commit();

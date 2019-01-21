@@ -11,7 +11,6 @@
 	<!--BE CAREFUL WITH RELATIVE STYLE.CSS PATH -->
 	<link rel="stylesheet" type="text/css" href="/style.css">
 	<link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet">
-	<?php header('Content-Type: text/html; charset=utf-8'); ?>
 </head>
 
 <body>

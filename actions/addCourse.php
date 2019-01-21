@@ -4,12 +4,8 @@ require "../common.php";
 
 if(isset($_POST['submit']) && hasPermission(0, $_POST['program'])) {
 
-  $teacherId = null;
-  foreach($_POST as $key => $value) {
-    if($value == 'on') {
-      $teacherId = $key;
-    }
-  }
+  $teacherId = postTernary("teacherId");
+  
   $new_course = array(
     'name' => $_POST['courseName'],
     'programId' => $_POST['program'],

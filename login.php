@@ -64,57 +64,6 @@ if($_POST && isset($_POST['submit'])) {
           $courses = array();
           $coordinatorProgramId = null;
 
-          // if($_SESSION['isTeacher']) {
-          //
-          //   //load permissions
-          //
-          //   $sql = "SELECT * FROM courses c INNER JOIN teachers t
-          //   ON c.teacherId = t.teacherId WHERE t.userId = :userId;";
-          //   $statement = $connection->prepare($sql);
-          //   $statement->bindParam(":userId", $_SESSION['userId'], PDO::PARAM_INT);
-          //   $statement->execute();
-          //
-          //   $resultsCourses = $statement->fetchAll();
-          //
-          //   foreach($resultsCourses as $course) {
-          //     array_push($courses, array('courseId' => $course['courseId'], 'courseName' => $course['name'],
-          //   'startDate'=>$course['startDate'], 'endDate' => $course['endDate']));
-          //   }
-          //
-          //
-          //   //load current courses
-          //
-          //   // $sql = "SELECT * FROM courses c INNER JOIN teachers t ON c.teacherId = t.teacherId
-          //   // WHERE t.userId = :userId
-          //   // AND NOW() < ADDDATE(c.endDate, INTERVAL 1 MONTH)
-          //   // AND NOW() > SUBDATE(c.startDate, INTERVAL 1 MONTH);";
-          //   // $statement = $connection->prepare($sql);
-          //   // $statement->bindParam(":userId", $_SESSION['userId'], PDO::PARAM_INT);
-          //   // $statement->execute();
-          //   //
-          //   // $resultsCourses = $statement->fetchAll();
-          //   //
-          //   // foreach($resultsCourses as $course) {
-          //   //   array_push($courses, array( 'name' => $course['name'], 'courseId' => $course['courseId']));
-          //   // }
-          //
-          // } else if($_SESSION['isCoordinator']) {
-          //     $sql = "SELECT programId, name FROM coordinators c INNER JOIN programs p
-          //     ON c.programId= p.programId WHERE c.userId = :userId;";
-          //     $statement = $connection->prepare($sql);
-          //     $statement->bindParam(':userId', $userId, PDO::PARAM_INT);
-          //     $statement->execute();
-          //
-          //     $coordinator = $statement->fetch(PDO:FETCH_ASSOC);
-          //
-          //     $coordinatorProgramId = $coordinator['programId'];
-          //     $coordinatorProgramName = $coordinator['name'];
-          // }
-          //
-          // $_SESSION['teacherCourses'] = $courses;
-          // $_SESSION['coordinatorProgramId'] = $coordinatorProgramId;
-          // $_SESSION['coordinatorProgramName'] = $coordinatorProgramName;
-
           header("location: /index.php");
           die();
         }

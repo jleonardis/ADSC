@@ -59,10 +59,8 @@ if(isset($_GET['participantAdded'])) {
     <option value="F">Femenino</option>
     <option value="O">Otro</option>
   </select><br>
-  <label for="age">Edad: </label>
-  <input type="number" id="age" name="age"><br>
   <label for="dob">Fecha de Nacimiento: </label>
-  <input type="date" id="dob" name="dob"><br>
+  <input type="date" id="dob" name="dob" required><br>
   <label for="email">Email: </label>
   <input type="text" id="email" name="email"><br>
   <label for="phoneNumber">Numero de Teléfono: </label>

@@ -2,7 +2,7 @@
 
 require "../common.php";
 
-if(isset($_GET['courseId']) && isset($_POST['submit']) && hasAdminPermission()) {
+if(isset($_GET['courseId']) && isset($_POST['submit']) && (hasAdminPermission() || isTechnician())) {
 
   $courseId = $_GET['courseId'];
 
@@ -108,7 +108,7 @@ if(isset($_GET['courseId']) && isset($_POST['submit']) && hasAdminPermission()) 
   }
 }
 else {
-  header('location: ../index.php');
+  echo $invalidPermissionMessage;
   die();
 }
 

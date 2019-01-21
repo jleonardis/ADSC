@@ -10,10 +10,6 @@ if(!isAdministrator()) {
 
 require "../templates/header.php";
 
-if(isset($_GET['userAdded'])) {
-  displayActionStatus('userAdded', 'Usuario agregado con exito!');
-}
-
 try {
 
   $sql = "SELECT * FROM programs;";
@@ -36,6 +32,11 @@ try {
 ?>
 <main>
 <div class="form-parent">
+  <?php
+  if(isset($_GET['userAdded'])) {
+    displayActionStatus('userAdded', 'Usuario agregado con exito!');
+  }
+  ?>
 <form id="registration-form" class= "submit-form" method="post" action="../actions/addUser.php">
   <h2>Agregar Usuario</h2>
 	<label for="firstName">Nombre:</label>

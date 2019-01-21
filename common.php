@@ -7,10 +7,6 @@
 require "config.php";
 session_start();
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
 $connection = connectToDatabase($dsn, $username, $password, $options);
 
 $invalidPermissionMessage = "no tienes permiso para usar esta pagina";
@@ -50,7 +46,7 @@ function getGenderEnding($gender) {
 function translateRoleName($name, $gender) {
   $ending = getGenderEnding($gender);
   switch($name) {
-    case 'administrador':
+    case 'administrator':
       return 'Administrador' . ($ending === 'a' ? 'a' : '');
 
     case 'coordinator':
@@ -79,8 +75,8 @@ function checkLogIn() {
 }
 
 function handleError($error) {
-  //echo "Hubo un error de sistema. Habla con un supervisor.";
-  echo $error;
+  echo "Hubo un error de sistema. Habla con un supervisor. \n";
+  echo $error->getMessage();
   global $sql;
   echo $sql;
   emailOwner();
@@ -123,7 +119,6 @@ function hasPermission($courseId = 0, $programId = 0, $participantPermissionId =
       $statement->execute();
 
       $result = $statement->fetch(PDO::FETCH_ASSOC);
-      echo $participantId . ' ' . $programId;
       if($result['result']) {
         return true;
       }
@@ -240,6 +235,13 @@ function displayActionStatus($getHeaderTag, $successMessage) {
 
 function postTernary($name) {
   return isset($_POST[$name]) && $_POST[$name] ? $_POST[$name] : null;
+}
+
+function getAge($dob) {
+  $today = new DateTime();
+  $years = $today->format('Y') - $dob->format('Y');
+  $age = $today->format('md') >= $dob->format('md') ? $years : $years - 1;
+  return $age;
 }
 
 //DATABASE FUNCTIONS

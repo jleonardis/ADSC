@@ -126,10 +126,13 @@ try {
 
 //get list of participants
 
-if(hasAdminPermission()) {
+if(hasAdminPermission() || isTechnician()) {
   try {
-    $sql = "SELECT participantId, firstName, lastName FROM participants;";
+    $sql = "SELECT participantId, firstName, lastName FROM participants p
+    WHERE NOT EXISTS (SELECT 1 FROM participantCourses pc
+    WHERE pc.participantId = p.participantId AND pc.courseId = :courseId)";
     $statement = $connection->prepare($sql);
+    $statement->bindParam(':courseId', $courseId, PDO::PARAM_INT);
     $statement->execute();
 
     $resultsAllParticipants = $statement->fetchAll();
@@ -199,32 +202,6 @@ if(hasAdminPermission()) {
 
  <!-- FOR NOW I'M DOING THIS ON THE BROWSER. COULD BE SWITCHED TO AJAX LATER. DEPENDS ON INTERNET SPEED. -->
  <div id="courseActions">
-   <?php if (isCoordinator() || isAdministrator()){ ?>
-   <div id="addParticipants">
-   <h2>Agregar Participantes</h2>
-  <input class="orange-search" type="text" id="searchBox">
-  <button class="orange-submit" id="search">Buscar</button>
-  <form method="post" action="actions/addParticipantsToCourse.php?courseId=<?php echo escape($courseId); ?>">
-    <input class="orange-submit addParticipants" type="submit" name="submit" id="submit" value="Agregar Participantes" hidden>
-     <table id="addParticipantTable" class="search-group">
-         <thead>
-           <!-- <tr class="search-head" hidden>
-             <th>Nombre</th>
-             <th>Seleccionar</th>
-           </tr> -->
-         </thead>
-         <tbody>
-           <?php foreach($resultsAllParticipants as $participant) {?>
-             <tr class="search-row" hidden>
-               <td class="table-cell"><?php echo escape($participant['firstName'] . " " . $participant['lastName']);?></td>
-               <td class="table-cell"><input type="checkbox" value="check" class="select-checkbox" name="<?php echo escape($participant['participantId']); ?>"></td>
-             </tr>
-           <?php } ?>
-         </tbody>
-       </table>
-     </form>
-  </div>
-<?php } ?>
   <div id="courseManagement">
     <h2> Acciones de Maestr<?php echo escape(getGenderEnding($_SESSION['gender']));?></h2>
     <div id="courseManagementButtons">
@@ -234,8 +211,37 @@ if(hasAdminPermission()) {
       <a href="/teachers/assignments.php?courseId=<?php echo escape($courseId);?>">
         <button type="button" id="assignmentsButton" class="orange-submit">Ver Tareas</button>
       </a>
+      <a href="/teachers/quotas.php?courseId=<?php echo escape($courseId); ?>">
+        <button type="button" id="quotasButton" class="orange-submit">Ver Quotas</button>
+      </a>
     </div>
   </div>
+  <?php if (hasAdminPermission() || isTechnician()){ ?>
+  <div id="addParticipants">
+  <h2>Agregar Participantes</h2>
+ <input class="orange-search" type="text" id="searchBox">
+ <button class="orange-submit" id="search">Buscar</button>
+ <form method="post" action="actions/addParticipantsToCourse.php?courseId=<?php echo escape($courseId); ?>">
+   <input class="orange-submit addParticipants" type="submit" name="submit" id="submit" value="Agregar Participantes" hidden>
+    <table id="addParticipantTable" class="search-group">
+        <thead>
+          <!-- <tr class="search-head" hidden>
+            <th>Nombre</th>
+            <th>Seleccionar</th>
+          </tr> -->
+        </thead>
+        <tbody>
+          <?php foreach($resultsAllParticipants as $participant) {?>
+            <tr class="search-row" hidden>
+              <td class="table-cell"><?php echo escape($participant['firstName'] . " " . $participant['lastName']);?></td>
+              <td class="table-cell"><input type="checkbox" value="check" class="select-checkbox" name="<?php echo escape($participant['participantId']); ?>"></td>
+            </tr>
+          <?php } ?>
+        </tbody>
+      </table>
+    </form>
+ </div>
+<?php } ?>
 </div>
 </main>
 
