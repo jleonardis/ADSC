@@ -75,6 +75,7 @@ try {
   }
   $roleNames = array_map('getTranslatedNameString', $resultsRoles); //getNameString defined in common.
 
+  
 } catch(PDOException $error) {
   handleError($error);
   die();
@@ -115,6 +116,7 @@ try {
       <?php } ?>
     </ul>
 </div>
+
 <?php if($hasCourses) { ?>
 <div class="participantCourses">
   <h3>Cursos Actuales como Participante</h3>
@@ -132,8 +134,10 @@ try {
     <?php foreach($coursesTaught as $course) { ?>
       <li><a href="/coursePage.php?courseId=<?php echo escape($course['courseId']); ?>"><strong><?php echo escape($course['name']); ?></strong></a></li>
     <?php } ?>
+  </ul>
   </div>
 <?php } ?>
+
 
 
 

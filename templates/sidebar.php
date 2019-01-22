@@ -39,4 +39,9 @@
       <a href="/admin/createCourse.php"><button class="orange-submit">Crear Curso</button></a>
     </div>
   <?php } ?>
+  <div id="account">
+    <h2>Administración de Cuenta</h2>
+    <a href="/participantPage.php?participantId=<?php echo escape($_SESSION['participantId']); ?>"><button class="orange-submit">Ver Perfil</button></a>
+    <a href="/user/updatePassword.php?participantId=<?php echo escape($_SESSION['participantId']); ?>"><button class="orange-submit">Cambiar Contraseña</button></a>
+  </div>
   </div>

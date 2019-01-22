@@ -77,7 +77,6 @@ if($_POST && isset($_POST['submit'])) {
     }
   }
 }
-
 require "templates/header.php";
 
  ?>

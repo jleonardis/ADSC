@@ -33,11 +33,14 @@ if(isset($_GET['participantId'])) {
 
   $participant = $result;
 
-  $sql = "SELECT * FROM roles WHERE name <> 'student';";
+  //switch this out at some point soon
+  $sql = "SELECT EXISTS (SELECT 1 FROM users WHERE participantId = :participantId
+  LIMIT 1) AS result;";
   $statement = $connection->prepare($sql);
+  $statement->bindParam(':participantId', $participantId, PDO::PARAM_INT);
   $statement->execute();
 
-  $roles = $statement->fetchAll();
+  $isUser = ($statement->fetch(PDO::FETCH_ASSOC))['result'];
 
 } else {
 
@@ -79,12 +82,6 @@ if(isset($_GET['participantId'])) {
          <?php echo (strpos($participant['languages'], $language) !== false)?'checked':''; ?>></label>
      <?php } ?><br>
      <label for="language-other">Otros Idiomas: <input type="text" id="language-other" name="language-other"></label><br>
-  <label for="role">Agregar Papel</label>
-  <select id="role" name="role">
-    <?php foreach($roles as $role) { ?>
-      <option value="<?php echo escape($role['roleId']); ?>"><?php echo escape($role['name']); ?></option>
-    <?php } ?>
-  </select>
    <label for="picture">Imagen (esto borrará la imagen anterior): </label>
    <input type="hidden" name="MAX_FILE_SIZE" value="1000000" /><!-- Add max size on php side!! -->
    <input type="file" id="picture" name="picture" accept="image"><br>
@@ -92,6 +89,9 @@ if(isset($_GET['participantId'])) {
    <textarea id="comments" name="comments"><?php echo escape($participant['comments']); ?></textarea>
    <input name="submit" type="submit" value="Actualizar" class="orange-submit">
  </form>
+ <?php if($isUser) { ?>
+   <a href="/user/updatePassword.php?participantId=<?php echo escape($participantId); ?>"><button class="orange-submit">Cambiar Contraseña</button></a>
+ <?php } ?>
 </main>
 <?php
 include "../templates/sidebar.php";
