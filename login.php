@@ -13,7 +13,8 @@ if($_POST && isset($_POST['submit'])) {
     $password = $_POST['password'];
 
     try {
-      $sql = "SELECT * FROM users u INNER JOIN participants p
+      $sql = "SELECT password, nickname, gender, p.participantId as participantId
+      FROM users u INNER JOIN participants p
       ON u.participantId = p.participantId WHERE username = :username LIMIT 1";
       $statement = $connection->prepare($sql);
       $statement->bindParam(":username", $username, PDO::PARAM_STR);

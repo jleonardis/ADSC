@@ -24,7 +24,10 @@ displayActionStatus('assignmentsUpdated', 'tareas actualizadas con exito!');
 //get course info
 try {
 
-  $sql = "SELECT * FROM courses WHERE courseId = :courseId";
+  //NOTE: CONSIDER COMBINING THESE SELECT STATEMENTS
+
+  $sql = "SELECT teacherId, name, description, daysOfWeek, startDate, endDate
+  FROM courses WHERE courseId = :courseId";
   $statement = $connection->prepare($sql);
   $statement->bindParam(':courseId', $courseId, PDO::PARAM_INT);
   $statement->execute();
@@ -48,7 +51,8 @@ try {
 
   }
 
-  $sql = "SELECT * FROM participants p INNER JOIN participantCourses pc
+  $sql = "SELECT p.participantId as participantId, firstName, lastName, gender
+  FROM participants p JOIN currentParticipantCourses_View pc
   ON p.participantId = pc.participantId WHERE pc.courseId = :courseId;";
   $statement = $connection->prepare($sql);
   $statement->bindParam(':courseId', $courseId, PDO::PARAM_INT);
@@ -57,10 +61,12 @@ try {
   $resultsCourseParticipants = $statement->fetchAll();
 
 
-  $sql = "SELECT * FROM attendance a INNER JOIN participantCourses pc
-  ON a.participantId = pc.participantId INNER JOIN courseSessions cs
-  ON a.sessionId = cs.sessionId WHERE cs.courseId = :courseId AND
-  cs.sessionDate < NOW();";
+  $sql = "SELECT pc.participantId as participantId, attended
+  FROM attendance a JOIN currentParticipantCourses_View pc
+  ON a.participantId = pc.participantId JOIN courseSessions cs
+  ON a.sessionId = cs.sessionId AND pc.courseId = cs.courseId
+  WHERE cs.courseId = :courseId AND
+  cs.sessionDate < NOW() AND cs.alive;";
 
   $statement = $connection->prepare($sql);
   $statement->bindParam(':courseId', $courseId, PDO::PARAM_INT);
@@ -87,9 +93,11 @@ try {
     }
   }
 
-  $sql = "SELECT * FROM grades g INNER JOIN assignments a
-  ON a.assignmentId = g.assignmentId INNER JOIN participants p
-  ON g.participantId = p.participantId WHERE a.courseId = :courseId;";
+  $sql = "SELECT p.participantId as participantId, grade
+  FROM grades g JOIN assignments a
+  ON a.assignmentId = g.assignmentId JOIN currentParticipantCourses_View p
+  ON g.participantId = p.participantId AND p.courseId = a.courseId
+  WHERE a.courseId = :courseId;";
 
   $statement = $connection->prepare($sql);
   $statement->bindParam(':courseId', $courseId, PDO::PARAM_INT);
@@ -129,7 +137,7 @@ try {
 if(hasAdminPermission() || isTechnician()) {
   try {
     $sql = "SELECT participantId, firstName, lastName FROM participants p
-    WHERE NOT EXISTS (SELECT 1 FROM participantCourses pc
+    WHERE NOT EXISTS (SELECT 1 FROM currentParticipantCourses_View pc
     WHERE pc.participantId = p.participantId AND pc.courseId = :courseId)";
     $statement = $connection->prepare($sql);
     $statement->bindParam(':courseId', $courseId, PDO::PARAM_INT);
@@ -174,6 +182,7 @@ if(hasAdminPermission() || isTechnician()) {
     <th>Género</th>
     <th>Asistencia</th>
     <th>Punteo</th>
+    <th></th>
   </thead>
   <tbody>
   <?php foreach($resultsCourseParticipants as $participant) { ?>
@@ -187,12 +196,14 @@ if(hasAdminPermission() || isTechnician()) {
       else {
         echo escape(round((($attendanceScores[$participant['participantId']]['attended']/$attendanceScores[$participant['participantId']]['total']) * 100)) . "%");
       }?></td>
-      <td><?php if(count($assignmentsScores) == 0 || $assignmentsScores[$participant['participantId']]['total'] === 0) {
+      <td><?php if(count($assignmentsScores) === 0 || $assignmentsScores[$participant['participantId']]['total'] === 0) {
         echo "-";
       }
       else {
         echo escape(round((($assignmentsScores[$participant['participantId']]['score']/$assignmentsScores[$participant['participantId']]['total']) * 100)) . "%");
       }?></td>
+      <td class="remove-participant" style="color: red; text-transform: uppercase;"
+      data-href="/actions/removeParticipantFromCourse.php?participantId=<?php echo escape($participant['participantId']); ?>&courseId=<?php echo escape($courseId);?>">Quitar</td>
     </tr>
   <?php } ?>
 </tbody>

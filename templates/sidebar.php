@@ -11,7 +11,7 @@
       <h2>Mis Cursos</h2>
       <ul>
       <?php
-      $sql = "SELECT * FROM courses WHERE teacherId = :participantId
+      $sql = "SELECT courseId, name FROM courses WHERE teacherId = :participantId
       AND alive = 1;";
       $statement = $connection->prepare($sql);
       $statement->bindParam(':participantId', $_SESSION['participantId'], PDO::PARAM_INT);

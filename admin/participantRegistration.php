@@ -10,7 +10,7 @@ if(!hasAdminPermission()) {
 }
 
 try {
-  $sql = "SELECT * FROM programs;";
+  $sql = "SELECT programId, name FROM programs;";
   $statement = $connection->prepare($sql);
   $statement->execute();
 

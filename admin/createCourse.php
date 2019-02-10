@@ -35,7 +35,8 @@ try {
 
     $resultsPrograms = $statement->fetchAll();
 
-    $sql = "SELECT * FROM participants p INNER JOIN participantRoles pr
+    $sql = "SELECT p.participantId as participantId, p.firstName as firstName,
+    p.lastName as lastName FROM participants p INNER JOIN participantRoles pr
     ON p.participantId = pr.participantId INNER JOIN roles r
     ON r.roleId = pr.roleId WHERE r.name = 'teacher' OR r.name = 'technician';";
     $statement = $connection->prepare($sql);

@@ -34,26 +34,17 @@ if(isset($_GET['courseId']) && hasPermission($_GET['courseId']) && isset($_POST[
 
       $sessionId = $connection->lastinsertId();
 
-      $sql = "SELECT p.participantId as participantId FROM participants p INNER JOIN participantCourses pc
-      ON p.participantId = pc.participantId WHERE pc.courseId = :courseId;";
-
-      $statement = $connection->prepare($sql);
-      $statement->bindParam(':courseId', $courseId, PDO::PARAM_INT);
-      $statement->execute();
-
-      $resultsParticipants = $statement->fetchAll();
-
       $sql = "INSERT INTO attendance (participantId, sessionId, attended)
-      VALUES (:participantId, :sessionId, :attended);";
+      SELECT DISTINCT participantId, :sessionId, :attended
+      FROM currentParticipantCourses_View
+      WHERE courseId = :courseId;";
       $statement = $connection->prepare($sql);
       $attended = 'absent';
       $statement->bindParam(":attended", $attended, PDO::PARAM_STR);
+      $statement->bindParam(":sessionId", $sessionId, PDO::PARAM_INT);
+      $statement->bindParam(":courseId", $courseId, PDO::PARAM_INT);
 
-      foreach ($resultsParticipants as $participant) {
-        $statement->bindParam(":participantId", $participant['participantId'], PDO::PARAM_INT);
-        $statement->bindParam(":sessionId", $sessionId, PDO::PARAM_INT);
-        $statement->execute();
-      }
+      $statement->execute();
 
     } else {
 

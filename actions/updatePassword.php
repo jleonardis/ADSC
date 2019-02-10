@@ -28,6 +28,7 @@ if(isset($_GET['participantId']) && ($_GET['participantId'] === $_SESSION['parti
       $statement->execute();
     }
     else {
+      include "../templates/header.php";
       echo "Ingresaste el DPI equivocado.";
       die();
     }

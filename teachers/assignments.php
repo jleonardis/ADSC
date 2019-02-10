@@ -17,9 +17,13 @@ if(!hasPermission($courseId)) {
 
 try {
 
-  $sql = "SELECT * FROM assignments a INNER JOIN grades g
-    ON a.assignmentId = g.assignmentId INNER JOIN participants p
-    ON g.participantId = p.participantId WHERE a.courseId = :courseId";
+  $sql = "SELECT p.participantId as participantId, firstName, lastName, name,
+    description, grade, gradeId
+    FROM assignments a JOIN grades g
+    ON a.assignmentId = g.assignmentId JOIN participants p
+    ON g.participantId = p.participantId JOIN currentParticipantCourses_View pc
+    ON pc.participantId = p.participantId AND pc.courseId = a.courseId
+    WHERE a.courseId = :courseId";
   $statement = $connection->prepare($sql);
   $statement->bindParam(':courseId', $courseId, PDO::PARAM_INT);
   $statement->execute();
@@ -105,7 +109,7 @@ else { ?>
       <input type="text" id="name" name="name"><br>
       <label for="description">Descripción: </label>
       <textarea id="description" name="description" maxlength="255"></textarea><br>
-      <input type="submit" name="submit" id="submit" class="orange-submit">
+      <input type="submit" name="submit" id="submit" value="Agregar" class="orange-submit">
     </form>
   </div>
 </main>

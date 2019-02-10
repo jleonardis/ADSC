@@ -15,7 +15,10 @@
     $(".course-row").hide();
     $(".course-row-" + programId).show();
   }
-
+  $('.remove-student').click(function(){
+    alert("clicked");
+    return false;
+  });
   $('.course-link').click(function() {
     window.location = $(this).data("href");
   });

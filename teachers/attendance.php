@@ -17,10 +17,13 @@ if(!hasPermission($courseId)) {
 
 try {
 
-  $sql = "SELECT * FROM attendance a INNER JOIN courseSessions cs
-    ON a.sessionId = cs.sessionId INNER JOIN participants p
-    ON a.participantId = p.participantId INNER JOIN participantCourses pc
-    ON p.participantId = pc.participantId WHERE cs.courseId = :courseId
+  $sql = "SELECT p.participantId as participantId, firstName, lastName, sessionDate,
+  cs.sessionId as sessionId, attended, attendanceId
+    FROM attendance a JOIN courseSessions cs
+    ON a.sessionId = cs.sessionId JOIN participants p
+    ON a.participantId = p.participantId JOIN currentParticipantCourses_View pc
+    ON cs.courseId = pc.courseId AND pc.participantId = p.participantId
+    WHERE cs.courseId = :courseId
     AND cs.sessionDate <= NOW() AND cs.alive;";
   $statement = $connection->prepare($sql);
   $statement->bindParam(':courseId', $courseId, PDO::PARAM_INT);

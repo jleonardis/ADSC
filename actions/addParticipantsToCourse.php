@@ -18,7 +18,8 @@ if(isset($_GET['courseId']) && isset($_POST['submit']) && (hasAdminPermission() 
 
     foreach($newParticipantIds as $participantId) {
 
-      $sql = "INSERT INTO participantCourses (participantId, courseId) VALUES (:participantId, :courseId)";
+      $sql = "INSERT INTO participantCourses (participantId, courseId, enrollDate)
+      VALUES (:participantId, :courseId, CURDATE())";
       $statement = $connection->prepare($sql);
       $statement->bindParam(':participantId', $participantId, PDO::PARAM_INT);
       $statement->bindParam(':courseId', $courseId, PDO::PARAM_INT);
@@ -51,50 +52,63 @@ if(isset($_GET['courseId']) && isset($_POST['submit']) && (hasAdminPermission() 
       }
     }
 
-    //get course sessions to update attendance table
-    $sql = "SELECT sessionId FROM courseSessions WHERE courseId = :courseId;";
-    $statement = $connection->prepare($sql);
-    $statement->bindParam(":courseId", $courseId, PDO::PARAM_INT);
-    $statement->execute();
-
-    $resultsSessions = $statement->fetchAll();
-
     $sql = "INSERT INTO attendance (participantId, sessionId, attended)
-    VALUES (:participantId, :sessionId, :attended);";
+    SELECT :participantId, cs.sessionId, 'absent'
+    FROM courseSessions cs
+    WHERE cs.courseId = :courseId
+    AND NOT EXISTS (
+      SELECT 1
+      FROM attendance a
+      WHERE a.sessionId = cs.sessionId
+      AND a.participantId = :participantId
+      LIMIT 1
+    );";
     $statement = $connection->prepare($sql);
-    $attended = 'absent';
-    $statement->bindParam(":attended", $attended, PDO::PARAM_STR);
+    $statement->bindParam(':courseId', $courseId, PDO::PARAM_INT);
 
-    foreach($resultsSessions as $session) {
-      foreach($newParticipantIds as $participantId) {
+    foreach($newParticipantIds as $participantId) {
       $statement->bindParam(":participantId", $participantId, PDO::PARAM_INT);
-      $sessionId = $session['sessionId'];
-      $statement->bindParam(":sessionId", $sessionId, PDO::PARAM_INT);
       $statement->execute();
-      }
     }
 
-    //get course assignments to update grades table
-    $sql = "SELECT assignmentId FROM assignments WHERE courseId = :courseId;";
+    $sql = "INSERT INTO grades (participantId, assignmentId, grade)
+    SELECT :participantId, a.assignmentId, NULL
+    FROM assignments a
+    WHERE a.courseId = :courseId
+    AND NOT EXISTS (
+      SELECT 1
+      FROM grades g
+      WHERE g.assignmentId = a.assignmentId
+      AND g.participantId = :participantId
+      LIMIT 1
+    );";
+
     $statement = $connection->prepare($sql);
-    $statement->bindParam(":courseId", $courseId, PDO::PARAM_INT);
-    $statement->execute();
+    $statement->bindParam(':courseId', $courseId, PDO::PARAM_INT);
 
-    if($statement->rowCount() !== 0) {
+    foreach($newParticipantIds as $participantId) {
+      $statement->bindParam(':participantId', $participantId, PDO::PARAM_INT);
+      $statement->execute();
+    }
 
-      $resultsAssignments = $statement->fetchAll();
+    $sql = "INSERT INTO participantQuotas (participantId, quotaId, amountPaid)
+    SELECT :participantId, q.quotaId, 0
+    FROM quotas q
+    WHERE q.courseId = :courseId
+    AND NOT EXISTS (
+      SELECT 1
+      FROM participantQuotas pq
+      WHERE pq.quotaId = q.quotaId
+      AND pq.participantId = :participantId
+      LIMIT 1
+    );";
 
-      $sql = "INSERT INTO grades (assignmentId, participantId) VALUES
-      (:assignmentId, :participantId);";
+    $statement = $connection->prepare($sql);
+    $statement->bindParam(':courseId', $courseId, PDO::PARAM_INT);
 
-      $statement = $connection->prepare($sql);
-      foreach($newParticipantIds as $participantId) {
-        $statement->bindParam(':participantId', $participantId, PDO::PARAM_INT);
-        foreach($resultsAssignments as $assignment) {
-          $statement->bindParam(':assignmentId', $assignment['assignmentId'], PDO::PARAM_INT);
-          $statement->execute();
-        }
-      }
+    foreach($newParticipantIds as $participantId) {
+      $statement->bindParam(':participantId', $participantId, PDO::PARAM_INT);
+      $statement->execute();
     }
 
     $connection->commit();

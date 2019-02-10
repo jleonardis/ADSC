@@ -76,9 +76,10 @@ CREATE TABLE courses (
 CREATE TABLE participantCourses (
 	participantId INT(11) UNSIGNED,
 	courseId INT(11) UNSIGNED,
+	enrollDate DATE,
+	dropOutDate DATE,
 	FOREIGN KEY (participantId) REFERENCES participants (participantId),
-	FOREIGN KEY (courseId) REFERENCES courses (courseId),
-	UNIQUE KEY(participantId, courseId)
+	FOREIGN KEY (courseId) REFERENCES courses (courseId)
 ) ENGINE InnoDB;
 
 CREATE TABLE permissions (

@@ -75,6 +75,7 @@ function checkLogIn() {
 }
 
 function handleError($error) {
+  echo $error->getMessage();
   echo "Hubo un error de sistema. Habla con un supervisor. \n";
   emailOwner();
 
@@ -163,10 +164,10 @@ function hasPermission($courseId = 0, $programId = 0, $participantPermissionId =
       return true;
     }
     if(isTeacher()) {
-      $sql = "SELECT EXISTS (SELECT 1 FROM permissions p INNER JOIN courses c
-      ON p.courseId = c.courseId INNER JOIN participantCourses pc
-      ON pc.courseId = c.courseId WHERE p.participantId = :participantId
-      AND pc.participantId = :participantPermissionId) AS result;";
+      $sql = "SELECT EXISTS (SELECT 1 FROM permissions p
+      INNER JOIN participantCourses pc
+      ON p.courseId = pc.courseId WHERE p.participantId = :participantId
+      AND pc.participantId = :participantPermissionId LIMIT 1) AS result;";
 
       $statement = $connection->prepare($sql);
       $statement->bindParam(':participantId', $participantId, PDO::PARAM_INT);

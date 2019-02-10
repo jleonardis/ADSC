@@ -18,7 +18,8 @@ if(isAdministrator()) {
 	  $resultsPrograms = $statement->fetchAll();
 
 	  //retrieve all courses
-	  $sql = "SELECT * FROM courses WHERE alive = 1 ORDER BY endDate";
+	  $sql = "SELECT courseId, name, startDate, endDate, programId
+		FROM courses WHERE alive = 1 ORDER BY endDate";
 	  $statement = $connection->prepare($sql);
 	  $statement->execute();
 	  $resultsCourses = $statement->fetchAll();
@@ -32,7 +33,8 @@ if(isAdministrator()) {
 if(isTeacher() || isTechnician()) {
 
 		try {
-			$sql = "SELECT c.* FROM courses c INNER JOIN participants p
+			$sql = "SELECT courseId, name, startDate, endDate
+			FROM courses c INNER JOIN participants p
 			ON c.teacherId = p.participantId WHERE p.participantId = :participantId AND
 			c.alive = 1;";
 			$statement = $connection->prepare($sql);
@@ -89,8 +91,8 @@ if(isTeacher() || isTechnician()) {
 		    <?php foreach($resultsCourses as $row) { ?>
 		      <tr class="course-link course-row course-row-<?php echo escape($row["programId"])?>" data-href="coursePage.php?courseId=<?php echo $row["courseId"];?>" hidden>
 		        <td><?php echo escape($row["name"]); ?></td>
-		        <td><?php echo escape($row["startDate"]); ?></td>
-		        <td><?php echo escape($row["endDate"]); ?></td>
+		        <td><?php echo escape(date('d/m/Y', strtotime($course['startDate']))); ?></td>
+		        <td><?php echo escape(date('d/m/Y', strtotime($course['endDate']))); ?></td>
 		      </tr>
 		    <?php } ?>
 		  </tbody>
@@ -113,8 +115,8 @@ if(isTeacher() || isTechnician()) {
 				<?php foreach($currentProgramCourses as $course) { ?>
 					<tr class="course-link" data-href="coursePage.php?courseId=<?php echo $course["courseId"];?>">
 						<td><?php echo escape($course['name']);?></td>
-						<td><?php echo escape($course['startDate']);?></td>
-						<td><?php echo escape($course['endDate']);?></td>
+						<td><?php echo escape(date('d/m/Y', strtotime($course['startDate'])));?></td>
+						<td><?php echo escape(date('d/m/Y', strtotime($course['endDate'])));?></td>
 					</tr>
 				<?php } ?>
 			</tbody>
@@ -133,8 +135,8 @@ if(isTeacher() || isTechnician()) {
 				<?php foreach($otherProgramCourses as $course) { ?>
 					<tr class="course-link" data-href="coursePage.php?courseId=<?php echo $course["courseId"];?>">
 						<td><?php echo escape($course['name']);?></td>
-						<td><?php echo escape($course['startDate']);?></td>
-						<td><?php echo escape($course['endDate']);?></td>
+						<td><?php echo escape(date('d/m/Y', strtotime($course['startDate'])));?></td>
+						<td><?php echo escape(date('d/m/Y', strtotime($course['endDate'])));?></td>
 					</tr>
 				<?php } ?>
 			</tbody>
@@ -156,8 +158,8 @@ if(isTeacher() || isTechnician()) {
 				<?php foreach($currentTeacherCourses as $course) { ?>
 					<tr class="course-link" data-href="coursePage.php?courseId=<?php echo $course["courseId"];?>">
 						<td><?php echo escape($course['name']);?></td>
-						<td><?php echo escape($course['startDate']);?></td>
-						<td><?php echo escape($course['endDate']);?></td>
+						<td><?php echo escape(date('d/m/Y', strtotime($course['startDate'])));?></td>
+						<td><?php echo escape(date('d/m/Y', strtotime($course['endDate'])));?></td>
 					</tr>
 				<?php } ?>
 			</tbody>
@@ -178,8 +180,8 @@ if(isTeacher() || isTechnician()) {
 				<?php foreach($otherTeacherCourses as $course) { ?>
 					<tr class="course-link" data-href="coursePage.php?courseId=<?php echo $course["courseId"];?>">
 						<td><?php echo escape($course['name']);?></td>
-						<td><?php echo escape($course['startDate']);?></td>
-						<td><?php echo escape($course['endDate']);?></td>
+						<td><?php echo escape(date('d/m/Y', strtotime($course['startDate'])));?></td>
+						<td><?php echo escape(date('d/m/Y', strtotime($course['endDate'])));?></td>
 					</tr>
 				<?php } ?>
 			</tbody>

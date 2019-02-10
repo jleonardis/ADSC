@@ -16,7 +16,7 @@ require "../templates/header.php";
  <main>
    <div class="form-parent">
      <form class="submit-form" method="post" action="../actions/updatePassword.php?participantId=<?php echo escape($participantId) ?>">
-       <h2>Actualizar Contraseña</h2>
+       <h2>Cambiar Contraseña</h2>
        <label for="dpi">DPI: </label>
        <input type="text" id="dpi" name="dpi"/><br>
        <label for="password">Contraseña Nueva: </label>
@@ -24,7 +24,7 @@ require "../templates/header.php";
        <label for="password-repeat">Repite Contraseña:</label>
        <input type="password" id="password-repeat" class="password-box"><br>
        <span id="password-warning" style="color: red" hidden>  Contraseñas no coinciden</span><br>
-       <input type="submit" class="orange-submit" name="submit" value="Actualizar">
+       <input type="submit" class="orange-submit" name="submit" value="Cambiar">
      </form>
    </div>
  </main>

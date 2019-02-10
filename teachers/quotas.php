@@ -17,9 +17,13 @@ if(!hasPermission($courseId)) {
 
 try {
 
-  $sql = "SELECT * FROM quotas q INNER JOIN participantQuotas pq
-    ON q.quotaId = pq.quotaId INNER JOIN participants p
-    ON pq.participantId = p.participantId WHERE q.courseId = :courseId";
+  $sql = "SELECT p.participantId as participantId, firstName, lastName, description,
+  amount, name, amountPaid, participantQuotaId
+    FROM quotas q JOIN participantQuotas pq
+    ON q.quotaId = pq.quotaId JOIN participants p
+    ON pq.participantId = p.participantId JOIN currentParticipantCourses_View pc
+    ON pc.participantId = p.participantId AND pc.courseId = q.courseId
+    WHERE q.courseId = :courseId";
   $statement = $connection->prepare($sql);
   $statement->bindParam(':courseId', $courseId, PDO::PARAM_INT);
   $statement->execute();
@@ -85,9 +89,9 @@ include "../templates/header.php";
                 <?php foreach($quotaInfos as $quotaName) {
                   $quotaInfo = $participant['quotas'][$quotaName['name']];?>
                   <td <?php if ($quotaInfo['amountPaid'] === $quotaName['amount']) {?>
-                    style="background-color: #3c9935"
+                    style="background-color: #3c9935; color: white"
                   <?php } ?>>
-                    <input type="number" max="<?php echo escape($quotaName['amount']); ?>" name="<?php echo escape($quotaInfo['participantQuotaId']); ?>" value ="<?php echo escape($quotaInfo['amountPaid']);?>"></td>
+                    Q <input type="number" max="<?php echo escape($quotaName['amount']); ?>" name="<?php echo escape($quotaInfo['participantQuotaId']); ?>" value ="<?php echo escape($quotaInfo['amountPaid']);?>"></td>
                 <?php } ?>
               </tr>
             <?php } ?>
@@ -107,10 +111,10 @@ else { ?>
       <label for="name">Nombre: </label>
       <input type="text" id="name" name="name"><br>
       <label for="amount">Monto: </label>
-      <input type="number" id="amount" name="amount"><br>
+      <input type="number" id="amount" name="amount" required><br>
       <label for="description">Descripción: </label>
       <textarea id="description" name="description" maxlength="255"></textarea><br>
-      <input type="submit" name="submit" id="submit" class="orange-submit">
+      <input type="submit" name="submit" id="submit" class="orange-submit" value="agregar">
     </form>
   </div>
 </main>

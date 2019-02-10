@@ -25,7 +25,8 @@ try {
   $resultsPrograms = $statement->fetchAll();
 
   //retrieve all courses
-  $sql = "SELECT * FROM courses WHERE alive = 1 ORDER BY endDate";
+  $sql = "SELECT courseId, name, programId, startDate, endDate
+  FROM courses WHERE alive = 1 ORDER BY endDate";
   $statement = $connection->prepare($sql);
   $statement->execute();
   $resultsCourses = $statement->fetchAll();
@@ -69,8 +70,8 @@ displayActionStatus('programAdded', 'Programa agregado con exito!');
     <?php foreach($resultsCourses as $row) { ?>
       <tr class="course-link course-row course-row-<?php echo escape($row["programId"])?>" data-href="coursePage.php?courseId=<?php echo $row["courseId"];?>" hidden>
         <td><?php echo escape($row["name"]); ?></td>
-        <td><?php echo escape($row["startDate"]); ?></td>
-        <td><?php echo escape($row["endDate"]); ?></td>
+        <td><?php echo escape(date('d/m/Y', strtotime($row['startDate']))); ?></td>
+        <td><?php echo escape(date('d/m/Y', strtotime($row['endDate']))); ?></td>
       </tr>
     <?php } ?>
   </tbody>

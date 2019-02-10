@@ -6,7 +6,9 @@ checkLogIn();
 require "templates/header.php";
 
 try {
-  $sql = "SELECT * FROM participants ORDER BY isActive DESC;";
+  $sql = "SELECT participantId, firstName, lastName, nickname, gender, dob, village,
+    languages
+  FROM participants ORDER BY isActive DESC;";
   $statement = $connection->prepare($sql);
   $statement->execute();
 

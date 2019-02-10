@@ -19,7 +19,9 @@ if(isset($_GET['participantId'])) {
 
   $participantId = $_GET['participantId'];
 
-  $sql = "SELECT * FROM participants WHERE participantId = :participantId";
+  $sql = "SELECT firstName, lastName, nickname, dpi, dob, email, phoneNumber,
+  phoneNumber_2, village, languages, comments
+  FROM participants WHERE participantId = :participantId";
   $statement = $connection->prepare($sql);
   $statement->bindParam(':participantId', $participantId, PDO::PARAM_INT);
   $statement->execute();

@@ -19,8 +19,12 @@ if(!hasPermission(0, 0, $participantId)) {
 
 //get participant info
 try {
-
-  $sql = "SELECT * FROM participants WHERE participantId = :participantId;";
+  $selectList = "SELECT participantId, firstName, lastName, nickname, gender,
+  village, languages, imageLocation, dob";
+  if(hasAdminPermission()){
+    $selectList .= ", phoneNumber, phoneNumber_2, email, comments";
+  }
+  $sql = $selectList .= " FROM participants WHERE participantId = :participantId;";
   $statement = $connection->prepare($sql);
   $statement->bindParam(':participantId', $participantId, PDO::PARAM_INT);
   $statement->execute();
@@ -33,7 +37,8 @@ try {
   $participant = $statement->fetch(PDO::FETCH_ASSOC);
   $participant['age'] = getAge(new DateTime($participant['dob']));
 
-  $sql = "SELECT * FROM participantCourses pc INNER JOIN courses c ON pc.courseId = c.courseId
+  $sql = "SELECT pc.courseId as courseId, name
+  FROM currentParticipantCourses_View pc INNER JOIN courses c ON pc.courseId = c.courseId
   WHERE pc.participantId = :participantId AND NOW() < ADDDATE(c.endDate, INTERVAL 1 MONTH)
   AND NOW() > SUBDATE(c.startDate, INTERVAL 1 MONTH) AND c.alive = 1;";
 
@@ -47,7 +52,7 @@ try {
     $courses = $statement->fetchAll();
   }
 
-  $sql = "SELECT * FROM courses WHERE teacherId = :participantId
+  $sql = "SELECT courseId, name FROM courses WHERE teacherId = :participantId
   AND NOW() < ADDDATE(endDate, INTERVAL 1 MONTH)
   AND NOW() > SUBDATE(startDate, INTERVAL 1 MONTH) AND alive = 1";
   $statement = $connection->prepare($sql);
@@ -75,7 +80,7 @@ try {
   }
   $roleNames = array_map('getTranslatedNameString', $resultsRoles); //getNameString defined in common.
 
-  
+
 } catch(PDOException $error) {
   handleError($error);
   die();

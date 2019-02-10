@@ -24,7 +24,7 @@ if(isset($_GET['courseId'])) {
     die();
   }
 
-  $sql = "SELECT * FROM courses WHERE courseId = :courseId";
+  $sql = "SELECT teacherId, programId, name, description FROM courses WHERE courseId = :courseId";
   $statement = $connection->prepare($sql);
   $statement->bindParam(':courseId', $courseId, PDO::PARAM_INT);
   $statement->execute();
@@ -36,7 +36,7 @@ if(isset($_GET['courseId'])) {
 
   $course = $statement->fetch(PDO::FETCH_ASSOC);
 
-  $sql = "SELECT * FROM programs;";
+  $sql = "SELECT programId, name FROM programs;";
   $statement = $connection->prepare($sql);
   $statement->execute();
 
@@ -45,7 +45,8 @@ if(isset($_GET['courseId'])) {
   if($course['teacherId']) {
 
     $teacherId = $course['teacherId'];
-    $sql = "SELECT * FROM participants WHERE participantId = :teacherId";
+    $sql = "SELECT firstName, lastName, participantId
+    FROM participants WHERE participantId = :teacherId";
 
     $statement = $connection->prepare($sql);
     $statement->bindParam(':teacherId', $teacherId, PDO::PARAM_INT);
@@ -56,7 +57,7 @@ if(isset($_GET['courseId'])) {
 
   }
 
-  $sql = "SELECT * FROM participants p INNER JOIN participantRoles pr
+  $sql = "SELECT firstName, lastName, p.participantId as participantId FROM participants p INNER JOIN participantRoles pr
   ON p.participantId = pr.participantId INNER JOIN roles r
   ON r.roleId = pr.roleId WHERE r.name = 'teacher' OR r.name = 'technician';";
   $statement = $connection->prepare($sql);
