@@ -22,22 +22,23 @@ try {
 
   $connection->beginTransaction();
 
-  $sql = "UPDATE attendance SET attended = :attended WHERE attendanceId = :attendanceId;";
+  $sql = "UPDATE grades SET grade = :grade WHERE gradeId = :gradeId;";
   $statement = $connection->prepare($sql);
 
   foreach($_POST as $key => $value) {
-    $statement->bindParam(':attendanceId', $key, PDO::PARAM_INT);
-    $statement->bindParam(':attended', $value, PDO::PARAM_STR);
+    $grade = $value ? $value : null;
+    $statement->bindParam(':gradeId', $key, PDO::PARAM_INT);
+    $statement->bindParam(':grade', $grade, PDO::PARAM_STR);
     $statement->execute();
   }
 
   $connection->commit();
-  if(isset($_GET['removeSession']) && isset($_GET['sessionId']) && $_GET['removeSession']) {
-    header("location: /actions/removeCourseSession.php?courseId=" . escape($courseId) . "&sessionId=" . escape($_GET['sessionId']));
+  if(isset($_GET['editRedirect']) && isset($_GET['assignmentId'])) {
+    header("location: /teachers/editAssignment.php?courseId=" . $courseId . "&assignmentId=" . $_GET['assignmentId']);
     die();
   }
   else {
-    header("location: /coursePage.php?courseId=" . escape($courseId));
+    header("location: /coursePage.php?courseId=" . escape($courseId) . "&assignmentUpdated=1");
     die();
   }
 

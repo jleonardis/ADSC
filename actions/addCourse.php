@@ -5,7 +5,7 @@ require "../common.php";
 if(isset($_POST['submit']) && hasPermission(0, $_POST['program'])) {
 
   $teacherId = postTernary("teacherId");
-  
+
   $new_course = array(
     'name' => $_POST['courseName'],
     'programId' => $_POST['program'],
@@ -69,49 +69,80 @@ if(isset($_POST['submit']) && hasPermission(0, $_POST['program'])) {
   }
 
   //add rows to courseSessions for each class meeting
-  $startDate = new DateTime($new_course['startDate']);
-  $endDate = new DateTime($new_course['endDate']);
+  // $startDate = new DateTime($new_course['startDate']);
+  // $endDate = new DateTime($new_course['endDate']);
+  // if(count($courseSessions) === 0) {
+  //   array_push($courseSessions, $startDate);
+  //   array_push($courseSessions, $endDate);
+  // }
+  // //add classes for first week (up until and including saturday)
+  // $lastInt = $startInt; // this is necessary because DateTime::add changes the underlying object
+  // $lastDate = clone $startDate;
+  // foreach($courseDays as $day) {
+  //   if($day >= $startInt) {
+  //     $newDate = $lastDate->add(new DateInterval('P' . ($day - $lastInt) . 'D'));
+  //     array_push($courseSessions, $newDate);
+  //     $lastInt = $day;
+  //     $lastDate = clone $newDate;
+  //   }
+  // }
+  //
+  // //now set the date to sunday. here we'll begin adding all other sessions
+  // $firstSunday = $lastDate->add(new DateInterval('P' . (7 - $lastInt) . 'D')); //save for later use
+  //
+  // $week = new DateInterval('P7D');
+  // foreach($courseDays as $dayNum) {
+  //   $interval = new DateInterval('P' . $dayNum . 'D');
+  //   for($date = (clone $firstSunday)->add($interval); $date <= $endDate; $date = $date->add($week)) {
+  //     array_push($courseSessions, clone $date);
+  //   }
+  // }
+  //
+  // //helper function to sort date array
+  // function dateOrderHelper($a, $b) {
+  //   return strtotime($a->format('Y-m-d')) - strtotime($b->format('Y-m-d'));
+  // }
+  //
+  // usort($courseSessions, 'dateOrderHelper');
+  //
+  // try {
+  //   $sql = "INSERT INTO courseSessions (courseId, sessionDate) VALUES (:courseId, :sessionDate);";
+  //
+  //   $statement = $connection->prepare($sql);
+  //   $statement->bindParam(':courseId', $courseId, PDO::PARAM_INT);
+  //   foreach($courseSessions as $session) {
+  //     $dateString = $session->format('Y-m-d');
+  //     $statement->bindParam(':sessionDate', $dateString, PDO::PARAM_STR);
+  //     $statement->execute();
+  //   }
 
-  //add classes for first week (up until and including saturday)
-  $lastInt = $startInt; // this is necessary because DateTime::add changes the underlying object
-  $lastDate = clone $startDate;
-  foreach($courseDays as $day) {
-    if($day >= $startInt) {
-      $newDate = $lastDate->add(new DateInterval('P' . ($day - $lastInt) . 'D'));
-      array_push($courseSessions, $newDate);
-      $lastInt = $day;
-      $lastDate = clone $newDate;
-    }
-  }
-
-  //now set the date to sunday. here we'll begin adding all other sessions
-  $firstSunday = $lastDate->add(new DateInterval('P' . (7 - $lastInt) . 'D')); //save for later use
-
-  $week = new DateInterval('P7D');
-  foreach($courseDays as $dayNum) {
-    $interval = new DateInterval('P' . $dayNum . 'D');
-    for($date = (clone $firstSunday)->add($interval); $date <= $endDate; $date = $date->add($week)) {
-      array_push($courseSessions, clone $date);
-    }
-  }
-
-  //helper function to sort date array
-  function dateOrderHelper($a, $b) {
-    return strtotime($a->format('Y-m-d')) - strtotime($b->format('Y-m-d'));
-  }
-
-  usort($courseSessions, 'dateOrderHelper');
-
+  $shiftedCourseDays = array_map(function($elem) {
+    return $elem + 1;
+  }, $courseDays);
   try {
-    $sql = "INSERT INTO courseSessions (courseId, sessionDate) VALUES (:courseId, :sessionDate);";
+    $sql = sprintf("INSERT INTO courseSessions (courseId, sessionDate)
+      SELECT :courseId, selected_date
+      FROM
+          (
+            SELECT ADDDATE(SUBDATE(CURDATE(), 365), thousands.i*1000 + hundreds.i*100 + tens.i*10 + ones.i)
+             AS selected_date
+            FROM (SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) ones,
+                  (SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) tens,
+                  (SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) hundreds,
+                  (SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) thousands
+          ) all_days
+      WHERE selected_date BETWEEN :startDate AND :endDate
+        AND DAYOFWEEK(selected_date) IN (%s);", implode(", ", $shiftedCourseDays));
+
+    $startDate = $_POST['startDate'];
+    $endDate = $_POST['endDate'];
 
     $statement = $connection->prepare($sql);
-    $statement->bindParam(':courseId', $courseId, PDO::PARAM_INT);
-    foreach($courseSessions as $session) {
-      $dateString = $session->format('Y-m-d');
-      $statement->bindParam(':sessionDate', $dateString, PDO::PARAM_STR);
-      $statement->execute();
-    }
+    $statement->bindParam(':courseId', $courseId);
+    $statement->bindParam(':startDate', $startDate);
+    $statement->bindParam(':endDate', $endDate);
+
+    $statement->execute();
 
     $connection->commit();
     header("location: ../coursePage.php?courseId=" . $courseId);

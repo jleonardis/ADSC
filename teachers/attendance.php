@@ -17,23 +17,38 @@ if(!hasPermission($courseId)) {
 
 try {
 
-  $sql = "SELECT p.participantId as participantId, firstName, lastName, sessionDate,
-  cs.sessionId as sessionId, attended, attendanceId
-    FROM attendance a JOIN courseSessions cs
-    ON a.sessionId = cs.sessionId JOIN participants p
-    ON a.participantId = p.participantId JOIN currentParticipantCourses_View pc
-    ON cs.courseId = pc.courseId AND pc.participantId = p.participantId
-    WHERE cs.courseId = :courseId
-    AND cs.sessionDate <= NOW() AND cs.alive;";
+  $sql = "SELECT par.participantId as participantId, firstName, lastName,
+      sessionDate, sessions.sessionId as sessionId, attended, attendanceId
+    FROM
+      (
+        SELECT sessionId, sessionDate
+        FROM courseSessions
+        WHERE courseId = :courseId
+          AND alive
+      ) sessions
+    LEFT JOIN
+      (
+        SELECT p.participantId as participantId, firstName, lastName,
+          attended, attendanceId, sessionId
+        FROM currentParticipantCourses_View pc
+        JOIN participants p
+          ON p.participantId = pc.participantId
+        JOIN attendance a
+          ON a.participantId = p.participantId
+        WHERE pc.courseId = :courseId
+      ) par
+    ON par.sessionId = sessions.sessionId;";
+
   $statement = $connection->prepare($sql);
   $statement->bindParam(':courseId', $courseId, PDO::PARAM_INT);
   $statement->execute();
 
+  $hasSessions = $statement->rowCount() !== 0;
   $results = $statement->fetchAll();
-
   $attendanceTable = array();
   $dates = array();
   $dateInfos = array();
+  $hasParticipants = ($hasSessions && !is_null($results[0]['participantId'])); //will be null if course has no participants
 
   foreach($results as $row) {
     $participantId = $row['participantId'];
@@ -70,24 +85,29 @@ include "../templates/header.php";
 
  ?>
  <main>
-   <h1>Actualizar Asistencia</h1>
+   <div id="back-button"><img src="/images/back-icon.png"></div>
+   <h1>Horario y Asistencia</h1>
    <div id="attendance" class="scrollDiv">
-     <form method="post" action="/actions/updateAttendance.php?courseId=<?php echo escape($courseId);?>">
+     <form id="main-form" method="post" action="/actions/updateAttendance.php?courseId=<?php echo escape($courseId);?>">
        <div id="attendanceTableWrapper" class="scrollTableWrapper">
          <table id="attendanceTable" class="scrollTable">
            <thead>
              <tr class="attendance-head-row">
-               <th class="fixed-column"> </th>
+               <?php if($hasParticipants) { ?>
+                  <th class="fixed-column"> </th>
+                <?php } ?>
                <?php foreach($dateInfos as $date) { ?>
 
                  <th><?php echo escape(date('d/m', strtotime($date['date']))); ?><br>
                  <?php if(hasAdminPermission()){ ?>
-                   <div class="remove-session" data-href="/actions/removeCourseSession.php?courseId=<?php echo escape($courseId);?>&sessionId=<?php echo escape($date['sessionId']);?>">X</div>
+                   <input type="submit" value="X" class="remove-session"
+                   formaction="/actions/updateAttendance.php?courseId=<?php echo escape($courseId);?>&sessionId=<?php echo escape($date['sessionId']);?>&removeSession=1">
                  <?php } ?>
                  </th>
                <?php } ?>
              </tr>
            </thead>
+           <?php if($hasParticipants) { ?>
            <tbody>
              <?php foreach($attendanceTable as $participantId => $participant) { ?>
                <tr>
@@ -105,9 +125,12 @@ include "../templates/header.php";
                </tr>
              <?php } ?>
            </tbody>
+         <?php } ?>
          </table>
        </div>
-       <input type="submit" name="submit" id="submit" class="orange-submit" value="Actualizar">
+       <?php if($hasParticipants) { ?>
+       <input type="submit" class="orange-submit" value="Actualizar Asistencia">
+     <?php } ?>
      </form>
    </div>
    <div id="addCourseSession">
@@ -115,7 +138,7 @@ include "../templates/header.php";
      <h3>Agregar Sesión</h3>
      <label for="date">Fecha: </label>
      <input type="date" name="date" id="date"><br>
-     <input class="orange-submit" type="submit" value="Agregar" name="submit">
+     <input class="orange-submit" type="submit" value="Agregar">
    </form>
  </div>
  </main>

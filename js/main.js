@@ -14,4 +14,8 @@
     return false;
   })
 
+  $('#back-button').click(function() {
+    $('#main-form').submit();
+  });
+
   })(jQuery);

@@ -91,3 +91,12 @@ td, th {
 	padding: 0 15px;
 	text-align: left;
 }
+
+#back-button {
+  :hover {
+    cursor: pointer;
+  }
+  img {
+    width: 30px;
+  }
+}

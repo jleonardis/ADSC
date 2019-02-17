@@ -10,7 +10,10 @@ try {
   $admin = array(
     'firstName' => 'admin',
     'lastName' => '',
-    'nickname' => 'admin'
+    'nickname' => 'admin',
+    'gender' => 'F',
+    'dob' => '2019-01-01',
+    'dpi' => 0
   );
 
   $sql = makeInsertQuery($admin, 'participants');

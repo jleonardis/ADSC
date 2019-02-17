@@ -9,8 +9,8 @@
         .remove-session{
           margin: 0 auto;
           background-color: pink;
-          width: 20px;
           text-align: center;
+          color: red;
         }
          .remove-session:hover {
             cursor: pointer;
@@ -39,7 +39,7 @@
       }
     }
   }
-  input[type='submit'] {
+  .orange-submit{
     margin-top: 30px;
   }
 }

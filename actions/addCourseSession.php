@@ -4,7 +4,7 @@ require "../common.php";
 
 checkLogIn();
 
-if(isset($_GET['courseId']) && hasPermission($_GET['courseId']) && isset($_POST['submit']) && isset($_POST['date'])) {
+if(isset($_GET['courseId']) && hasPermission($_GET['courseId']) && isset($_POST['date'])) {
 
   $courseId = $_GET['courseId'];
   $date = $_POST['date'];

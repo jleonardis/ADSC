@@ -17,17 +17,24 @@ if(!hasPermission($courseId)) {
   die();
 }
 
-displayActionStatus('participantsAdded', 'Participante(s) agregado con exito!');
-displayActionStatus('attendanceUpdated', "asistencia actualizado con exito!");
-displayActionStatus('assignmentsUpdated', 'tareas actualizadas con exito!');
-
 //get course info
 try {
 
   //NOTE: CONSIDER COMBINING THESE SELECT STATEMENTS
 
-  $sql = "SELECT teacherId, name, description, daysOfWeek, startDate, endDate
-  FROM courses WHERE courseId = :courseId";
+  $sql = "SELECT teacherId, name, description, daysOfWeek, cs.startDate,
+    cs.endDate
+  FROM courses c
+  LEFT JOIN
+    (
+      SELECT courseId, MIN(sessionDate) AS startDate, MAX(sessionDate) AS endDate
+      FROM courseSessions
+      WHERE alive
+      AND courseId = :courseId
+      GROUP BY courseId
+    ) cs
+    ON c.courseId = cs.courseId;";
+
   $statement = $connection->prepare($sql);
   $statement->bindParam(':courseId', $courseId, PDO::PARAM_INT);
   $statement->execute();
@@ -38,6 +45,7 @@ try {
   }
 
   $course = $statement->fetch(PDO::FETCH_ASSOC);
+  $hasDates = !IS_NULL($course['startDate']);
 
   if($course['teacherId']) {
 
@@ -97,7 +105,7 @@ try {
   FROM grades g JOIN assignments a
   ON a.assignmentId = g.assignmentId JOIN currentParticipantCourses_View p
   ON g.participantId = p.participantId AND p.courseId = a.courseId
-  WHERE a.courseId = :courseId;";
+  WHERE a.courseId = :courseId AND a.alive;";
 
   $statement = $connection->prepare($sql);
   $statement->bindParam(':courseId', $courseId, PDO::PARAM_INT);
@@ -158,7 +166,11 @@ if(hasAdminPermission() || isTechnician()) {
 <h1><?php echo escape($course['name']); ?></h1>
 <div><strong><?php echo escape($course['description']); ?></strong></div>
 </div>
-<div><p><?php echo escape($course['daysOfWeek']); ?><br><?php echo escape(date('d/m/Y', strtotime($course['startDate'])) . "   hasta   " . date('d/m/Y', strtotime($course['endDate']))); ?></p></div>
+<?php if($hasDates) { ?>
+<div>
+  <p><?php echo escape($course['daysOfWeek']); ?><br><?php echo escape(date('d/m/Y', strtotime($course['startDate'])) . "   hasta   " . date('d/m/Y', strtotime($course['endDate']))); ?></p>
+</div>
+<?php } ?>
 <?php if (isset($teacher)) { ?>
 <a href="/participantPage.php?participantId=<?php echo escape($teacher['participantId']);?>"><strong><?php
   echo "Enseñado por " . escape($teacher['firstName'] . " " . $teacher['lastName']);?></strong></a>
@@ -172,9 +184,6 @@ if(hasAdminPermission() || isTechnician()) {
 
 <div id="courseInfo">
 <h2>Participantes: </h2>
-<?php if(count($resultsCourseParticipants) == 0) { ?>
-  <p>Este curso no tiene participantes.</p>
-<?php } else { ?>
 <table id="participantList">
   <thead>
     <th>Nombre</th>
@@ -190,7 +199,7 @@ if(hasAdminPermission() || isTechnician()) {
       <td><?php echo escape($participant['firstName']);?></td>
       <td><?php echo escape($participant['lastName']);?></td>
       <td><?php echo escape($participant['gender']);?></td>
-      <td><?php if(count($attendanceScores) == 0 || $attendanceScores[$participant['participantId']]['total'] === 0) {
+      <td><?php if(count($attendanceScores) === 0 || $attendanceScores[$participant['participantId']]['total'] === 0) {
         echo "-";
       }
       else {
@@ -205,11 +214,10 @@ if(hasAdminPermission() || isTechnician()) {
       <td class="remove-participant" style="color: red; text-transform: uppercase;"
       data-href="/actions/removeParticipantFromCourse.php?participantId=<?php echo escape($participant['participantId']); ?>&courseId=<?php echo escape($courseId);?>">Quitar</td>
     </tr>
-  <?php } ?>
+<?php } ?>
 </tbody>
 </table>
 </div>
-<?php } ?>
 
  <!-- FOR NOW I'M DOING THIS ON THE BROWSER. COULD BE SWITCHED TO AJAX LATER. DEPENDS ON INTERNET SPEED. -->
  <div id="courseActions">
@@ -217,7 +225,7 @@ if(hasAdminPermission() || isTechnician()) {
     <h2> Acciones de Maestr<?php echo escape(getGenderEnding($_SESSION['gender']));?></h2>
     <div id="courseManagementButtons">
       <a href="/teachers/attendance.php?courseId=<?php echo escape($courseId);?>">
-        <button type="button" id="attendanceButton" class="orange-submit">Actualizar Asistencia</button>
+        <button type="button" id="attendanceButton" class="orange-submit">Horario y Asistencia</button>
       </a>
       <a href="/teachers/assignments.php?courseId=<?php echo escape($courseId);?>">
         <button type="button" id="assignmentsButton" class="orange-submit">Ver Tareas</button>

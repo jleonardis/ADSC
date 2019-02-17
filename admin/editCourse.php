@@ -6,13 +6,9 @@ include "../templates/header.php";
 
 checkLogIn();
 
-if(!isAdministrator() && !isCoordinator()) {
+if(!hasAdminPermission()) {
   echo $invalidPermissionMessage;
   die();
-}
-
-if(isset($_GET) && isset($_GET['courseUpdated'])) {
-  displayActionStatus('courseUpdated', "Curso actualizado con exito!");
 }
 
 if(isset($_GET['courseId'])) {
@@ -24,45 +20,53 @@ if(isset($_GET['courseId'])) {
     die();
   }
 
-  $sql = "SELECT teacherId, programId, name, description FROM courses WHERE courseId = :courseId";
-  $statement = $connection->prepare($sql);
-  $statement->bindParam(':courseId', $courseId, PDO::PARAM_INT);
-  $statement->execute();
+  try
+  {
 
-  if($statement->rowCount() === 0) {
-    echo "ese curso ya no existe";
-    die();
-  }
-
-  $course = $statement->fetch(PDO::FETCH_ASSOC);
-
-  $sql = "SELECT programId, name FROM programs;";
-  $statement = $connection->prepare($sql);
-  $statement->execute();
-
-  $programs = $statement->fetchAll();
-
-  if($course['teacherId']) {
-
-    $teacherId = $course['teacherId'];
-    $sql = "SELECT firstName, lastName, participantId
-    FROM participants WHERE participantId = :teacherId";
-
+    $sql = "SELECT teacherId, programId, name, description FROM courses WHERE courseId = :courseId";
     $statement = $connection->prepare($sql);
-    $statement->bindParam(':teacherId', $teacherId, PDO::PARAM_INT);
-
+    $statement->bindParam(':courseId', $courseId, PDO::PARAM_INT);
     $statement->execute();
 
-    $currentTeacher = $statement->fetch(PDO::FETCH_ASSOC);
+    if($statement->rowCount() === 0) {
+      echo "ese curso ya no existe";
+      die();
+    }
 
+    $course = $statement->fetch(PDO::FETCH_ASSOC);
+
+    $sql = "SELECT programId, name FROM programs;";
+    $statement = $connection->prepare($sql);
+    $statement->execute();
+
+    $programs = $statement->fetchAll();
+
+    if($course['teacherId']) {
+
+      $teacherId = $course['teacherId'];
+      $sql = "SELECT firstName, lastName, participantId
+      FROM participants WHERE participantId = :teacherId";
+
+      $statement = $connection->prepare($sql);
+      $statement->bindParam(':teacherId', $teacherId, PDO::PARAM_INT);
+
+      $statement->execute();
+
+      $currentTeacher = $statement->fetch(PDO::FETCH_ASSOC);
+
+    }
+
+    $sql = "SELECT firstName, lastName, p.participantId as participantId FROM participants p INNER JOIN participantRoles pr
+    ON p.participantId = pr.participantId INNER JOIN roles r
+    ON r.roleId = pr.roleId WHERE r.name = 'teacher' OR r.name = 'technician';";
+    $statement = $connection->prepare($sql);
+    $statement->execute();
+    $resultsTeachers = $statement->fetchAll();
   }
-
-  $sql = "SELECT firstName, lastName, p.participantId as participantId FROM participants p INNER JOIN participantRoles pr
-  ON p.participantId = pr.participantId INNER JOIN roles r
-  ON r.roleId = pr.roleId WHERE r.name = 'teacher' OR r.name = 'technician';";
-  $statement = $connection->prepare($sql);
-  $statement->execute();
-  $resultsTeachers = $statement->fetchAll();
+  catch (PDOException $error) {
+    handleError($error);
+    die();
+  }
 
 
 } else {
@@ -113,5 +117,5 @@ if(isset($_GET['courseId'])) {
 <?php include "../templates/sidebar.php";?>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
  <script src="/js/search.js"></script>
- <script src="/js/editCourse.js"></script>
+ <script src="/js/deleteButton.js"></script>
 <?php include "../templates/footer.php"; ?>

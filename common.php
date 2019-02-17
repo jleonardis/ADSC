@@ -75,6 +75,8 @@ function checkLogIn() {
 }
 
 function handleError($error) {
+  global $sql;
+  echo $sql;
   echo $error->getMessage();
   echo "Hubo un error de sistema. Habla con un supervisor. \n";
   emailOwner();
