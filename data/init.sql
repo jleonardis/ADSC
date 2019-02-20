@@ -146,6 +146,10 @@ CREATE TABLE participantQuotas (
 	quotaId INT(11) UNSIGNED NOT NULL,
 	amountPaid DECIMAL(7,2) DEFAULT 0 NOT NULL,
 	FOREIGN KEY (participantId) REFERENCES participants (participantId),
-	FOREIGN KEY (quotaId) REFERENCES quotas (quotaId),
-	UNIQUE KEY(participantId, quotaId)
+	FOREIGN KEY (quotaId) REFERENCES quotas (quotaId)
 ) Engine InnoDB;
+
+CREATE VIEW currentParticipantCourses_View AS
+	SELECT *
+	FROM participantCourses
+	WHERE dropOutDate IS NULL;
