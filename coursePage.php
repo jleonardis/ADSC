@@ -24,7 +24,12 @@ try {
 
   $sql = "SELECT teacherId, name, description, daysOfWeek, cs.startDate,
     cs.endDate
-  FROM courses c
+  FROM
+    (
+      SELECT courseId, teacherId, name, description, daysOfWeek
+      FROM courses
+      WHERE courseId = :courseId
+    ) c
   LEFT JOIN
     (
       SELECT courseId, MIN(sessionDate) AS startDate, MAX(sessionDate) AS endDate
