@@ -91,3 +91,5 @@ require "templates/header.php";
     <input class="orange-submit" type="submit" name="submit" value="Entrar">
   </form>
 </div>
+
+<?php include "templates/footer.php"; ?>

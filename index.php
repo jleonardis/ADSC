@@ -19,7 +19,7 @@ if(isAdministrator()) {
 
 	  //retrieve all courses
 	  $sql = "SELECT courseId, name, startDate, endDate, programId
-		FROM courses WHERE alive = 1 ORDER BY endDate";
+		FROM courses_View WHERE alive ORDER BY endDate";
 	  $statement = $connection->prepare($sql);
 	  $statement->execute();
 	  $resultsCourses = $statement->fetchAll();
@@ -34,7 +34,7 @@ if(isTeacher() || isTechnician()) {
 
 		try {
 			$sql = "SELECT courseId, name, startDate, endDate
-			FROM courses c INNER JOIN participants p
+			FROM courses_View c INNER JOIN participants p
 			ON c.teacherId = p.participantId WHERE p.participantId = :participantId AND
 			c.alive = 1;";
 			$statement = $connection->prepare($sql);
@@ -91,8 +91,8 @@ if(isTeacher() || isTechnician()) {
 		    <?php foreach($resultsCourses as $row) { ?>
 		      <tr class="course-link course-row course-row-<?php echo escape($row["programId"])?>" data-href="coursePage.php?courseId=<?php echo $row["courseId"];?>" hidden>
 		        <td><?php echo escape($row["name"]); ?></td>
-		        <td><?php echo escape(date('d/m/Y', strtotime($course['startDate']))); ?></td>
-		        <td><?php echo escape(date('d/m/Y', strtotime($course['endDate']))); ?></td>
+		        <td><?php echo escape(date('d/m/Y', strtotime($row['startDate']))); ?></td>
+		        <td><?php echo escape(date('d/m/Y', strtotime($row['endDate']))); ?></td>
 		      </tr>
 		    <?php } ?>
 		  </tbody>

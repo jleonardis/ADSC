@@ -38,7 +38,7 @@ try {
   $participant['age'] = getAge(new DateTime($participant['dob']));
 
   $sql = "SELECT pc.courseId as courseId, name
-  FROM currentParticipantCourses_View pc INNER JOIN courses c ON pc.courseId = c.courseId
+  FROM currentParticipantCourses_View pc INNER JOIN courses_View c ON pc.courseId = c.courseId
   WHERE pc.participantId = :participantId AND NOW() < ADDDATE(c.endDate, INTERVAL 1 MONTH)
   AND NOW() > SUBDATE(c.startDate, INTERVAL 1 MONTH) AND c.alive = 1;";
 
@@ -52,7 +52,7 @@ try {
     $courses = $statement->fetchAll();
   }
 
-  $sql = "SELECT courseId, name FROM courses WHERE teacherId = :participantId
+  $sql = "SELECT courseId, name FROM courses_View WHERE teacherId = :participantId
   AND NOW() < ADDDATE(endDate, INTERVAL 1 MONTH)
   AND NOW() > SUBDATE(startDate, INTERVAL 1 MONTH) AND alive = 1";
   $statement = $connection->prepare($sql);
@@ -107,7 +107,7 @@ try {
       <li><strong>Apodo: </strong><?php echo escape($participant['nickname']);?></li>
       <li><strong>Papeles: </strong><?php echo escape(implode(", ", $roleNames)); ?></li>
       <li><strong>Genero: </strong><?php echo escape($participant['gender']); ?></li>
-      <li><strong>Age: </strong><?php echo escape($participant['age']);?></li>
+      <li><strong>Edad: </strong><?php echo escape($participant['age']);?></li>
       <?php if(hasAdminPermission()) { ?>
       <li><strong>Email: </strong><?php echo escape($participant['email']); ?></li>
       <li><strong>Numero de Teléfono: </strong><?php echo escape($participant['phoneNumber']); ?></li>

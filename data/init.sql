@@ -145,6 +145,7 @@ CREATE TABLE participantQuotas (
 	participantId INT(11) UNSIGNED NOT NULL,
 	quotaId INT(11) UNSIGNED NOT NULL,
 	amountPaid DECIMAL(7,2) DEFAULT 0 NOT NULL,
+	paymentDate DATE NOT NULL,
 	FOREIGN KEY (participantId) REFERENCES participants (participantId),
 	FOREIGN KEY (quotaId) REFERENCES quotas (quotaId)
 ) Engine InnoDB;

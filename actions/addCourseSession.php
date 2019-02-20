@@ -64,28 +64,6 @@ if(isset($_GET['courseId']) && hasPermission($_GET['courseId']) && isset($_POST[
       }
     }
 
-    //check to see if we need to change start and end dates
-    $sql = "SELECT startDate, endDate FROM courses WHERE courseId = :courseId LIMIT 1";
-    $statement = $connection->prepare($sql);
-    $statement->bindParam(':courseId', $courseId, PDO::PARAM_INT);
-    $statement->execute();
-
-    $dates = $statement->fetch(PDO::FETCH_ASSOC);
-
-    if($date < $dates['startDate']) {
-      $sql = "UPDATE courses SET startDate = :startDate WHERE courseId = :courseId";
-      $statement = $connection->prepare($sql);
-      $statement->bindParam(':courseId', $courseId, PDO::PARAM_INT);
-      $statement->bindParam(':startDate', $date, PDO::PARAM_STR);
-      $statement->execute();
-    } else if ($date > $dates['endDate']) {
-      $sql = "UPDATE courses SET endDate = :endDate WHERE courseId = :courseId";
-      $statement = $connection->prepare($sql);
-      $statement->bindParam(':courseId', $courseId, PDO::PARAM_INT);
-      $statement->bindParam(':endDate', $date, PDO::PARAM_STR);
-      $statement->execute();
-    }
-
     $connection->commit();
 
     header("location: /teachers/attendance.php?courseId=" . $courseId);

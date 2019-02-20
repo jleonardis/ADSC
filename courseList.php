@@ -26,7 +26,7 @@ try {
 
   //retrieve all courses
   $sql = "SELECT courseId, name, programId, startDate, endDate
-  FROM courses WHERE alive = 1 ORDER BY endDate";
+  FROM courses_View WHERE alive ORDER BY endDate";
   $statement = $connection->prepare($sql);
   $statement->execute();
   $resultsCourses = $statement->fetchAll();

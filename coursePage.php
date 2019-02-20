@@ -236,7 +236,7 @@ if(hasAdminPermission() || isTechnician()) {
         <button type="button" id="assignmentsButton" class="orange-submit">Ver Tareas</button>
       </a>
       <a href="/teachers/quotas.php?courseId=<?php echo escape($courseId); ?>">
-        <button type="button" id="quotasButton" class="orange-submit">Ver Quotas</button>
+        <button type="button" id="quotasButton" class="orange-submit">Ver Cuotas</button>
       </a>
     </div>
   </div>

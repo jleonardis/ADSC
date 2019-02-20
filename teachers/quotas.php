@@ -17,13 +17,33 @@ if(!hasPermission($courseId)) {
 
 try {
 
-  $sql = "SELECT p.participantId as participantId, firstName, lastName, description,
-  amount, name, amountPaid, participantQuotaId
-    FROM quotas q JOIN participantQuotas pq
-    ON q.quotaId = pq.quotaId JOIN participants p
-    ON pq.participantId = p.participantId JOIN currentParticipantCourses_View pc
-    ON pc.participantId = p.participantId AND pc.courseId = q.courseId
-    WHERE q.courseId = :courseId";
+  $sql = "SELECT par.participantId as participantId, firstName, lastName, description,
+  amount, name, q.quotaId as quotaId, amountPaid
+    FROM
+      (
+        SELECT name, description, amount, quotaId
+        FROM quotas
+        WHERE courseId = :courseId
+          AND alive
+      ) q
+    LEFT JOIN
+      (
+        SELECT p.participantId as participantId, firstName, lastName,
+          amountPaid, quotaId
+        FROM currentParticipantCourses_View pc
+        JOIN participants p
+          ON p.participantId = pc.participantId
+        JOIN
+          (
+            SELECT SUM(amountPaid) as amountPaid, quotaId, participantId
+            FROM participantQuotas
+            GROUP BY quotaId, participantId
+          ) pq
+        ON pq.participantId = p.participantId
+        WHERE pc.courseId = :courseId
+      ) par
+    ON q.quotaId = par.quotaId;";
+
   $statement = $connection->prepare($sql);
   $statement->bindParam(':courseId', $courseId, PDO::PARAM_INT);
   $statement->execute();
@@ -36,6 +56,9 @@ try {
   if($hasQuotas) {
 
     $results = $statement->fetchAll();
+    $hasParticipants = !is_null($results[0]['participantId']);
+
+    $amountsDue = array(); //this is passed to js at end of page
 
     foreach($results as $row) {
       $participantId = $row['participantId'];
@@ -44,15 +67,19 @@ try {
         $quotasTable[$participantId] = array();
         $quotasTable[$participantId]['participantName'] = $participantName;
         $quotasTable[$participantId]['quotas'] = array();
+
+        $amountsDue[$participantId] = array();
       }
       $name = $row['name'];
       if(array_search($name, $quotaNames) === false) {
-        array_push($quotaInfos, array('name' => $name, 'description' => $row['description'], 'amount' => $row['amount']));
+        array_push($quotaInfos, array('name' => $name,
+          'description' => $row['description'], 'amount' => $row['amount'], 'quotaId' => $row['quotaId']));
         array_push($quotaNames, $name);
       }
       $quotasTable[$participantId]['quotas'][$name] = array();
       $quotasTable[$participantId]['quotas'][$name]['amountPaid'] = $row['amountPaid'];
-      $quotasTable[$participantId]['quotas'][$name]['participantQuotaId'] = $row['participantQuotaId'];
+
+      $amountsDue[$participantId][$row['quotaId']] = $row['amount'] - $row['amountPaid'];
     }
   }
 
@@ -69,7 +96,6 @@ include "../templates/header.php";
   <h1>Pagos de Cuotas</h1>
   <?php if($hasQuotas) { ?>
   <div class="scrollDiv assignments">
-    <form method="post" action="/actions/updateQuotas.php?courseId=<?php echo escape($courseId);?>">
       <div class="scrollTableWrapper">
         <table class="scrollTable">
           <thead>
@@ -82,6 +108,7 @@ include "../templates/header.php";
               <?php } ?>
             </tr>
           </thead>
+          <?php if($hasParticipants) { ?>
           <tbody>
             <?php foreach($quotasTable as $participantId => $participant) { ?>
               <tr>
@@ -91,15 +118,36 @@ include "../templates/header.php";
                   <td <?php if ($quotaInfo['amountPaid'] === $quotaName['amount']) {?>
                     style="background-color: #3c9935; color: white"
                   <?php } ?>>
-                    Q <input type="number" max="<?php echo escape($quotaName['amount']); ?>" name="<?php echo escape($quotaInfo['participantQuotaId']); ?>" value ="<?php echo escape($quotaInfo['amountPaid']);?>"></td>
+                    Q<?php echo escape($quotaInfo['amountPaid']);?></td>
                 <?php } ?>
               </tr>
             <?php } ?>
           </tbody>
+        <?php } ?>
         </table>
       </div>
-      <input type="submit" name="submit" id="submit" class="orange-submit" value="Actualizar">
-    </form>
+      <form method="post" class="submit-form" action="/actions/makeQuotaPayment.php?courseId=<?php echo escape($courseId); ?>">
+        <h2>Realizar Pago</h2>
+        <label for="quotaId">Cuota: </label>
+        <select name="quotaId" id="quotaId" required>
+          <option value="">--Elige Cuota--</option>
+          <?php foreach($quotaInfos as $quota) { ?>
+            <option value="<?php echo escape($quota['quotaId']); ?>"><?php echo escape($quota['name']); ?></option>
+          <?php } ?>
+        </select><br>
+        <label for="participantId">Participante: </label>
+        <select name="participantId" id="participantId" required>
+          <option value="">--Elige Cuota--</option>
+          <?php foreach($quotasTable as $participantId => $participant) { ?>
+            <option value="<?php echo escape($participantId); ?>"><?php echo escape($participant['participantName']);?></option>
+          <?php } ?>
+        </select><br>
+        <label for="amountToPay">Monto: </label>
+        <input type="number" name="amountToPay" id="amountToPay" required><br>
+        <label for="quotaDate">Fecha: </label>
+        <input type="date" name="quotaDate" id="quotaDate" required>
+        <input type="submit" class="orange-submit" value="Agregar">
+      </form>
   </div>
 <?php }
 else { ?>
@@ -114,10 +162,12 @@ else { ?>
       <input type="number" id="amount" name="amount" required><br>
       <label for="description">Descripción: </label>
       <textarea id="description" name="description" maxlength="255"></textarea><br>
-      <input type="submit" name="submit" id="submit" class="orange-submit" value="agregar">
+      <input type="submit" class="orange-submit" value="agregar">
     </form>
   </div>
 </main>
 
-<?php include "../templates/sidebar.php";
-include "../templates/footer.php"; ?>
+<?php include "../templates/sidebar.php"; ?>
+<script>var amountsDue = <?php echo json_encode($amountsDue); ?></script>
+<script src="/js/quotasPage.js"></script>
+<?php include "../templates/footer.php"; ?>

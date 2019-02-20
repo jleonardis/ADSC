@@ -2,7 +2,7 @@
 
 require "../common.php";
 
-if(isset($_GET['courseId']) && isset($_POST['submit']) && hasPermission($_GET['courseId'])) {
+if(isset($_GET['courseId']) && hasPermission($_GET['courseId'])) {
 
   $courseId = $_GET['courseId'];
 

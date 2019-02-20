@@ -4,7 +4,7 @@ require "../common.php";
 
 checkLogIn();
 
-if(isset($_GET) && isset($_GET['courseId'])) {
+if(isset($_GET['courseId'])) {
   $courseId = $_GET['courseId'];
 }
 else {

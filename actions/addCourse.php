@@ -134,13 +134,10 @@ if(isset($_POST['submit']) && hasPermission(0, $_POST['program'])) {
       WHERE selected_date BETWEEN :startDate AND :endDate
         AND DAYOFWEEK(selected_date) IN (%s);", implode(", ", $shiftedCourseDays));
 
-    $startDate = $_POST['startDate'];
-    $endDate = $_POST['endDate'];
-
     $statement = $connection->prepare($sql);
     $statement->bindParam(':courseId', $courseId);
-    $statement->bindParam(':startDate', $startDate);
-    $statement->bindParam(':endDate', $endDate);
+    $statement->bindParam(':startDate', $_POST['startDate']);
+    $statement->bindParam(':endDate', $_POST['endDate']);
 
     $statement->execute();
 

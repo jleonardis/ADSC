@@ -13,8 +13,8 @@ if(isset($_GET['courseId'])) {
       'courseId' => $courseId,
       'name' => $_POST['courseName'],
       'description' => $_POST['description'],
-      'startDate' => $_POST['startDate'],
-      'endDate' => $_POST['endDate'],
+      //'startDate' => $_POST['startDate'],
+      //'endDate' => $_POST['endDate'],
       'teacherId' => $teacherId
     );
 
@@ -54,17 +54,20 @@ if(isset($_GET['courseId'])) {
       }
 
       //add course sessions with this cool sql query
-      $sql = "SELECT * FROM
-        (
-          SELECT ADDDATE(SUBDATE(CURDATE(), 1))
-        )
-(select adddate(SUBDATE(CURDATE(), 100), t3.i*1000 + t2.i*100 + t1.i*10 + t0.i) selected_date from
- (select 0 i union select 1 union select 2 union select 3 union select 4 union select 5 union select 6 union select 7 union select 8 union select 9) t0,
- (select 0 i union select 1 union select 2 union select 3 union select 4 union select 5 union select 6 union select 7 union select 8 union select 9) t1,
- (select 0 i union select 1 union select 2 union select 3 union select 4 union select 5 union select 6 union select 7 union select 8 union select 9) t2,
- (select 0 i union select 1 union select 2 union select 3 union select 4 union select 5 union select 6 union select 7 union select 8 union select 9) t3) v
- where selected_date between '2019-02-10' and '2030-03-10'
-	AND dayofweek(selected_date) IN (2, 4, 6);"
+      // $sql = "INSERT INTO courseSessions (courseId, sessionDate)
+      //   SELECT :courseId, selected_date
+      //   FROM
+      //       (
+      //         SELECT ADDDATE(SUBDATE(CURDATE(), 7 * 365), thousands.i*1000 + hundreds.i*100 + tens.i*10 + ones.i)
+      //          AS selected_date
+      //         FROM (SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) ones,
+      //               (SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) tens,
+      //               (SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) hundreds,
+      //               (SELECT 0 i UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) thousands) t
+      //         WHERE selected_date BETWEEN :startDate AND :endDate
+      //           AND DAY_OF_WEEK(selected_date) IN ()
+      //       ) AS course_dates
+          
 
 
       $connection->commit();

@@ -12,7 +12,7 @@
       <ul>
       <?php
       $sql = "SELECT courseId, name FROM courses WHERE teacherId = :participantId
-      AND alive = 1;";
+      AND alive;";
       $statement = $connection->prepare($sql);
       $statement->bindParam(':participantId', $_SESSION['participantId'], PDO::PARAM_INT);
       $statement->execute();
