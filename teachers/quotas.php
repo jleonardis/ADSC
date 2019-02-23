@@ -93,6 +93,7 @@ include "../templates/header.php";
 ?>
 
 <main>
+  <div class="back-button-icon"><a href="/coursePage.php?courseId=<?php echo escape($courseId);?>"><img src="/images/back-icon.png"></a></div>
   <h1>Pagos de Cuotas</h1>
   <?php if($hasQuotas) { ?>
   <div class="scrollDiv assignments">
@@ -104,7 +105,9 @@ include "../templates/header.php";
               <?php foreach($quotaInfos as $name) { ?>
                 <th<?php if ($name['description']) {?> title="<?php echo escape($name['description']); ?>"
               <?php } ?>><span><?php echo escape($name['name']); ?></span><br>
-                <span>Monto: <?php echo escape($name['amount']);?></span></th>
+                <span>Monto: <?php echo escape($name['amount']);?></span>
+                <a href="/teachers/editQuota.php?quotaId=<?php echo escape($name['quotaId']); ?>&courseId=<?php echo escape($courseId); ?>">
+                  <button style="color: red;">Editar</button></a></th>
               <?php } ?>
             </tr>
           </thead>
@@ -137,7 +140,7 @@ include "../templates/header.php";
         </select><br>
         <label for="participantId">Participante: </label>
         <select name="participantId" id="participantId" required>
-          <option value="">--Elige Cuota--</option>
+          <option value="">--Elige Participante--</option>
           <?php foreach($quotasTable as $participantId => $participant) { ?>
             <option value="<?php echo escape($participantId); ?>"><?php echo escape($participant['participantName']);?></option>
           <?php } ?>
@@ -145,8 +148,12 @@ include "../templates/header.php";
         <label for="amountToPay">Monto: </label>
         <input type="number" name="amountToPay" id="amountToPay" required><br>
         <label for="quotaDate">Fecha: </label>
-        <input type="date" name="quotaDate" id="quotaDate" required>
-        <input type="submit" class="orange-submit" value="Agregar">
+        <input type="date" name="quotaDate" id="quotaDate" required><br>
+        <?php if(hasAdminPermission()) { ?>
+          <label for="descuento">Es descuento?: </label>
+          <input type="checkbox" value="discount" name="discount" id="discount"><br>
+        <?php } ?>
+        <input type="submit" class="orange-submit" value="Realizar">
       </form>
   </div>
 <?php }

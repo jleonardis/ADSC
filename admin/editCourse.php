@@ -110,7 +110,7 @@ if(isset($_GET['courseId'])) {
        <?php } ?>
      </div>
    <input name="submit" type="submit" value="Actualizar" class="orange-submit">
-   <button id="cancelCourse" type="button" class="orange-submit" data-href="/actions/cancelCourse.php?courseId=<?php echo escape($courseId)?>">Eliminar Curso</button>
+   <button id="cancelCourse" type="button" class="orange-submit delete-button" data-href="/actions/cancelCourse.php?courseId=<?php echo escape($courseId)?>">Eliminar Curso</button>
  </form>
 </div>
 </main>

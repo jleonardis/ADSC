@@ -154,3 +154,15 @@ CREATE VIEW currentParticipantCourses_View AS
 	SELECT *
 	FROM participantCourses
 	WHERE dropOutDate IS NULL;
+
+CREATE VIEW courseStartDateEndDate_View AS
+	SELECT courseId, MIN(sessionDate) AS startDate, MAX(sessionDate) AS endDate
+	FROM courseSessions
+	GROUP BY courseId;
+
+CREATE VIEW courses_View AS
+	SELECT courseId, programId, teacherId, name, description, daysOfWeek,
+		cs.startDate as startDate, cs.endDate as endDate, alive
+	FROM courses c
+	LEFT JOIN courseSessions cs
+	ON c.courseId = cs.courseId;

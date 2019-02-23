@@ -116,10 +116,24 @@ if(isset($_POST['submit']) && hasPermission(0, $_POST['program'])) {
   //     $statement->execute();
   //   }
 
-  $shiftedCourseDays = array_map(function($elem) {
-    return $elem + 1;
-  }, $courseDays);
-  try {
+  $startDate = $_POST['startDate'];
+  $endDate = $_POST['endDate'];
+
+  if(count($courseDays) === 0){
+    $sql =  "INSERT INTO courseSessions (courseId, sessionDate) VALUES
+            (:courseId, :startDate)";
+    if($startDate !== $endDate) {
+      $sql .= ", (:courseId, :endDate);";
+    }
+    else {
+      $sql .= ";";
+    }
+  }
+  else {
+    $shiftedCourseDays = array_map(function($elem) {
+      return $elem + 1;
+    }, $courseDays);
+
     $sql = sprintf("INSERT INTO courseSessions (courseId, sessionDate)
       SELECT :courseId, selected_date
       FROM
@@ -134,10 +148,15 @@ if(isset($_POST['submit']) && hasPermission(0, $_POST['program'])) {
       WHERE selected_date BETWEEN :startDate AND :endDate
         AND DAYOFWEEK(selected_date) IN (%s);", implode(", ", $shiftedCourseDays));
 
+  }
+
+  try {
     $statement = $connection->prepare($sql);
     $statement->bindParam(':courseId', $courseId);
-    $statement->bindParam(':startDate', $_POST['startDate']);
-    $statement->bindParam(':endDate', $_POST['endDate']);
+    $statement->bindParam(':startDate', $startDate);
+    if(!(count($courseDays) === 0 && $startDate === $endDate)){
+      $statement->bindParam(':endDate', $endDate);
+    }
 
     $statement->execute();
 

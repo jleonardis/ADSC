@@ -83,7 +83,7 @@ include "../templates/header.php";
 ?>
 
 <main>
-  <div id="back-button"><img src="/images/back-icon.png"></div>
+  <div class="back-button-icon" id="back-button"><img src="/images/back-icon.png"></div>
   <h1>Tareas</h1>
   <div class="scrollDiv assignments">
     <form id="main-form" method="post" action="/actions/updateGrades.php?courseId=<?php echo escape($courseId);?>">
@@ -119,7 +119,7 @@ include "../templates/header.php";
         <?php } ?>
         </table>
       </div>
-      <input type="submit" class="orange-submit" value="Actualizar">
+      <input type="submit" class="orange-submit" value="Guardar Cambios">
     <?php } else {
       echo "este curso no tiene ninguna tarea asignada";
     } ?>

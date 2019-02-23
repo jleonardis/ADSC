@@ -21,14 +21,13 @@ if(!hasPermission($courseId)) {
 try {
 
   $connection->beginTransaction();
-
   $insertArray = array(
     'participantId' => $_POST['participantId'],
     'quotaId' => $_POST['quotaId'],
     'paymentDate' => $_POST['quotaDate'],
-    'amountPaid' => $_POST['amountToPay']
+    'amountPaid' => $_POST['amountToPay'],
+    'discount' => isset($_POST['discount'])?1:0
   );
-  echo var_dump($insertArray);
   $sql = makeInsertQuery($insertArray, 'participantQuotas');
   $statement = $connection->prepare($sql);
   $statement->execute($insertArray);

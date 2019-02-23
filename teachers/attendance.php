@@ -85,7 +85,7 @@ include "../templates/header.php";
 
  ?>
  <main>
-   <div id="back-button"><img src="/images/back-icon.png"></div>
+   <div class="back-button-icon" id="back-button"><img src="/images/back-icon.png"></div>
    <h1>Horario y Asistencia</h1>
    <div id="attendance" class="scrollDiv">
      <form id="main-form" method="post" action="/actions/updateAttendance.php?courseId=<?php echo escape($courseId);?>">
@@ -129,7 +129,7 @@ include "../templates/header.php";
          </table>
        </div>
        <?php if($hasParticipants) { ?>
-       <input type="submit" class="orange-submit" value="Actualizar Asistencia">
+       <input type="submit" class="orange-submit" value="Guardar Cambios">
      <?php } ?>
      </form>
    </div>

@@ -34,8 +34,10 @@ if(isset($_POST['submit'])) {
     }
 
     $connection->commit();
+
     header("location: /coursePage.php?courseId=" . escape($courseId) . "&assignmentUpdated=1");
     die();
+
 
   } catch(PDOException $error) {
     $connection->rollBack();

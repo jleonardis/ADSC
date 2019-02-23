@@ -92,10 +92,10 @@ td, th {
   text-align: left;
 }
 
-#back-button :hover {
+.back-button-icon :hover {
   cursor: pointer;
 }
-#back-button img {
+.back-button-icon img {
   width: 30px;
 }
 
@@ -283,11 +283,7 @@ h1 {
 .submit-form #searchBox {
   float: none;
 }
-.submit-form #cancelCourse {
-  float: right;
-  clear: both;
-}
-.submit-form #removeAssignment {
+.submit-form .delete-button {
   float: right;
   clear: both;
 }

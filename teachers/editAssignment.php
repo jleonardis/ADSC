@@ -50,7 +50,7 @@ try
       <input type="text" name="description" id="description"
       value="<?php echo escape($assignment['description']);?>"><br>
       <input type="submit" value="Actualizar" class="orange-submit">
-      <button id="removeAssignment" type="button" class="orange-submit" id="removeAssignment"
+      <button id="removeAssignment" type="button" class="orange-submit delete-button"
       data-href="/actions/removeAssignment.php?assignmentId=<?php echo escape($assignmentId) ?>&courseId=<?php echo escape($courseId); ?>">
       Eliminar</button>
     </form>
