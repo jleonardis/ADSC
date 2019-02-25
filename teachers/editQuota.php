@@ -22,10 +22,14 @@ if(!hasPermission($courseId)) {
 try
 {
   $sql = "SELECT name, amount, description, pq.maxPayment as maxPayment
-  FROM quotas q
-  LEFT JOIN
+  FROM
     (
-      SELECT MAX(amountPaid) as maxPayment
+      SELECT *
+      FROM quotas
+      WHERE quotaId = :quotaId
+    ) q,
+    (
+      SELECT IFNULL(MAX(amountPaid), 0) as maxPayment
       FROM
       (
         SELECT SUM(amountPaid) as amountPaid
@@ -33,10 +37,7 @@ try
         WHERE quotaId = :quotaId
         GROUP BY quotaId, participantId
       ) sums
-    ) pq
-  ON 1 = 1
-  WHERE q.quotaId = :quotaId";
-
+    ) pq;";
   $statement = $connection->prepare($sql);
   $statement->bindParam(':quotaId', $quotaId, PDO::PARAM_INT);
   $statement->execute();
@@ -64,7 +65,7 @@ try
       <input type="text" name="description" id="description"
       value="<?php echo escape($quota['description']);?>"><br>
       <label for="description">Monto: </label>
-      <input type="number" name="amount" id="description" min=<?php echo escape($quota['maxPayment']); ?>
+      <input type="number" name="amount" id="amount" min=<?php echo escape($quota['maxPayment']); ?>
       value="<?php echo escape($quota['amount']);?>"><br>
       <input type="submit" value="Actualizar" class="orange-submit">
       <?php if($quota['maxPayment'] == 0) { ?>

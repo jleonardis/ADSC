@@ -69,7 +69,7 @@ if($_POST && isset($_POST['submit'])) {
           die();
         }
         else {
-          echo "you entered the wrong password"; //TRANSLATE!!!
+          echo "contraseña incorrecta"; //TRANSLATE!!!
         }
       }
 

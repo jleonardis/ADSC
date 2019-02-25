@@ -50,8 +50,12 @@ if(isset($_GET['participantAdded'])) {
 	<input class="names" type="text" name="lastName" id="lastName" required><br>
   <label for="nickname">Apodo: </label>
   <input class="names" type="text" id="nickname" name="nickname"><br>
+  <?php if(isAdministrator()) { ?>
+  <label for="noDPI">No tiene DPI Guatemalteco?: </label>
+  <input type="checkbox" name="noDPI" id="noDPI"><br>
+<?php } ?>
   <label for="dpi">DPI: </label>
-  <input type="text" id="dpi" name="dpi" required><br>
+  <input type="text" id="dpi" name="dpi"><br>
   <label for="gender" required>Genero: </label>
   <select id="gender" name="gender" required>
 		<option value="">--Elige género--</option>

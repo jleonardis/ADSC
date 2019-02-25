@@ -18,31 +18,28 @@ if(!hasPermission($courseId)) {
 try {
 
   $sql = "SELECT par.participantId as participantId, firstName, lastName, description,
-  amount, name, q.quotaId as quotaId, amountPaid
+  amount, name, q.quotaId as quotaId, hasDPI, IFNULL(pq.amountPaid, 0) as amountPaid
     FROM
       (
-        SELECT name, description, amount, quotaId
+        SELECT name, description, amount, quotaId, courseId
         FROM quotas
         WHERE courseId = :courseId
           AND alive
       ) q
     LEFT JOIN
       (
-        SELECT p.participantId as participantId, firstName, lastName,
-          amountPaid, quotaId
-        FROM currentParticipantCourses_View pc
-        JOIN participants p
-          ON p.participantId = pc.participantId
-        JOIN
-          (
-            SELECT SUM(amountPaid) as amountPaid, quotaId, participantId
-            FROM participantQuotas
-            GROUP BY quotaId, participantId
-          ) pq
-        ON pq.participantId = p.participantId
-        WHERE pc.courseId = :courseId
+        SELECT participantId, firstName, lastName, courseId, hasDPI
+        FROM currentParticipantCourses_View
+        WHERE courseId = :courseId
       ) par
-    ON q.quotaId = par.quotaId;";
+    ON par.courseId = q.courseId
+    LEFT JOIN
+      (
+        SELECT SUM(amountPaid) as amountPaid, quotaId, participantId
+        FROM participantQuotas
+        GROUP BY quotaId, participantId
+      ) pq
+    ON pq.quotaId = q.quotaId AND pq.participantId = par.participantId;";
 
   $statement = $connection->prepare($sql);
   $statement->bindParam(':courseId', $courseId, PDO::PARAM_INT);
@@ -67,7 +64,7 @@ try {
         $quotasTable[$participantId] = array();
         $quotasTable[$participantId]['participantName'] = $participantName;
         $quotasTable[$participantId]['quotas'] = array();
-
+        $quotasTable[$participantId]['hasDPI'] = $row['hasDPI'];
         $amountsDue[$participantId] = array();
       }
       $name = $row['name'];
@@ -107,7 +104,7 @@ include "../templates/header.php";
               <?php } ?>><span><?php echo escape($name['name']); ?></span><br>
                 <span>Monto: <?php echo escape($name['amount']);?></span>
                 <a href="/teachers/editQuota.php?quotaId=<?php echo escape($name['quotaId']); ?>&courseId=<?php echo escape($courseId); ?>">
-                  <button style="color: red;">Editar</button></a></th>
+                  <button style="color: red;">Editar Cuota</button></a></th>
               <?php } ?>
             </tr>
           </thead>
@@ -121,7 +118,11 @@ include "../templates/header.php";
                   <td <?php if ($quotaInfo['amountPaid'] === $quotaName['amount']) {?>
                     style="background-color: #3c9935; color: white"
                   <?php } ?>>
+                  <?php if($participant['hasDPI']) {?>
                     Q<?php echo escape($quotaInfo['amountPaid']);?></td>
+                  <?php } else { ?>
+                    <span>Falta DPI</span>
+                  <?php } ?>
                 <?php } ?>
               </tr>
             <?php } ?>
@@ -142,7 +143,9 @@ include "../templates/header.php";
         <select name="participantId" id="participantId" required>
           <option value="">--Elige Participante--</option>
           <?php foreach($quotasTable as $participantId => $participant) { ?>
+            <?php if($participant['hasDPI']) { ?>
             <option value="<?php echo escape($participantId); ?>"><?php echo escape($participant['participantName']);?></option>
+          <?php } ?>
           <?php } ?>
         </select><br>
         <label for="amountToPay">Monto: </label>

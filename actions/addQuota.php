@@ -21,16 +21,16 @@ if(isset($_GET['courseId']) && hasPermission($_GET['courseId'])) {
     $statement = $connection->prepare($sql);
     $statement->execute($newQuota);
 
-    $quotaId = $connection->lastInsertId();
-
-    $sql = "INSERT INTO participantQuotas (quotaId, participantId)
-    SELECT :quotaId, participantId
-    FROM currentParticipantCourses_View
-    WHERE courseId = :courseId;";
-    $statement = $connection->prepare($sql);
-    $statement->bindParam(':quotaId', $quotaId, PDO::PARAM_INT);
-    $statement->bindParam(':courseId', $courseId, PDO::PARAM_INT);
-    $statement->execute();
+    // $quotaId = $connection->lastInsertId();
+    //
+    // $sql = "INSERT INTO participantQuotas (quotaId, participantId)
+    // SELECT :quotaId, participantId
+    // FROM currentParticipantCourses_View
+    // WHERE courseId = :courseId;";
+    // $statement = $connection->prepare($sql);
+    // $statement->bindParam(':quotaId', $quotaId, PDO::PARAM_INT);
+    // $statement->bindParam(':courseId', $courseId, PDO::PARAM_INT);
+    // $statement->execute();
 
     $connection->commit();
     header("location: /teachers/quotas.php?courseId=" . $courseId . "&quotaAdded=1");

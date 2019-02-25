@@ -20,7 +20,7 @@ if(isset($_POST['submit']) && hasAdminPermission()) {
     'firstName' => $_POST['firstName'],
     'lastName' => $_POST['lastName'],
     'nickname' => $_POST['nickname'],
-    'dpi' => preg_replace('/[^\da-z]/i', "", $_POST['dpi']), //this to remove all hyphens and spaces
+    'dpi' => isset($_POST['dpi'])  && $_POST['dpi'] !== "" ? preg_replace('/[^\da-z]/i', "", $_POST['dpi']) : null, //this to remove all hyphens and spaces
     'gender' => postTernary('gender'),
     'email'=> postTernary('email'),
     'phoneNumber' => (isset($_POST['phoneNumber']) && $_POST['phoneNumber']?preg_replace("/[^0-9]/", "", $_POST['phoneNumber']):NULL),

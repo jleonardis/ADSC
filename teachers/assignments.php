@@ -18,7 +18,7 @@ if(!hasPermission($courseId)) {
 try {
 
   $sql = "SELECT par.participantId as participantId, firstName, lastName,
-      name, description, grade, gradeId, a.assignmentId as assignmentId
+      name, description, grade, gradeId, hasDPI, a.assignmentId as assignmentId
     FROM
       (
         SELECT name, description, assignmentId
@@ -28,13 +28,11 @@ try {
       ) a
     LEFT JOIN
       (
-        SELECT p.participantId as participantId, firstName, lastName,
-          grade, gradeId, assignmentId
+        SELECT pc.participantId as participantId, firstName, lastName,
+          grade, gradeId, assignmentId, hasDPI
         FROM currentParticipantCourses_View pc
-        JOIN participants p
-          ON p.participantId = pc.participantId
         JOIN grades g
-          ON g.participantId = p.participantId
+          ON g.participantId = pc.participantId
         WHERE pc.courseId = :courseId
       ) par
     ON par.assignmentId = a.assignmentId;";
@@ -58,6 +56,7 @@ try {
       if(!isset($assignmentsTable[$participantId])) {
         $assignmentsTable[$participantId] = array();
         $assignmentsTable[$participantId]['participantName'] = $participantName;
+        $assignmentsTable[$participantId]['hasDPI'] = $row['hasDPI'];
         $assignmentsTable[$participantId]['assignments'] = array();
       }
       $name = $row['name'];
@@ -97,7 +96,7 @@ include "../templates/header.php";
               <?php } ?>
               <?php foreach($assignmentInfos as $name) { ?>
                 <th title="<?php echo escape($name['description']); ?>"><span style="text-align: center;"><?php echo escape($name['name']); ?></span><br>
-                <input type="submit" value="Editar" formaction="/actions/updateGrades.php?assignmentId=<?php echo escape($name['assignmentId']); ?>&courseId=<?php echo escape($courseId); ?>&editRedirect=1"
+                <input type="submit" value="Editar Tarea" formaction="/actions/updateGrades.php?assignmentId=<?php echo escape($name['assignmentId']); ?>&courseId=<?php echo escape($courseId); ?>&editRedirect=1"
                    style="color: red;"></th>
 
               <?php } ?>
@@ -111,7 +110,12 @@ include "../templates/header.php";
                 <?php foreach($assignmentInfos as $assignmentName) {
                   $assignmentInfo = $participant['assignments'][$assignmentName['name']];?>
                   <td>
-                    <input type="number" max="100" name="<?php echo escape($assignmentInfo['gradeId']); ?>" value ="<?php echo escape($assignmentInfo['grade']);?>"></td>
+                    <?php if($participant['hasDPI']) { ?>
+                    <input type="number" max="100" name="<?php echo escape($assignmentInfo['gradeId']); ?>"
+                    value ="<?php echo escape($assignmentInfo['grade']);?>">
+                  <?php } else {?>
+                  <span>Falta DPI</span>
+                <?php } ?></td>
                 <?php } ?>
               </tr>
             <?php } ?>

@@ -20,7 +20,6 @@ if(isset($_POST['submit']) && hasPermission(0, $_POST['program'])) {
   $courseDayNames = array();
   $startDay = strtolower(date('l', strtotime($new_course['startDate']))); //gets the day of the week of the start date
   $daysOfWeek = array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday');
-  $spanishDaysOfWeek = array('Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sabado');
 
   //manually go through the days of the days of the week
   //add any days the class will fall on and also record the integer value for
@@ -30,14 +29,14 @@ if(isset($_POST['submit']) && hasPermission(0, $_POST['program'])) {
   foreach($daysOfWeek as $key => $value) {
     if(isset($_POST[$value])) {
       array_push($courseDays, $key);
-      array_push($courseDayNames, $spanishDaysOfWeek[$key]);
+      array_push($courseDayNames, $value);
     }
     if($startDay === $value) {
       $startInt = $key;
     }
   }
 
-  $new_course['daysOfWeek'] = implode(", ", $courseDayNames);
+  $new_course['daysOfWeek'] = implode(",", $courseDayNames);
 
   $sql = makeInsertQuery($new_course, 'courses');
 

@@ -33,16 +33,24 @@
 
     $('#dpi').change(function() {
       //trim all white space
-      var dpi = $('#dpi').val();
+      var dpi = $('#dpi').val().replace(/[^\d[a-z]/gi, '');
 
-      if(dpi) {
+      if(dpi !== null) {
         names.forEach(function(elem) {
           if(elem['dpi'] === dpi) {
             if(window.confirm('hay otro participante con ese numero de DPI. Quisieras ver su perfil?')){
               window.open('/participantPage.php?participantId=' + elem['participantId']);
             }
           }
-        })
+        });
+        var dpiCheckbox = document.getElementById('noDPI');
+        if(!dpiCheckbox || !(dpiCheckBox.checked)){
+          if(!(/^\d{15}$/.test(dpi))) {
+            alert("ese DPI no es valido");
+            document.getElementById('dpi').value = '';
+          }
+        }
+
       }
     })
 

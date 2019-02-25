@@ -35,6 +35,13 @@ if(isset($_GET['participantId'])) {
 
   $participant = $result;
 
+  $sql = "SELECT participantId, firstName, lastName, nickname, dpi FROM participants;";
+  $statement = $connection->prepare($sql);
+  $statement->execute();
+
+  $resultsParticipants = $statement->fetchAll();
+
+
   //switch this out at some point soon
   $sql = "SELECT EXISTS (SELECT 1 FROM users WHERE participantId = :participantId
   LIMIT 1) AS result;";
@@ -55,11 +62,15 @@ if(isset($_GET['participantId'])) {
 <h2>Editar Participante: <?php echo escape($participant['firstName'] . ' ' . $participant['lastName']);?></h2>
  <form form class="submit-form" enctype="multipart/form-data" method="post" action="../actions/updateParticipant.php?participantId=<?php echo escape($participantId); ?>">
    <label for="firstName">Nombre: </label>
-   <input type="text" name="firstName" id="firstName" value="<?php echo escape($participant['firstName']);?>"><br>
+   <input type="text" name="firstName" id="firstName" class="names" value="<?php echo escape($participant['firstName']);?>"><br>
    <label for="lastName">Apellido: </label>
-   <input type="text" name="lastName" id="lastName" value="<?php echo escape($participant['lastName']);?>"><br>
+   <input type="text" name="lastName" id="lastName" class="names" value="<?php echo escape($participant['lastName']);?>"><br>
    <label for="nickname">Apodo: </label>
-   <input type="text" id="nickname" name="nickname" value="<?php echo escape($participant['nickname']);?>"><br>
+   <input type="text" id="nickname" name="nickname" class="names" value="<?php echo escape($participant['nickname']);?>"><br>
+   <?php if(isAdministrator()) { ?>
+   <label for="noDPI">No tiene DPI Guatemalteco?: </label>
+   <input type="checkbox" name="noDPI" id="noDPI"><br>
+ <?php } ?>
    <label for="dpi">DPI: </label>
    <input type="text" id="dpi" name="dpi" value="<?php echo escape($participant['dpi']); ?>"><br>
    <label for="age">Fecha de Nacimiento: </label>
@@ -95,6 +106,8 @@ if(isset($_GET['participantId'])) {
    <a href="/user/updatePassword.php?participantId=<?php echo escape($participantId); ?>"><button class="orange-submit">Cambiar Contraseña</button></a>
  <?php } ?>
 </main>
-<?php
-include "../templates/sidebar.php";
-include "../templates/footer.php"; ?>
+<?php include "../templates/sidebar.php";?>
+<script>var names = <?php echo json_encode($resultsParticipants);?>;</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="/js/registration.js"></script>
+<?php include "../templates/footer.php"; ?>

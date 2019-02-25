@@ -50,6 +50,11 @@ try {
   }
 
   $course = $statement->fetch(PDO::FETCH_ASSOC);
+
+  $daysOfWeek = $course['daysOfWeek'];
+  $daysOfWeek = translateToSpanish($daysOfWeek);
+  $daysOfWeek = str_replace(',', ', ', $daysOfWeek);
+
   $hasDates = !IS_NULL($course['startDate']);
 
   if($course['teacherId']) {
@@ -64,9 +69,10 @@ try {
 
   }
 
-  $sql = "SELECT p.participantId as participantId, firstName, lastName, gender
-  FROM participants p JOIN currentParticipantCourses_View pc
-  ON p.participantId = pc.participantId WHERE pc.courseId = :courseId;";
+  $sql = "SELECT participantId, firstName, lastName, gender, hasDPI
+  FROM currentParticipantCourses_View
+  WHERE courseId = :courseId
+  ORDER BY hasDPI DESC, lastName ASC;";
   $statement = $connection->prepare($sql);
   $statement->bindParam(':courseId', $courseId, PDO::PARAM_INT);
   $statement->execute();
@@ -74,7 +80,7 @@ try {
   $resultsCourseParticipants = $statement->fetchAll();
 
 
-  $sql = "SELECT pc.participantId as participantId, attended
+  $sql = "SELECT pc.participantId as participantId, attended, hasDPI
   FROM attendance a JOIN currentParticipantCourses_View pc
   ON a.participantId = pc.participantId JOIN courseSessions cs
   ON a.sessionId = cs.sessionId AND pc.courseId = cs.courseId
@@ -95,7 +101,8 @@ try {
       if(!isset($attendanceScores[$parId])){
         $attendanceScores[$parId] = array(
           'attended' => 0,
-          'total' => 0);
+          'total' => 0,
+          'hasDPI' => $row['hasDPI']);
       }
       if($row['attended'] === 'present') {
         $attendanceScores[$parId]['attended']++;
@@ -106,7 +113,7 @@ try {
     }
   }
 
-  $sql = "SELECT p.participantId as participantId, grade
+  $sql = "SELECT p.participantId as participantId, grade, hasDPI
   FROM grades g JOIN assignments a
   ON a.assignmentId = g.assignmentId JOIN currentParticipantCourses_View p
   ON g.participantId = p.participantId AND p.courseId = a.courseId
@@ -126,7 +133,8 @@ try {
       if(!isset($assignmentsScores[$parId])){
         $assignmentsScores[$parId] = array(
           'score' => 0,
-          'total' => 0);
+          'total' => 0,
+          'hasDPI' => $row['hasDPI']);
       }
       if($row['grade']) {
         $assignmentsScores[$parId]['score'] += $row['grade'];
@@ -173,7 +181,8 @@ if(hasAdminPermission() || isTechnician()) {
 </div>
 <?php if($hasDates) { ?>
 <div>
-  <p><?php echo escape($course['daysOfWeek']); ?><br><?php echo escape(date('d/m/Y', strtotime($course['startDate'])) . "   hasta   " . date('d/m/Y', strtotime($course['endDate']))); ?></p>
+  <p><?php
+  echo escape($daysOfWeek); ?><p><br><?php echo escape(date('d/m/Y', strtotime($course['startDate'])) . "   hasta   " . date('d/m/Y', strtotime($course['endDate']))); ?></p>
 </div>
 <?php } ?>
 <?php if (isset($teacher)) { ?>
@@ -204,13 +213,13 @@ if(hasAdminPermission() || isTechnician()) {
       <td><?php echo escape($participant['firstName']);?></td>
       <td><?php echo escape($participant['lastName']);?></td>
       <td><?php echo escape($participant['gender']);?></td>
-      <td><?php if(count($attendanceScores) === 0 || $attendanceScores[$participant['participantId']]['total'] === 0) {
+      <td><?php if(count($attendanceScores) === 0 || $attendanceScores[$participant['participantId']]['total'] === 0 || !$attendanceScores[$participant['participantId']]['hasDPI']) {
         echo "-";
       }
       else {
         echo escape(round((($attendanceScores[$participant['participantId']]['attended']/$attendanceScores[$participant['participantId']]['total']) * 100)) . "%");
       }?></td>
-      <td><?php if(count($assignmentsScores) === 0 || $assignmentsScores[$participant['participantId']]['total'] === 0) {
+      <td><?php if(count($assignmentsScores) === 0 || $assignmentsScores[$participant['participantId']]['total'] === 0 || !$attendanceScores[$participant['participantId']]['hasDPI']) {
         echo "-";
       }
       else {
@@ -243,9 +252,9 @@ if(hasAdminPermission() || isTechnician()) {
   <?php if (hasAdminPermission() || isTechnician()){ ?>
   <div id="addParticipants">
   <h2>Agregar Participantes</h2>
- <input class="orange-search" type="text" id="searchBox">
- <button class="orange-submit" id="search">Buscar</button>
  <form method="post" action="actions/addParticipantsToCourse.php?courseId=<?php echo escape($courseId); ?>">
+   <input class="orange-search" type="text" id="searchBox">
+   <button type="button" class="orange-submit" id="search">Buscar</button>
    <input class="orange-submit addParticipants" type="submit" name="submit" id="submit" value="Agregar Participantes" hidden>
     <table id="addParticipantTable" class="search-group">
         <thead>

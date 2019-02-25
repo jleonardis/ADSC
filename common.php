@@ -244,6 +244,24 @@ function getAge($dob) {
   return $age;
 }
 
+function translateToSpanish($str) {
+  $translationArray = array(
+    'Sunday' => 'Domingo',
+    'Monday' => 'Lunes',
+    'Tuesday' => 'Martes',
+    'Wednesday' => 'Miércoles',
+    'Thursday' => 'Jueves',
+    'Friday' => 'Viernes',
+    'Saturday' => 'Sabado'
+  );
+
+  foreach($translationArray as $english => $spanish) {
+    $str = str_replace($english, $spanish, $str);
+  }
+
+  return $str;
+}
+
 //DATABASE FUNCTIONS
 function makeInsertQuery($array, $tableName) {
 
