@@ -28,7 +28,9 @@ if(isset($_POST['submit']) && hasAdminPermission()) {
     'dob' => postTernary('dob'),
     'village' => postTernary('village'),
     'comments' => $_POST['comments'],
-    'languages' => ''
+    'languages' => '',
+    'maritalStatus' => postTernary('maritalStatus'),
+    'educationLevel' => postTernary('educationLevel')
   );
   $languages = array();
   foreach($_POST as $key => $value) {

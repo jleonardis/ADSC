@@ -83,6 +83,20 @@ if(isset($_GET['participantAdded'])) {
       <label for="language-<?php echo escape($language); ?>"><?php echo escape($language);?>: <input type="checkbox" id="language-<?php echo escape($language); ?>" name="language-<?php echo escape($language); ?>" value="<?php echo escape($language); ?>"></label>
     <?php } ?><br>
     <label for="language-other">Otros Idiomas: <input type="text" id="language-other" name="language-other"></label><br>
+  <label for="maritalStatus">Estatus Civil: </label>
+  <select id="maritalStatus" name="maritalStatus">
+    <option value="">--Elige Estatus Civil--</option>
+    <?php foreach($maritalStatuses as $status) { ?>
+      <option value="<?php echo escape($status); ?>"><?php echo escape($status);?></option>
+    <?php } ?>
+  </select><br>
+  <label for="educationLevel">Nivel de Educación: </label>
+  <select id="educationLevel" name="educationLevel">
+    <option value="">--Elige Nivel de Educación--</option>
+    <?php foreach($educationLevels as $level) { ?>
+      <option value="<?php echo escape($level); ?>"><?php echo escape($level);?></option>
+    <?php } ?>
+  </select><br>
   <label for="picture">Imagen: </label>
   <input type="hidden" name="MAX_FILE_SIZE" value="1000000" /><!-- Add max size on php side!! -->
   <input type="file" id="picture" name="picture" accept="image"><br>

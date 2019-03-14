@@ -20,7 +20,7 @@ if(!hasPermission(0, 0, $participantId)) {
 //get participant info
 try {
   $selectList = "SELECT participantId, firstName, lastName, nickname, gender,
-  village, languages, imageLocation, dob";
+  village, languages, imageLocation, dob, maritalStatus, educationLevel";
   if(hasAdminPermission()){
     $selectList .= ", phoneNumber, phoneNumber_2, email, comments";
   }
@@ -116,6 +116,8 @@ try {
       <?php } ?>
       <li><strong>Idiomas: </strong><?php echo escape($participant['languages']); ?> </li>
       <li><strong>Comunidad de Origen: </strong><?php echo escape($participant['village']); ?></li>
+      <li><strong>Estatus Civil: </strong><?php echo escape($participant['maritalStatus']); ?></li>
+      <li><strong>Nivel de Educación: </strong><?php echo escape($participant['educationLevel']); ?></li>
       <?php if(hasAdminPermission()) { ?>
       <li><strong>Comentarios: </strong><?php echo escape($participant['comments']); ?></li>
       <?php } ?>

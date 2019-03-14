@@ -18,7 +18,7 @@ if(!hasPermission($courseId)) {
 try {
 
   $sql = "SELECT par.participantId as participantId, firstName, lastName, description,
-  amount, name, q.quotaId as quotaId, hasDPI, IFNULL(pq.amountPaid, 0) as amountPaid
+  amount, name, q.quotaId as quotaId, IFNULL(pq.amountPaid, 0) as amountPaid
     FROM
       (
         SELECT name, description, amount, quotaId, courseId
@@ -28,7 +28,7 @@ try {
       ) q
     LEFT JOIN
       (
-        SELECT participantId, firstName, lastName, courseId, hasDPI
+        SELECT participantId, firstName, lastName, courseId
         FROM currentParticipantCourses_View
         WHERE courseId = :courseId
       ) par
@@ -64,7 +64,6 @@ try {
         $quotasTable[$participantId] = array();
         $quotasTable[$participantId]['participantName'] = $participantName;
         $quotasTable[$participantId]['quotas'] = array();
-        $quotasTable[$participantId]['hasDPI'] = $row['hasDPI'];
         $amountsDue[$participantId] = array();
       }
       $name = $row['name'];
@@ -118,11 +117,7 @@ include "../templates/header.php";
                   <td <?php if ($quotaInfo['amountPaid'] === $quotaName['amount']) {?>
                     style="background-color: #3c9935; color: white"
                   <?php } ?>>
-                  <?php if($participant['hasDPI']) {?>
                     Q<?php echo escape($quotaInfo['amountPaid']);?></td>
-                  <?php } else { ?>
-                    <span>Falta DPI</span>
-                  <?php } ?>
                 <?php } ?>
               </tr>
             <?php } ?>
@@ -143,9 +138,7 @@ include "../templates/header.php";
         <select name="participantId" id="participantId" required>
           <option value="">--Elige Participante--</option>
           <?php foreach($quotasTable as $participantId => $participant) { ?>
-            <?php if($participant['hasDPI']) { ?>
             <option value="<?php echo escape($participantId); ?>"><?php echo escape($participant['participantName']);?></option>
-          <?php } ?>
           <?php } ?>
         </select><br>
         <label for="amountToPay">Monto: </label>
@@ -156,6 +149,8 @@ include "../templates/header.php";
           <label for="descuento">Es descuento?: </label>
           <input type="checkbox" value="discount" name="discount" id="discount"><br>
         <?php } ?>
+        <label for="receiptNumber">Numero de Recibo: </label>
+        <input type="text" name="receiptNumber" id="receiptNumber" class="short-input">
         <input type="submit" class="orange-submit" value="Realizar">
       </form>
   </div>

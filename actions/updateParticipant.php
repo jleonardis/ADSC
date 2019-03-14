@@ -26,7 +26,9 @@ if(isset($_GET['participantId'])) {
       'dob' => postTernary('dob'),
       'comments' => postTernary('comments'),
       'village' => postTernary('village'),
-      'languages' => ''
+      'languages' => '',
+      'maritalStatus' => postTernary('maritalStatus'),
+      'educationLevel' => postTernary('educationLevel')
     );
 
     $languages = array();

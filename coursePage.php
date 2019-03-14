@@ -80,7 +80,7 @@ try {
   $resultsCourseParticipants = $statement->fetchAll();
 
 
-  $sql = "SELECT pc.participantId as participantId, attended, hasDPI
+  $sql = "SELECT pc.participantId as participantId, attended
   FROM attendance a JOIN currentParticipantCourses_View pc
   ON a.participantId = pc.participantId JOIN courseSessions cs
   ON a.sessionId = cs.sessionId AND pc.courseId = cs.courseId
@@ -101,8 +101,7 @@ try {
       if(!isset($attendanceScores[$parId])){
         $attendanceScores[$parId] = array(
           'attended' => 0,
-          'total' => 0,
-          'hasDPI' => $row['hasDPI']);
+          'total' => 0);
       }
       if($row['attended'] === 'present') {
         $attendanceScores[$parId]['attended']++;
@@ -213,13 +212,13 @@ if(hasAdminPermission() || isTechnician()) {
       <td><?php echo escape($participant['firstName']);?></td>
       <td><?php echo escape($participant['lastName']);?></td>
       <td><?php echo escape($participant['gender']);?></td>
-      <td><?php if(count($attendanceScores) === 0 || $attendanceScores[$participant['participantId']]['total'] === 0 || !$attendanceScores[$participant['participantId']]['hasDPI']) {
+      <td><?php if(count($attendanceScores) === 0 || $attendanceScores[$participant['participantId']]['total'] === 0) {
         echo "-";
       }
       else {
         echo escape(round((($attendanceScores[$participant['participantId']]['attended']/$attendanceScores[$participant['participantId']]['total']) * 100)) . "%");
       }?></td>
-      <td><?php if(count($assignmentsScores) === 0 || $assignmentsScores[$participant['participantId']]['total'] === 0 || !$attendanceScores[$participant['participantId']]['hasDPI']) {
+      <td><?php if(count($assignmentsScores) === 0 || $assignmentsScores[$participant['participantId']]['total'] === 0 || !$assignmentsScores[$participant['participantId']]['hasDPI']) {
         echo "-";
       }
       else {

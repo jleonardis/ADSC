@@ -23,7 +23,8 @@ if(isset($_GET['courseId'])) {
   try
   {
 
-    $sql = "SELECT teacherId, programId, name, description FROM courses WHERE courseId = :courseId";
+    $sql = "SELECT teacherId, programId, name, description, daysOfWeek, startDate, endDate
+    FROM courses_View WHERE courseId = :courseId";
     $statement = $connection->prepare($sql);
     $statement->bindParam(':courseId', $courseId, PDO::PARAM_INT);
     $statement->execute();
@@ -34,6 +35,7 @@ if(isset($_GET['courseId'])) {
     }
 
     $course = $statement->fetch(PDO::FETCH_ASSOC);
+    $daysOfWeek = $course['daysOfWeek'];
 
     $sql = "SELECT programId, name FROM programs;";
     $statement = $connection->prepare($sql);
@@ -82,7 +84,7 @@ if(isset($_GET['courseId'])) {
    <h2>Editar Curso: <?php echo escape($course['name']);?></h2>
    <label for="courseName">Nombre de Curso:</label>
    <input type="text" name="courseName" id="courseName" value="<?php echo escape($course['name']);?>"><br>
-   <?php if (isAdministrator()) { //only admins can changes what program a course falls under ?>
+   <?php if (isAdministrator()) { //only admins can changes what program a course falls unde ?>
   <label for="programId">Programa:</label>
    <select id="programId" name="programId" value="<?php echo escape($course["programId"]);?>"><br>
    <?php foreach($programs as $program) {
@@ -92,10 +94,20 @@ if(isset($_GET['courseId'])) {
    <?php } ?>
  </select><br>
 <?php } ?>
-   <!-- <label for="startDate">Inicio:</label>
-   <input id = "startDate" name="startDate" type="date" value="<?php echo escape($course['startDate']); ?>"></input><br>
+   <label for="startDate">Inicio:</label>
+   <input id = "startDate" name="startDate" type="date" min=<?php echo escape(date('Y-m-d', time())); ?> value="<?php echo escape($course['startDate']); ?>"
+    <?php if(date('Y-m-d', time()) > $course['startDate']) { ?> disabled <?php } ?>></input><br>
    <label for="endDate">Finalización:</label>
-   <input id="endDate" type="date" name="endDate" value="<?php echo escape($course['endDate']); ?>"></input><br> -->
+   <input id="endDate" type="date" name="endDate" min=<?php echo escape(max(date('Y-m-d', time()), $course['startDate'])); ?> value="<?php echo escape($course['endDate']); ?>"
+      <?php if(date('Y-m-d', time()) > $course['endDate']) { ?> disabled <?php } ?>></input><br>
+   <label for="schedule">Horario: </label><br>
+   <label for="sunday">D <input type="checkbox" id="sunday" name="sunday" value="sunday" <?php if(stripos($daysOfWeek, 'Sunday') !== FALSE) { ?>checked<?php } ?>></label>
+   <label for="monday">L <input type="checkbox" id="monday" name="monday" value="monday" <?php if(stripos($daysOfWeek, 'Monday') !== FALSE) { ?>checked<?php } ?>></label>
+   <label for="tuesday">Ma <input type="checkbox" id="tuesday" name="tuesday" value="tuesday" <?php if(stripos($daysOfWeek, 'Tuesday') !== FALSE) { ?>checked<?php } ?>></label>
+   <label for="wednesday">Mi <input type="checkbox" id="wednesday" name="wednesday" value="wednesday" <?php if(stripos($daysOfWeek, 'Wednesday') !== FALSE) { ?>checked<?php } ?>></label>
+   <label for="thursday">J <input type="checkbox" id="thursday" name="thursday" value="thursday" <?php if(stripos($daysOfWeek, 'Thursday') !== FALSE) { ?>checked<?php } ?>></label>
+   <label for="friday">V <input type="checkbox" id="friday" name="friday" value="friday" <?php if(stripos($daysOfWeek, 'Friday') !== FALSE) { ?>checked<?php } ?>></label>
+   <label for="saturday">S <input type="checkbox" id="saturday" name="saturday" value="saturday" <?php if(stripos($daysOfWeek, 'Saturday') !== FALSE) { ?>checked<?php } ?>></label><br>
    <label for="description">Descripción: </label>
    <textarea id="description" name="description" maxlength="255"><?php echo escape($course['description']); ?></textarea><br>
    <input class="orange-search" type="text" id="searchBox" value="<?php echo escape(isset($currentTeacher)?$currentTeacher['firstName'] . ' ' . $currentTeacher['lastName']:'');?>">
@@ -118,4 +130,5 @@ if(isset($_GET['courseId'])) {
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
  <script src="/js/search.js"></script>
  <script src="/js/deleteButton.js"></script>
+ <script src="/js/courseForm.js"></script>
 <?php include "../templates/footer.php"; ?>

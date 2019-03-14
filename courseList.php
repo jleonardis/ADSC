@@ -40,8 +40,6 @@ try {
 }
 
 require "templates/header.php";
-displayActionStatus('courseAdded', 'Curso agregado con exito!');
-displayActionStatus('programAdded', 'Programa agregado con exito!');
 
 ?>
 <main>
@@ -83,7 +81,7 @@ displayActionStatus('programAdded', 'Programa agregado con exito!');
 <?php include "templates/sidebar.php"; ?>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="js/courses.js"></script>
+<script src="js/courseList.js"></script>
 <script src="js/search.js"></script>
 
 <?php require "templates/footer.php" ?>

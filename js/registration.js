@@ -43,9 +43,9 @@
             }
           }
         });
-        var dpiCheckbox = document.getElementById('noDPI');
-        if(!dpiCheckbox || !(dpiCheckBox.checked)){
-          if(!(/^\d{15}$/.test(dpi))) {
+        var dpiCheckBox = document.getElementById('noDPI');
+        if(!dpiCheckBox || !(dpiCheckBox.checked)){
+          if(!(/^\d{13}$/.test(dpi))) {
             alert("ese DPI no es valido");
             document.getElementById('dpi').value = '';
           }

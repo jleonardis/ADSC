@@ -13,6 +13,8 @@ CREATE TABLE participants (
 	phoneNumber VARCHAR(20),
 	phoneNumber_2 VARCHAR(20),
 	imageLocation VARCHAR(255),
+	maritalStatus VARCHAR(30),
+	educationLevel VARCHAR(30),
 	comments TEXT
 ) ENGINE InnoDB;
 

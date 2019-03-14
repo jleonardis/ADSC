@@ -18,8 +18,7 @@ if(!hasPermission($courseId)) {
 try {
 
   $sql = "SELECT par.participantId as participantId, firstName, lastName,
-      sessionDate, sessions.sessionId as sessionId, attended, attendanceId,
-      hasDPI
+      sessionDate, sessions.sessionId as sessionId, attended, attendanceId
     FROM
       (
         SELECT sessionId, sessionDate
@@ -30,7 +29,7 @@ try {
     LEFT JOIN
       (
         SELECT pc.participantId as participantId, firstName, lastName,
-          attended, attendanceId, sessionId, hasDPI
+          attended, attendanceId, sessionId
         FROM currentParticipantCourses_View pc
         JOIN attendance a
           ON a.participantId = pc.participantId
@@ -56,7 +55,6 @@ try {
       $attendanceTable[$participantId] = array();
       $attendanceTable[$participantId]['participantName'] = $participantName;
       $attendanceTable[$participantId]['dates'] = array();
-      $attendanceTable[$participantId]['hasDPI'] = $row['hasDPI'];
     }
     $date = $row['sessionDate'];
     $sessionId = $row['sessionId'];
@@ -115,15 +113,11 @@ include "../templates/header.php";
                  <?php foreach($dateInfos as $date) {
                    $sessionInfo = $participant['dates'][$date['date']];?>
                    <td>
-                     <?php if($participant['hasDPI']) { ?>
                      <select name="<?php echo escape($sessionInfo['attendanceId']); ?>">
                        <option value="absent" <?php echo ($sessionInfo['attended']==='absent')?'selected':'';?>>No</option>
                        <option value="present" <?php echo ($sessionInfo['attended']==='present')?'selected':'';?>>Sí</option>
                        <option value="excused" <?php echo ($sessionInfo['attended']==='excused')?'selected':'';?>>Permiso</option>
                      </select>
-                   <?php } else { ?>
-                     <span>Falta DPI</span>
-                   <?php } ?>
                   </td>
                  <?php } ?>
                </tr>

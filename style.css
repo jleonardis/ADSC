@@ -291,6 +291,10 @@ h1 {
   float: right;
   clear: both;
 }
+.submit-form .short-input {
+  width: 100px;
+  margin-left: 50px;
+}
 
 #login-page {
   text-align: center;

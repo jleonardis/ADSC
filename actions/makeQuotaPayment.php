@@ -26,7 +26,8 @@ try {
     'quotaId' => $_POST['quotaId'],
     'paymentDate' => $_POST['quotaDate'],
     'amountPaid' => $_POST['amountToPay'],
-    'discount' => isset($_POST['discount'])?1:0
+    'discount' => isset($_POST['discount']) ? 1 : 0,
+    'receiptNumber' => $_POST['receiptNumber']
   );
   $sql = makeInsertQuery($insertArray, 'participantQuotas');
   $statement = $connection->prepare($sql);

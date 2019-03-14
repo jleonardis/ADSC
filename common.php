@@ -5,6 +5,7 @@
  *
  */
 require "config.php";
+
 session_start();
 
 $connection = connectToDatabase($dsn, $username, $password, $options);

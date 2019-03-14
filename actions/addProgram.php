@@ -33,7 +33,7 @@ if(isset($_POST['submit']) && hasPermission()) {
     }
 
     $connection->commit();
-    header("location: ../courseList.php?programAdded=1");
+    header("location: ../courseList.php");
     die();
 
   } catch(PDOException $error) {
