@@ -83,9 +83,9 @@ if(isset($_GET['participantAdded'])) {
       <label for="language-<?php echo escape($language); ?>"><?php echo escape($language);?>: <input type="checkbox" id="language-<?php echo escape($language); ?>" name="language-<?php echo escape($language); ?>" value="<?php echo escape($language); ?>"></label>
     <?php } ?><br>
     <label for="language-other">Otros Idiomas: <input type="text" id="language-other" name="language-other"></label><br>
-  <label for="maritalStatus">Estatus Civil: </label>
+  <label for="maritalStatus">Estado Civil: </label>
   <select id="maritalStatus" name="maritalStatus">
-    <option value="">--Elige Estatus Civil--</option>
+    <option value="">--Elige Estado Civil--</option>
     <?php foreach($maritalStatuses as $status) { ?>
       <option value="<?php echo escape($status); ?>"><?php echo escape($status);?></option>
     <?php } ?>

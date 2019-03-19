@@ -95,9 +95,9 @@ if(isset($_GET['participantId'])) {
          <?php echo (strpos($participant['languages'], $language) !== false)?'checked':''; ?>></label>
      <?php } ?><br>
      <label for="language-other">Otros Idiomas: <input type="text" id="language-other" name="language-other"></label><br>
-  <label for="maritalStatus">Estatus Civil: </label>
+  <label for="maritalStatus">Estado Civil: </label>
   <select id="maritalStatus" name="maritalStatus">
-    <option value="">--Elige Estatus Civil--</option>
+    <option value="">--Elige Estado Civil--</option>
     <?php foreach($maritalStatuses as $status) { ?>
       <option value="<?php echo escape($status); ?>" <?php echo $status === $participant['maritalStatus'] ? 'selected' : '';?>><?php echo escape($status);?></option>
     <?php } ?>

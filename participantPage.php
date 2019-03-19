@@ -116,7 +116,7 @@ try {
       <?php } ?>
       <li><strong>Idiomas: </strong><?php echo escape($participant['languages']); ?> </li>
       <li><strong>Comunidad de Origen: </strong><?php echo escape($participant['village']); ?></li>
-      <li><strong>Estatus Civil: </strong><?php echo escape($participant['maritalStatus']); ?></li>
+      <li><strong>Estado Civil: </strong><?php echo escape($participant['maritalStatus']); ?></li>
       <li><strong>Nivel de Educación: </strong><?php echo escape($participant['educationLevel']); ?></li>
       <?php if(hasAdminPermission()) { ?>
       <li><strong>Comentarios: </strong><?php echo escape($participant['comments']); ?></li>
