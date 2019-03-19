@@ -28,31 +28,31 @@ try {
    		(
    		SELECT amountPaid, quotaId
       FROM participantQuotas
-   		WHERE MONTH(paymentDate) = 1
+   		WHERE MONTH(paymentDate) = 1 AND (discount IS NULL OR discount = 0)
    		) jan ON jan.quotaId = courseList.quotaId
   	LEFT JOIN
   		(
   		SELECT amountPaid, quotaId
   		FROM participantQuotas
-  		WHERE MONTH(paymentDate) = 2
+  		WHERE MONTH(paymentDate) = 2 AND (discount IS NULL OR discount = 0)
   		) feb ON feb.quotaId = courseList.quotaId
   	LEFT JOIN
   		(
   		SELECT amountPaid, quotaId
   		FROM participantQuotas
-  		WHERE MONTH(paymentDate) = 3
+  		WHERE MONTH(paymentDate) = 3 AND (discount IS NULL OR discount = 0)
   		) mar ON mar.quotaId = courseList.quotaId
   	LEFT JOIN
   		(
   		SELECT amountPaid, quotaId
   		FROM participantQuotas
-  		WHERE MONTH(paymentDate) = 4
+  		WHERE MONTH(paymentDate) = 4 AND (discount IS NULL OR discount = 0)
   		) apr ON apr.quotaId = courseList.quotaId
   	LEFT JOIN
   		(
   		SELECT amountPaid, quotaId
   		FROM participantQuotas
-  		WHERE MONTH(paymentDate) = 5
+  		WHERE MONTH(paymentDate) = 5 AND (discount IS NULL OR discount = 0)
   		) may ON may.quotaId = courseList.quotaId
   	GROUP BY courseList.programId, courseList.courseId WITH ROLLUP
       ) numbers
