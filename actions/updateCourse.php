@@ -1,7 +1,6 @@
 <?php
 
 require "../common.php";
-require "../chromephp-master/ChromePhp.php";
 
 if(isset($_GET['courseId'])) {
   $courseId = $_GET['courseId'];
