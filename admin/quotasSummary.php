@@ -22,7 +22,8 @@ try {
   		SELECT p.programId, c.courseId, q.quotaId
   		FROM programs p
   		LEFT JOIN courses c ON c.programId = p.programId
-          LEFT JOIN quotas q ON q.courseId = c.courseId
+      LEFT JOIN quotas q ON q.courseId = c.courseId
+      WHERE p.name <> 'TESTING'
   		) courseList
   	LEFT JOIN
    		(
@@ -65,11 +66,26 @@ try {
   	(
       SELECT name as course_name, courseId
       FROM courses
-      ) c ON c.courseId = numbers.courseId
-  ORDER BY -p.programId desc, -c.courseId desc;
-  ";
+      ) c ON c.courseId = numbers.courseId ";
 
-  $statement = $connection->prepare($sql);
+  if(isCoordinator()) {
+
+    $sql .= "JOIN (
+        SELECT programId
+        FROM programCoordinators
+        WHERE coordinatorId = :participantId
+      ) pc ON pc.programId = p.programId";
+    $sql .= " ORDER BY -p.programId desc, -c.courseId desc;";
+
+    $statement = $connection->prepare($sql);
+    $statement->bindParam(':participantId', $_SESSION['participantId'], PDO::PARAM_INT);
+
+  } else {
+
+    $sql .= "ORDER BY -p.programId desc, -c.courseId desc;";
+    $statement = $connection->prepare($sql);
+  }
+
   $statement->execute();
 
   $report = $statement->fetchAll();
@@ -90,7 +106,7 @@ include "../templates/header.php";
          <thead>
            <tr>
              <th>Programa</th>
-             <th>Curso</th>
+             <th>Curso<br>(Hacer clíc para editar pagos)</th>
              <th>Enero</th>
              <th>Febrero</th>
              <th>Marzo</th>
@@ -113,10 +129,10 @@ include "../templates/header.php";
               $programDisplayName = "";
             }
               ?> <td><strong><?php echo escape($programDisplayName); ?></strong></td>
-              <td><?php if($row['course_name'] === "Total de Programa" || $row['course_name'] === "Gran Total") {
-                echo "<strong>" . escape($row['course_name']) . "</strong>";
+              <?php if($row['course_name'] === "Total de Programa" || $row['course_name'] === "Gran Total") {
+                echo "<td><strong>" . escape($row['course_name']) . "</strong></td>";
               }  else {
-                  echo escape($row['course_name']);
+                  echo "<td><a href='/admin/editPayments.php?courseId=" . $row['courseId'] . "'><div>" . escape($row['course_name']) . "</div></a></td>";
                 } ?></td>
               <td><?php echo "Q" . escape($row['janTotal']); ?> </td>
               <td><?php echo "Q" . escape($row['febTotal']); ?> </td>

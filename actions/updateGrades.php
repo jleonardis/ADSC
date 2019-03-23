@@ -26,7 +26,7 @@ try {
   $statement = $connection->prepare($sql);
 
   foreach($_POST as $key => $value) {
-    $grade = $value ? $value : null;
+    $grade = $value === '' ? null : $value;
     $statement->bindParam(':gradeId', $key, PDO::PARAM_INT);
     $statement->bindParam(':grade', $grade, PDO::PARAM_STR);
     $statement->execute();

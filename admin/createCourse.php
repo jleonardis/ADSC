@@ -35,6 +35,12 @@ try {
 
     $resultsPrograms = $statement->fetchAll();
 
+    $sql = "SELECT divisionId, name, programId FROM divisions;";
+    $statement = $connection->prepare($sql);
+    $statement->execute();
+
+    $resultsDivisions = $statement->fetchAll();
+
     $sql = "SELECT p.participantId as participantId, p.firstName as firstName,
     p.lastName as lastName FROM participants p INNER JOIN participantRoles pr
     ON p.participantId = pr.participantId INNER JOIN roles r
@@ -62,14 +68,18 @@ include "../templates/header.php";
         <span><strong>Programa: </strong><input type="text" name="program" value="<?php echo escape($resultsPrograms[0]['name']); ?>" disabled>
           <input type="hidden" name="program" value="<?php echo escape($resultsPrograms[0]['programId']);?>"><br>
       <?php } else { ?>
-    	<label for="program">Programa: </label>
-      <select id="program" name="program" required><br>
+    	<label for="programId">Programa: </label>
+      <select id="programId" name="programId" required><br>
         <option value="">--Elige una opción--</option>
       <?php foreach($resultsPrograms as $row) { ?>
         <option value=<?php echo escape($row["programId"]); ?>><?php echo escape($row["name"]); ?></option>
       <?php } ?>
       </select><br>
     <?php } ?>
+      <label for="divisionId">Eje: </label>
+      <select id="divisionId" name="divisionId" disabled>
+        <option value=''>--Elige Eje--</option>
+      </select><br>
     	<label for="startDate">Inicio: </label>
       <input id = "startDate" name="startDate" type="date" required><br>
       <label for="endDate">Finalización: </label>
@@ -103,5 +113,6 @@ include "../templates/header.php";
 <?php include "../templates/sidebar.php"; ?>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
  <script src="/js/search.js"></script>
+ <script>var divisions = <?php echo json_encode($resultsDivisions); ?></script>
  <script src="/js/courseForm.js"></script>
 <?php include "../templates/footer.php"; ?>

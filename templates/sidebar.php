@@ -36,6 +36,7 @@
       <?php if (isAdministrator()) { ?>
       <a href="/admin/createProgram.php"><button class="orange-submit">Crear Programa</button></a>
       <?php } ?>
+      <a href="/admin/createDivision.php"><button class="orange-submit">Crear Eje</button></a>
       <a href="/admin/createCourse.php"><button class="orange-submit">Crear Curso</button></a>
       <a href="/admin/quotasSummary.php"><button class="orange-submit">Resumen de Cuotas</button></a>
     </div>

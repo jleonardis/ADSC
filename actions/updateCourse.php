@@ -14,7 +14,8 @@ if(isset($_GET['courseId'])) {
       'courseId' => $courseId,
       'name' => $_POST['courseName'],
       'description' => $_POST['description'],
-      'teacherId' => $teacherId
+      'teacherId' => $teacherId,
+      'divisionId' => postTernary('divisionId')
     );
 
     if(isset($_POST['programId'])) {

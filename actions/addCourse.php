@@ -8,7 +8,8 @@ if(isset($_POST['submit']) && hasPermission(0, $_POST['program'])) {
 
   $new_course = array(
     'name' => $_POST['courseName'],
-    'programId' => $_POST['program'],
+    'programId' => $_POST['programId'],
+    'divisionId' => $_POST['divisionId'],
     'description' => $_POST['description'],
     'startDate' => $_POST['startDate'],
     'endDate' => $_POST['endDate'],

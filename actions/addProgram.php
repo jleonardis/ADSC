@@ -2,7 +2,7 @@
 
 require "../common.php";
 
-if(isset($_POST['submit']) && hasPermission()) {
+if(isset($_POST['submit']) && hasAdminPermission()) {
 
 
   $new_program = array(

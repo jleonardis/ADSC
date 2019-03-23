@@ -53,6 +53,15 @@ CREATE TABLE programs (
 	alive BOOLEAN NOT NULL DEFAULT 1
 ) ENGINE InnoDB;
 
+CREATE TABLE divisions (
+	divisionId INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+	programId INT UNSIGNED,
+	name VARCHAR(255),
+	alive BOOLEAN NOT NULL DEFAULT 1,
+	FOREIGN KEY (programId) REFERENCES programs (programId),
+	UNIQUE KEY(programId, name)
+) ENGINE InnoDB;
+
 CREATE TABLE programCoordinators (
 	programId INT UNSIGNED,
 	coordinatorId INT UNSIGNED,
@@ -65,6 +74,7 @@ CREATE TABLE courses (
 	courseId INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 	programId INT UNSIGNED,
 	teacherId INT UNSIGNED,
+	divisionId INT UNSIGNED,
 	name VARCHAR(255) UNIQUE,
 	startDate DATE,
 	endDate	DATE,
@@ -72,7 +82,8 @@ CREATE TABLE courses (
 	daysOfWeek SET('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'),
 	alive BOOLEAN NOT NULL DEFAULT 1,
 	FOREIGN KEY (programId) REFERENCES programs (programId),
-	FOREIGN KEY (teacherId) REFERENCES participants (participantId)
+	FOREIGN KEY (teacherId) REFERENCES participants (participantId),
+	FOREIGN KEY (divisionId) REFERENCES divisions (divisionId)
 ) ENGINE InnoDB;
 
 CREATE TABLE participantCourses (

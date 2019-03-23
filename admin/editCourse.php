@@ -23,7 +23,7 @@ if(isset($_GET['courseId'])) {
   try
   {
 
-    $sql = "SELECT teacherId, programId, name, description, daysOfWeek, startDate, endDate
+    $sql = "SELECT teacherId, programId, name, description, daysOfWeek, startDate, endDate, divisionId
     FROM courses_View WHERE courseId = :courseId";
     $statement = $connection->prepare($sql);
     $statement->bindParam(':courseId', $courseId, PDO::PARAM_INT);
@@ -35,6 +35,7 @@ if(isset($_GET['courseId'])) {
     }
 
     $course = $statement->fetch(PDO::FETCH_ASSOC);
+    $programId = $course["programId"];
     $daysOfWeek = $course['daysOfWeek'];
 
     $sql = "SELECT programId, name FROM programs;";
@@ -42,6 +43,14 @@ if(isset($_GET['courseId'])) {
     $statement->execute();
 
     $programs = $statement->fetchAll();
+
+    $resultsPrograms = $statement->fetchAll();
+
+    $sql = "SELECT divisionId, name, programId FROM divisions;";
+    $statement = $connection->prepare($sql);
+    $statement->execute();
+
+    $resultsDivisions = $statement->fetchAll();
 
     if($course['teacherId']) {
 
@@ -87,13 +96,28 @@ if(isset($_GET['courseId'])) {
    <?php if (isAdministrator()) { //only admins can changes what program a course falls unde ?>
   <label for="programId">Programa:</label>
    <select id="programId" name="programId" value="<?php echo escape($course["programId"]);?>"><br>
-   <?php foreach($programs as $program) {
-     $programId = $course["programId"];?>
+   <?php foreach($programs as $program) { ?>
      <option value=<?php echo escape($program["programId"]); ?> <?php if($program['programId'] == $programId) {
        echo "selected= 'selected'"; } ?>><?php echo escape($program["name"]); ?></option>
-   <?php } ?>
+   <?php
+ } ?>
  </select><br>
 <?php } ?>
+   <label for="divisionId">Eje: </label>
+   <select id="divisionId" name="divisionId">
+     <option value=''>--Elige un Eje--</option>
+     <?php
+     $programDivisions = array_filter($resultsDivisions, function($elem) {
+       global $programId;
+       return $elem['programId'] === $programId;
+     });
+     echo $course['divisionId'];
+     foreach($programDivisions as $division) { ?>
+       <option value="<?php echo escape($division['divisionId']); ?>" <?php if($division['divisionId'] === $course['divisionId']) { echo "selected = 'selected'"; } ?>>
+         <?php echo escape($division['name']); ?>
+       </option>
+     <?php } ?>
+   </select><br>
    <label for="startDate">Inicio:</label>
    <input id = "startDate" name="startDate" type="date" min=<?php echo escape(date('Y-m-d', time())); ?> value="<?php echo escape($course['startDate']); ?>"
     <?php if(date('Y-m-d', time()) > $course['startDate']) { ?> disabled <?php } ?>></input><br>
@@ -128,6 +152,7 @@ if(isset($_GET['courseId'])) {
 </main>
 <?php include "../templates/sidebar.php";?>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>var divisions = <?php echo json_encode($resultsDivisions); ?></script>
  <script src="/js/search.js"></script>
  <script src="/js/deleteButton.js"></script>
  <script src="/js/courseForm.js"></script>

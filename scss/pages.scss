@@ -15,14 +15,21 @@
 }
 
 #courseInfo {
-  margin-top: 50px;
+  margin-top: 20px;
   float: left;
   clear: both;
+
+  .inactive-participant {
+    opacity: .5;
+  }
+  .centered-cell {
+    text-align: center;
+  }
 }
 
 #courseActions {
   float: left;
-  margin-top: 50px;
+  margin-top: 17px;
   clear: both;
   width: 100%;
 
@@ -37,7 +44,7 @@
     float: left;
     clear: both;
     width: 50%;
-    padding-top: 50px;
+    margin-top: 35px;
     #submit {
       margin-top: 10px;
     }
@@ -53,10 +60,6 @@
       display: flex;
       justify-content: space-between;
       flex-direction: row;
-      button {
-        max-width: 150px;
-        height: 50px;
-      }
     }
   }
 
