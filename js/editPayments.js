@@ -9,7 +9,7 @@ for(var i = 0; i < paymentInputs.length; i++) {
 
 function checkMax(e) {
   var element = e.target;
-  if(element.value > element.getAttribute('max')){
+  if(parseFloat(element.value) > parseFloat(element.getAttribute('max'))){
     alert("Ese monto es demasiado");
     element.value = element.getAttribute('max');
   }
