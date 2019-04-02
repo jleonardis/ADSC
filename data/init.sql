@@ -128,6 +128,7 @@ CREATE TABLE assignments (
 	name VARCHAR(255),
 	description VARCHAR(255),
 	alive BOOLEAN NOT NULL DEFAULT 1,
+	createdTime DATETIME DEFAULT CURRENT_TIMESTAMP,
 	FOREIGN KEY (courseId) REFERENCES courses (courseId),
 	UNIQUE KEY(coBurseId, name)
 ) ENGINE InnoDB;
@@ -149,6 +150,7 @@ CREATE TABLE quotas (
 	description VARCHAR(255),
 	amount DECIMAL(7,2) NOT NULL,
 	alive BOOLEAN NOT NULL DEFAULT 1,
+	createdTime DATETIME DEFAULT CURRENT_TIMESTAMP,
 	FOREIGN KEY (courseId) REFERENCES courses (courseId),
 	UNIQUE KEY(courseId, name)
 ) Engine InnoDB;
@@ -178,7 +180,7 @@ CREATE VIEW coursesStartDateEndDate_View AS
 	GROUP BY courseId;
 
 CREATE VIEW courses_View AS
-	SELECT courseId, programId, teacherId, name, description, daysOfWeek,
+	SELECT courseId, programId, teacherId, name, description, daysOfWeek, cs.divisionId as divisionId
 		cs.startDate as startDate, cs.endDate as endDate, alive
 	FROM courses c
 	LEFT JOIN coursesStartDateEndDate_View cs
