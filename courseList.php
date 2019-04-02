@@ -25,8 +25,17 @@ try {
   $resultsPrograms = $statement->fetchAll();
 
   //retrieve all courses
-  $sql = "SELECT courseId, name, programId, startDate, endDate
-  FROM courses_View WHERE alive ORDER BY endDate";
+  $sql = "SELECT courseId, c.name, c.programId, d.divisionId, d.name as divisionName,
+   startDate, endDate, 1 sortby
+  FROM courses_View c
+  JOIN divisions d ON d.divisionId = c.divisionId
+  WHERE c.alive
+  UNION ALL
+  SELECT courseId, name, programId, 0 as divisionId, 'Sin Eje' as divisionName,
+    startDate, endDate, 2 sortby
+  FROM courses_View
+  WHERE alive AND divisionId IS NULL
+  ORDER BY sortby, programId, divisionName, endDate";
   $statement = $connection->prepare($sql);
   $statement->execute();
   $resultsCourses = $statement->fetchAll();
@@ -56,16 +65,21 @@ require "templates/header.php";
 </select>
 
 <table id="courseTable">
-  <thead>
-    <tr>
-      <th class="table-head" hidden>Curso</th>
-      <th class="table-head" hidden>Inicio</th>
-      <th class="table-head" hidden>Finalización</th>
-    </tr>
-  </thead>
   <tbody>
-
-    <?php foreach($resultsCourses as $row) { ?>
+    <?php
+    $currentDivisionId = -1;
+    $currentProgramId = -1;
+    foreach($resultsCourses as $row) {
+      if($row['divisionId'] !== $currentDivisionId || $row['programId'] !== $currentProgramId) {
+        $currentDivisionId = $row['divisionId'];
+        $currentProgramId = $row['programId'];?>
+      <tr class="course-row course-row-<?php echo escape($row['programId']); ?>"><th class="division-heading"><strong style="text-transform: uppercase;"><?php echo escape($row['divisionName']); ?></strong></th></tr>
+        <tr class="course-row course-row-<?php echo escape($row['programId']); ?>">
+          <th class="table-head" hidden><strong>Curso</strong></th>
+          <th class="table-head" hidden><strong>Inicio</strong></th>
+          <th class="table-head" hidden><strong>Finalización</strong></th>
+        </tr>
+    <?php } ?>
       <tr class="course-link course-row course-row-<?php echo escape($row["programId"])?>" data-href="coursePage.php?courseId=<?php echo $row["courseId"];?>" hidden>
         <td><?php echo escape($row["name"]); ?></td>
         <td><?php echo escape(date('d/m/Y', strtotime($row['startDate']))); ?></td>

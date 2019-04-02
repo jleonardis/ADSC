@@ -158,6 +158,9 @@ h1 {
   width: 600px;
   text-align: center;
 }
+#courseList #courseTable .division-heading {
+  padding-top: 25px;
+}
 
 .course-link:hover {
   background-color: #EC9342;

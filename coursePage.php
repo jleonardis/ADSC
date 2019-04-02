@@ -22,11 +22,11 @@ try {
 
   //NOTE: CONSIDER COMBINING THESE SELECT STATEMENTS
 
-  $sql = "SELECT teacherId, name, description, daysOfWeek, cs.startDate,
-    cs.endDate
+  $sql = "SELECT teacherId, c.name as name, c.description, daysOfWeek, cs.startDate,
+    cs.endDate, d.name as divisionName
   FROM
     (
-      SELECT courseId, teacherId, name, description, daysOfWeek
+      SELECT courseId, teacherId, name, description, daysOfWeek, divisionId
       FROM courses
       WHERE courseId = :courseId
     ) c
@@ -38,7 +38,9 @@ try {
       AND courseId = :courseId
       GROUP BY courseId
     ) cs
-    ON c.courseId = cs.courseId;";
+    ON c.courseId = cs.courseId
+  LEFT JOIN divisions d
+    ON d.divisionId = c.divisionId;";
 
   $statement = $connection->prepare($sql);
   $statement->bindParam(':courseId', $courseId, PDO::PARAM_INT);
@@ -203,6 +205,7 @@ if(hasAdminPermission() || isTechnician()) {
 <div id="courseHeading" class="heading">
 <div>
 <h1><?php echo escape($course['name']); ?></h1>
+<?php if($course['divisionName']) { echo "<h4>" . escape($course['divisionName']) . "</h4>"; } ?>
 <div><strong><?php echo escape($course['description']); ?></strong></div>
 </div>
 <?php if($hasDates) { ?>

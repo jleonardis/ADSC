@@ -18,10 +18,10 @@ if(!hasPermission($courseId)) {
 try {
 
   $sql = "SELECT par.participantId as participantId, firstName, lastName,
-      name, description, grade, gradeId, hasDPI, a.assignmentId as assignmentId
+      name, description, grade, gradeId, hasDPI, a.assignmentId, a.createdTime
     FROM
       (
-        SELECT name, description, assignmentId
+        SELECT name, description, assignmentId, createdTime
         FROM assignments
         WHERE courseId = :courseId
           AND alive
@@ -35,7 +35,8 @@ try {
           ON g.participantId = pc.participantId
         WHERE pc.courseId = :courseId
       ) par
-    ON par.assignmentId = a.assignmentId;";
+    ON par.assignmentId = a.assignmentId
+    ORDER BY createdTime;";
 
   $statement = $connection->prepare($sql);
   $statement->bindParam(':courseId', $courseId, PDO::PARAM_INT);

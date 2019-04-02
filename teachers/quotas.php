@@ -18,10 +18,10 @@ if(!hasPermission($courseId)) {
 try {
 
   $sql = "SELECT par.participantId as participantId, firstName, lastName, description,
-  amount, name, q.quotaId as quotaId, IFNULL(pq.amountPaid, 0) as amountPaid
+  amount, name, q.quotaId as quotaId, IFNULL(pq.amountPaid, 0) as amountPaid, q.createdTime
     FROM
       (
-        SELECT name, description, amount, quotaId, courseId
+        SELECT name, description, amount, quotaId, courseId, createdTime
         FROM quotas
         WHERE courseId = :courseId
           AND alive
@@ -39,7 +39,8 @@ try {
         FROM participantQuotas
         GROUP BY quotaId, participantId
       ) pq
-    ON pq.quotaId = q.quotaId AND pq.participantId = par.participantId;";
+    ON pq.quotaId = q.quotaId AND pq.participantId = par.participantId
+    ORDER BY createdTime;";
 
   $statement = $connection->prepare($sql);
   $statement->bindParam(':courseId', $courseId, PDO::PARAM_INT);

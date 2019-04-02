@@ -39,12 +39,12 @@ include "../templates/header.php";
 <main>
   <div class="form-parent">
   <form method="post" action="/actions/addDivision.php" class="submit-form">
-    <h2>Agregar División</h2>
+    <h2>Agregar Eje</h2>
     <label for="name">Nombre de Eje: </label>
     <input type="text" id="name" name="name"><br>
     <label for="program">Programa: </label>
     <select id="program" name="program">
-      <option value="">--Elige el Programa--</option>
+      <option value="">--Elige Programa--</option>
       <?php foreach($programs as $program) { ?>
         <option value="<?php echo escape($program['programId']); ?>"><?php echo escape($program['name']); ?></option>
       <?php } ?>
