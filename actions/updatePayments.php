@@ -42,7 +42,6 @@ try {
     $receiptNumber = $updateRow['receiptNumber'] === '' ? null : $updateRow['receiptNumber'];
     $paymentDate = $updateRow['paymentDate'] === '' ? null : $updateRow['paymentDate'];
     $amountPaid = $updateRow['amountPaid'] === '' ? 0 : $updateRow['amountPaid'];
-    echo $amountPaid;
 
     $statement->bindParam(':amountPaid', $amountPaid, PDO::PARAM_STR);
     $statement->bindParam(':receiptNumber', $receiptNumber, PDO::PARAM_STR);

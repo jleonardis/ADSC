@@ -65,7 +65,7 @@ try
       <input type="text" name="description" id="description"
       value="<?php echo escape($quota['description']);?>"><br>
       <label for="description">Monto: </label>
-      <input type="number" name="amount" id="amount" min=<?php echo escape($quota['maxPayment']); ?>
+      <input type="number" step="any" name="amount" id="amount" min=<?php echo escape($quota['maxPayment']); ?>
       value="<?php echo escape($quota['amount']);?>"><br>
       <input type="submit" value="Actualizar" class="orange-submit">
       <?php if($quota['maxPayment'] == 0) { ?>

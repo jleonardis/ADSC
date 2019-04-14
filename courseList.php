@@ -73,7 +73,7 @@ require "templates/header.php";
       if($row['divisionId'] !== $currentDivisionId || $row['programId'] !== $currentProgramId) {
         $currentDivisionId = $row['divisionId'];
         $currentProgramId = $row['programId'];?>
-      <tr class="course-row course-row-<?php echo escape($row['programId']); ?>"><th class="division-heading"><strong style="text-transform: uppercase;"><?php echo escape($row['divisionName']); ?></strong></th></tr>
+      <tr class="course-row course-row-<?php echo escape($row['programId']); ?>" hidden><th class="division-heading"><strong style="text-transform: uppercase;"><?php echo escape($row['divisionName']); ?></strong></th></tr>
         <tr class="course-row course-row-<?php echo escape($row['programId']); ?>">
           <th class="table-head" hidden><strong>Curso</strong></th>
           <th class="table-head" hidden><strong>Inicio</strong></th>

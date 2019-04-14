@@ -19,7 +19,7 @@ if(isset($_GET['participantId'])) {
 
   $participantId = $_GET['participantId'];
 
-  $sql = "SELECT firstName, lastName, nickname, dpi, dob, email, phoneNumber,
+  $sql = "SELECT firstName, lastName, nickname, dpi, gender, dob, email, phoneNumber,
   phoneNumber_2, village, languages, maritalStatus, educationLevel, comments
   FROM participants WHERE participantId = :participantId";
   $statement = $connection->prepare($sql);
@@ -71,9 +71,16 @@ if(isset($_GET['participantId'])) {
    <label for="noDPI">No tiene DPI Guatemalteco?: </label>
    <input type="checkbox" name="noDPI" id="noDPI"><br>
  <?php } ?>
-   <label for="dpi">DPI: </label>
+   <label for="dpi">DPI/CUI: </label>
    <input type="text" id="dpi" name="dpi" value="<?php echo escape($participant['dpi']); ?>"><br>
-   <label for="age">Fecha de Nacimiento: </label>
+   <label for="gender">Género</label>
+   <select name="gender" id="gender">
+     <option value="">--Elige género--</option>
+     <option value="M" <?php echo $participant['gender'] == 'M' ? 'selected' : ''; ?>>Masculino</option>
+     <option value="F" <?php echo $participant['gender'] == 'F' ? 'selected' : ''; ?>>Femenino</option>
+     <option value="O" <?php echo $participant['gender'] == 'O' ? 'selected' : ''; ?>>Otro</option>
+   </select><br>
+   <label for="dpi">Fecha de Nacimiento: </label>
    <input type="date" id="dob" name="dob" value="<?php echo escape($participant['dob']);?>"><br>
    <label for="email">Email: </label>
    <input type="text" id="email" name="email" value="<?php echo escape($participant['email']);?>"><br>

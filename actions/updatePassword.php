@@ -29,7 +29,7 @@ if(isset($_GET['participantId']) && ($_GET['participantId'] === $_SESSION['parti
     }
     else {
       include "../templates/header.php";
-      echo "Ingresaste el DPI equivocado.";
+      echo "Ingresaste el DPI/CUI equivocado.";
       die();
     }
 

@@ -17,7 +17,7 @@ require "../templates/header.php";
    <div class="form-parent">
      <form class="submit-form" method="post" action="../actions/updatePassword.php?participantId=<?php echo escape($participantId) ?>">
        <h2>Cambiar Contraseña</h2>
-       <label for="dpi">DPI: </label>
+       <label for="dpi">DPI/CUI: </label>
        <input type="text" id="dpi" name="dpi"/><br>
        <label for="password">Contraseña Nueva: </label>
        <input type="password" id="password" name="password" class="password-box"><br>

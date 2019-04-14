@@ -54,7 +54,7 @@ if(isset($_GET['participantAdded'])) {
   <label for="noDPI">No tiene DPI Guatemalteco?: </label>
   <input type="checkbox" name="noDPI" id="noDPI"><br>
 <?php } ?>
-  <label for="dpi">DPI: </label>
+  <label for="dpi">DPI/CUI: </label>
   <input type="text" id="dpi" name="dpi"><br>
   <label for="gender" required>Genero: </label>
   <select id="gender" name="gender" required>

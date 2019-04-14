@@ -2,14 +2,14 @@
 
 require "../common.php";
 
-if(isset($_POST['submit']) && hasPermission(0, $_POST['program'])) {
+if(isset($_POST['submit']) && hasPermission(0, $_POST['programId'])) {
 
   $teacherId = postTernary("teacherId");
 
   $new_course = array(
     'name' => $_POST['courseName'],
     'programId' => $_POST['programId'],
-    'divisionId' => $_POST['divisionId'],
+    'divisionId' => postTernary('divisionId'),
     'description' => $_POST['description'],
     'startDate' => $_POST['startDate'],
     'endDate' => $_POST['endDate'],

@@ -13,7 +13,9 @@ var programElem = document.getElementById('programId');
 var divisionElem = document.getElementById('divisionId');
 var defaultOption = new Option('--Elige un Eje--', '');
 
-programElem.addEventListener("change", function() {
+
+
+const updateDivisionsDropDown = function() {
 
   var programId = programElem.value;
   while(divisionElem.firstChild) {
@@ -41,4 +43,8 @@ programElem.addEventListener("change", function() {
       divisionElem.disabled = true;
     }
   }
-});
+}
+
+programElem.addEventListener("change", updateDivisionsDropDown);
+
+updateDivisionsDropDown();

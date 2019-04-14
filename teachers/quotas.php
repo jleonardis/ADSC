@@ -143,7 +143,7 @@ include "../templates/header.php";
           <?php } ?>
         </select><br>
         <label for="amountToPay">Monto: </label>
-        <input type="number" name="amountToPay" id="amountToPay" required><br>
+        <input type="number" step="any" name="amountToPay" id="amountToPay" required><br>
         <label for="quotaDate">Fecha: </label>
         <input type="date" name="quotaDate" id="quotaDate" required><br>
         <?php if(hasAdminPermission()) { ?>
@@ -165,7 +165,7 @@ else { ?>
       <label for="name">Nombre: </label>
       <input type="text" id="name" name="name"><br>
       <label for="amount">Monto: </label>
-      <input type="number" id="amount" name="amount" required><br>
+      <input type="number" step="any" id="amount" name="amount" required><br>
       <label for="description">Descripción: </label>
       <textarea id="description" name="description" maxlength="255"></textarea><br>
       <input type="submit" class="orange-submit" value="agregar">

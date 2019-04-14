@@ -66,7 +66,7 @@ include "../templates/header.php";
     	<input type="text" name="courseName" id="courseName" required><br>
       <?php if (count($resultsPrograms) === 1) { ?>
         <span><strong>Programa: </strong><input type="text" name="program" value="<?php echo escape($resultsPrograms[0]['name']); ?>" disabled>
-          <input type="hidden" name="program" value="<?php echo escape($resultsPrograms[0]['programId']);?>"><br>
+          <input type="hidden" name="programId" id="programId" value="<?php echo escape($resultsPrograms[0]['programId']);?>"><br>
       <?php } else { ?>
     	<label for="programId">Programa: </label>
       <select id="programId" name="programId" required><br>

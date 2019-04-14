@@ -112,10 +112,10 @@ include "../templates/header.php";
                   $assignmentInfo = $participant['assignments'][$assignmentName['name']];?>
                   <td>
                     <?php if($participant['hasDPI']) { ?>
-                    <input type="number" max="100" name="<?php echo escape($assignmentInfo['gradeId']); ?>"
+                    <input type="number" step="any" max="100" name="<?php echo escape($assignmentInfo['gradeId']); ?>"
                     value ="<?php echo escape($assignmentInfo['grade']);?>">
                   <?php } else {?>
-                  <span>Falta DPI</span>
+                  <span>Falta DPI/CUI</span>
                 <?php } ?></td>
                 <?php } ?>
               </tr>

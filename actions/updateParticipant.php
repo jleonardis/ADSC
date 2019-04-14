@@ -19,6 +19,7 @@ if(isset($_GET['participantId'])) {
       'firstName' => $_POST['firstName'],
       'lastName' => $_POST['lastName'],
       'nickname' => $_POST['nickname'],
+      'gender' => $_POST['gender'],
       'dpi' => isset($_POST['dpi']) && $_POST['dpi'] !== "" ? preg_replace("/[^0-9]/", "", $_POST['dpi']) : null, //this to remove all hyphens and spaces
       'email'=> postTernary('email'),
       'phoneNumber' => (isset($_POST['phoneNumber']) && $_POST['phoneNumber']?preg_replace("/[^0-9]/", "", $_POST['phoneNumber']):null),

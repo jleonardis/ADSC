@@ -111,13 +111,14 @@ if(isset($_GET['courseId'])) {
        global $programId;
        return $elem['programId'] === $programId;
      });
-     echo $course['divisionId'];
      foreach($programDivisions as $division) { ?>
-       <option value="<?php echo escape($division['divisionId']); ?>" <?php if($division['divisionId'] === $course['divisionId']) { echo "selected = 'selected'"; } ?>>
+       <option value=<?php echo escape($division['divisionId']); ?> selected="<?php $division['divisionId'] == $course['divisionId'] ? 'selected' : '' ?>">
          <?php echo escape($division['name']); ?>
        </option>
      <?php } ?>
    </select><br>
+   <?php echo var_dump($programDivisions); ?>
+   <?php echo var_dump($course); ?>
    <label for="startDate">Inicio:</label>
    <input id = "startDate" name="startDate" type="date" min=<?php echo escape(date('Y-m-d', time())); ?> value="<?php echo escape($course['startDate']); ?>"
     <?php if(date('Y-m-d', time()) > $course['startDate']) { ?> disabled <?php } ?>></input><br>

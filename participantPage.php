@@ -80,6 +80,14 @@ try {
   }
   $roleNames = array_map('getTranslatedNameString', $resultsRoles); //getNameString defined in common.
 
+  if(isAdministrator()) {
+    $sql = "SELECT username FROM users WHERE participantId = :participantId;";
+    $statement = $connection->prepare($sql);
+    $statement->bindParam(':participantId', $participantId, PDO::PARAM_INT);
+    $statement->execute();
+
+    $username = $statement->fetch(PDO::FETCH_ASSOC)['username'];
+  }
 
 } catch(PDOException $error) {
   handleError($error);
@@ -104,6 +112,9 @@ try {
     <img id="profilePic" src="<?php echo escape($imageFile) ?>">
     <?php } ?>
     <ul id="attributesList">
+      <?php if(isAdministrator() && $username) { ?>
+        <li><strong>Usuario: </strong><?php echo escape($username); ?></li>
+      <?php } ?>
       <li><strong>Apodo: </strong><?php echo escape($participant['nickname']);?></li>
       <li><strong>Papeles: </strong><?php echo escape(implode(", ", $roleNames)); ?></li>
       <li><strong>Genero: </strong><?php echo escape($participant['gender']); ?></li>

@@ -57,6 +57,7 @@ CREATE TABLE divisions (
 	divisionId INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 	programId INT UNSIGNED,
 	name VARCHAR(255),
+	description VARCHAR(255),
 	alive BOOLEAN NOT NULL DEFAULT 1,
 	FOREIGN KEY (programId) REFERENCES programs (programId),
 	UNIQUE KEY(programId, name)

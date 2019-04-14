@@ -60,7 +60,7 @@ include "../templates/header.php";
             <div><?php echo escape($payment['name']); ?></div>
             <div><?php echo escape($payment['participantName']); ?></div>
             <div><input type="text" name="receiptNumber-<?php echo escape($payment['participantQuotaId']); ?>" value="<?php echo escape($payment['receiptNumber']);?>"></div>
-            <div><input type="number" name="amountPaid-<?php echo escape($payment['participantQuotaId']); ?>" value="<?php echo escape($payment['amountPaid']);?>"
+            <div><input type="number" step="any" name="amountPaid-<?php echo escape($payment['participantQuotaId']); ?>" value="<?php echo escape($payment['amountPaid']);?>"
               min="0" data-quotaId = <?php echo escape($payment['quotaId']); ?> data-participantId = <?php echo escape($payment['participantId']); ?>
               data-maxAmount = <?php echo escape($payment['amount']); ?>
               class="paymentInput participantQuota-<?php echo escape($payment['participantId']); ?>-<?php echo escape($payment['quotaId']); ?>"></div>
