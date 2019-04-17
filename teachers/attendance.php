@@ -101,14 +101,18 @@ include "../templates/header.php";
                    <input type="submit" value="X" class="remove-session" title="Eliminar Sesión"
                    formaction="/actions/updateAttendance.php?courseId=<?php echo escape($courseId);?>&sessionId=<?php echo escape($date['sessionId']);?>&removeSession=1"><br>
                  <?php } ?>
-                 <label style="font-size: .75em;">Tod@s: </label>
-                 <input type="checkbox" class="select-all-checkbox" data-date = "<?php echo escape($date['date']);?>">
                  </th>
                <?php } ?>
              </tr>
            </thead>
            <?php if($hasParticipants) { ?>
            <tbody>
+             <tr>
+               <th class="fixed-column">Tod@s Presente: </th>
+               <?php foreach($dateInfos as $date){ ?>
+                 <td><input type="checkbox" class="select-all-checkbox" data-date="<?php echo escape($date['date']); ?>"></td>
+               <?php } ?>
+             </tr>
              <?php foreach($attendanceTable as $participantId => $participant) { ?>
                <tr>
                  <th class="fixed-column"><?php echo escape($participant['participantName']); ?></th>
