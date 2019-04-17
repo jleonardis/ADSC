@@ -44,7 +44,7 @@ try {
     $sql = "SELECT p.participantId as participantId, p.firstName as firstName,
     p.lastName as lastName FROM participants p INNER JOIN participantRoles pr
     ON p.participantId = pr.participantId INNER JOIN roles r
-    ON r.roleId = pr.roleId WHERE r.name = 'teacher' OR r.name = 'technician';";
+    ON r.roleId = pr.roleId WHERE p.alive AND (r.name = 'teacher' OR r.name = 'technician');";
     $statement = $connection->prepare($sql);
     $statement->execute();
     $resultsTeachers = $statement->fetchAll();
@@ -113,6 +113,7 @@ include "../templates/header.php";
 <?php include "../templates/sidebar.php"; ?>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
  <script src="/js/search.js"></script>
- <script>var divisions = <?php echo json_encode($resultsDivisions); ?></script>
+ <script>const divisions = <?php echo json_encode($resultsDivisions); ?></script>
+ <script>const selectedDivision = 0</script>
  <script src="/js/courseForm.js"></script>
 <?php include "../templates/footer.php"; ?>

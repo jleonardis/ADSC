@@ -36,7 +36,7 @@ if(isTeacher() || isTechnician()) {
 			$sql = "SELECT courseId, name, startDate, endDate
 			FROM courses_View c INNER JOIN participants p
 			ON c.teacherId = p.participantId WHERE p.participantId = :participantId AND
-			c.alive = 1;";
+			c.alive = 1 AND p.alive;";
 			$statement = $connection->prepare($sql);
 			$statement->bindParam(':participantId', $_SESSION['participantId'], PDO::PARAM_INT);
 			$statement->execute();

@@ -12,7 +12,7 @@ try {
   $sql = "SELECT p.participantId as participantId, p.firstName as firstName,
   p.lastName as lastName FROM participants p INNER JOIN participantRoles pr
   ON p.participantId = pr.participantId INNER JOIN roles r
-  ON pr.roleId = r.roleId WHERE r.name = 'coordinator'";
+  ON pr.roleId = r.roleId WHERE r.name = 'coordinator' AND p.alive";
   $statement = $connection->prepare($sql);
   $statement->execute();
 

@@ -168,6 +168,7 @@ JOIN
 	GROUP BY pc.participantId
     ) stats
 ON stats.participantId = p.participantId
+WHERE p.alive
 ORDER BY stats.active DESC;";
 
   $statement = $connection->prepare($sql);
@@ -186,7 +187,7 @@ ORDER BY stats.active DESC;";
 if(hasAdminPermission() || isTechnician()) {
   try {
     $sql = "SELECT participantId, firstName, lastName FROM participants p
-    WHERE NOT EXISTS (SELECT 1 FROM participantCourses pc
+    WHERE p.alive AND NOT EXISTS (SELECT 1 FROM participantCourses pc
     WHERE pc.participantId = p.participantId AND pc.courseId = :courseId)";
     $statement = $connection->prepare($sql);
     $statement->bindParam(':courseId', $courseId, PDO::PARAM_INT);

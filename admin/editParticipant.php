@@ -122,6 +122,7 @@ if(isset($_GET['participantId'])) {
    <label for="comments">Comentarios: </label>
    <textarea id="comments" name="comments"><?php echo escape($participant['comments']); ?></textarea>
    <input name="submit" type="submit" value="Actualizar" class="orange-submit">
+   <button id="cancelCourse" type="button" class="orange-submit delete-button" data-href="/actions/removeParticipant.php?participantId=<?php echo escape($participantId)?>">Eliminar Participante</button>
  </form>
  <?php if($isUser) { ?>
    <a href="/user/updatePassword.php?participantId=<?php echo escape($participantId); ?>"><button class="orange-submit">Cambiar Contraseña</button></a>
@@ -131,4 +132,5 @@ if(isset($_GET['participantId'])) {
 <script>var names = <?php echo json_encode($resultsParticipants);?>;</script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="/js/registration.js"></script>
+<script src="/js/deleteButton.js"></script>g
 <?php include "../templates/footer.php"; ?>

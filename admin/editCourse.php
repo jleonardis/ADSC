@@ -69,7 +69,7 @@ if(isset($_GET['courseId'])) {
 
     $sql = "SELECT firstName, lastName, p.participantId as participantId FROM participants p INNER JOIN participantRoles pr
     ON p.participantId = pr.participantId INNER JOIN roles r
-    ON r.roleId = pr.roleId WHERE r.name = 'teacher' OR r.name = 'technician';";
+    ON r.roleId = pr.roleId WHERE p.alive AND (r.name = 'teacher' OR r.name = 'technician');";
     $statement = $connection->prepare($sql);
     $statement->execute();
     $resultsTeachers = $statement->fetchAll();
@@ -117,8 +117,6 @@ if(isset($_GET['courseId'])) {
        </option>
      <?php } ?>
    </select><br>
-   <?php echo var_dump($programDivisions); ?>
-   <?php echo var_dump($course); ?>
    <label for="startDate">Inicio:</label>
    <input id = "startDate" name="startDate" type="date" min=<?php echo escape(date('Y-m-d', time())); ?> value="<?php echo escape($course['startDate']); ?>"
     <?php if(date('Y-m-d', time()) > $course['startDate']) { ?> disabled <?php } ?>></input><br>
@@ -153,7 +151,8 @@ if(isset($_GET['courseId'])) {
 </main>
 <?php include "../templates/sidebar.php";?>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script>var divisions = <?php echo json_encode($resultsDivisions); ?></script>
+<script>const divisions = <?php echo json_encode($resultsDivisions); ?></script>
+<script>const selectedDivision = <?php echo IS_NULL($course['divisionId']) ? 0 : $course['divisionId']; ?></script>
  <script src="/js/search.js"></script>
  <script src="/js/deleteButton.js"></script>
  <script src="/js/courseForm.js"></script>

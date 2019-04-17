@@ -8,7 +8,9 @@ require "templates/header.php";
 try {
   $sql = "SELECT participantId, firstName, lastName, nickname, gender, dob, village,
     languages
-  FROM participants ORDER BY isActive DESC;";
+  FROM participants
+  WHERE alive
+  ORDER BY isActive DESC;";
   $statement = $connection->prepare($sql);
   $statement->execute();
 

@@ -98,9 +98,11 @@ include "../templates/header.php";
 
                  <th><?php echo escape(date('d/m', strtotime($date['date']))); ?><br>
                  <?php if(hasAdminPermission()){ ?>
-                   <input type="submit" value="X" class="remove-session"
-                   formaction="/actions/updateAttendance.php?courseId=<?php echo escape($courseId);?>&sessionId=<?php echo escape($date['sessionId']);?>&removeSession=1">
+                   <input type="submit" value="X" class="remove-session" title="Eliminar Sesión"
+                   formaction="/actions/updateAttendance.php?courseId=<?php echo escape($courseId);?>&sessionId=<?php echo escape($date['sessionId']);?>&removeSession=1"><br>
                  <?php } ?>
+                 <label style="font-size: .75em;">Tod@s: </label>
+                 <input type="checkbox" class="select-all-checkbox" data-date = "<?php echo escape($date['date']);?>">
                  </th>
                <?php } ?>
              </tr>
@@ -113,7 +115,7 @@ include "../templates/header.php";
                  <?php foreach($dateInfos as $date) {
                    $sessionInfo = $participant['dates'][$date['date']];?>
                    <td>
-                     <select name="<?php echo escape($sessionInfo['attendanceId']); ?>">
+                     <select class="<?php echo escape($date['date']); ?>" name="<?php echo escape($sessionInfo['attendanceId']); ?>">
                        <option value="absent" <?php echo ($sessionInfo['attended']==='absent')?'selected':'';?>>No</option>
                        <option value="present" <?php echo ($sessionInfo['attended']==='present')?'selected':'';?>>Sí</option>
                        <option value="excused" <?php echo ($sessionInfo['attended']==='excused')?'selected':'';?>>Permiso</option>

@@ -31,11 +31,11 @@ const updateDivisionsDropDown = function() {
     divisions.forEach(function(elem) {
       if(elem['programId'] === programId) {
         hasDivisions = true;
-        divisionElem.appendChild(new Option(elem['name'], elem['divisionId']));
+        divisionElem.appendChild(new Option(elem['name'], elem['divisionId'], false, elem['divisionId'] == selectedDivision)); //selectedDivision fed in from editCourse.php
       }
     });
     if(hasDivisions) {
-      divisionElem.prepend(new Option('--Elige un Eje--', '', false, true));
+      divisionElem.prepend(new Option('--Elige un Eje--', '', false, !selectedDivision));
       divisionElem.disabled = false;
     }
     else {
