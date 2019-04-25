@@ -26,6 +26,8 @@ if(isset($_GET['courseId']) && hasPermission($_GET['courseId'])) {
 
   }
 
+} else {
+  echo $invalidPermissionMessage;
 }
 
  ?>

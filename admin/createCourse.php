@@ -3,7 +3,7 @@
 require "../common.php";
 checkLogIn();
 
-if(!isAdministrator() && !isCoordinator()) {
+if(!hasAdminPermission() && !isTechnician()) {
   echo $invalidPermissionMessage;
   die();
 }

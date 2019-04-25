@@ -4,7 +4,7 @@ require "../common.php";
 
 checkLogIn();
 
-if(isset($_GET['participantId']) && hasPermission($_GET['participantId'])) {
+if(isset($_GET['participantId']) && hasPermission(0, 0, $_GET['participantId'])) {
 
   $participantId = $_GET['participantId'];
 
@@ -26,6 +26,8 @@ if(isset($_GET['participantId']) && hasPermission($_GET['participantId'])) {
 
   }
 
+} else {
+  echo $invalidPermissionMessage;
 }
 
  ?>

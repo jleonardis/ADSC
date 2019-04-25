@@ -112,7 +112,7 @@ if(isset($_GET['courseId'])) {
        return $elem['programId'] === $programId;
      });
      foreach($programDivisions as $division) { ?>
-       <option value=<?php echo escape($division['divisionId']); ?> selected="<?php $division['divisionId'] == $course['divisionId'] ? 'selected' : '' ?>">
+       <option value=<?php echo escape($division['divisionId']); ?> <?php echo($division['divisionId'] == $course['divisionId'] ? 'selected' : ''); ?>>
          <?php echo escape($division['name']); ?>
        </option>
      <?php } ?>
