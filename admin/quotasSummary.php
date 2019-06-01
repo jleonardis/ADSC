@@ -11,51 +11,71 @@ if(!hasAdminPermission()){
 try {
 
     $sql = "SELECT program_name, p.programId, CASE WHEN course_name is NULL AND program_name IS NULL THEN 'Gran Total' WHEN course_name IS NULL THEN 'Total de Programa' ELSE course_name END as course_name,
-    c.courseId, janTotal, febTotal, marTotal, aprTotal, mayTotal,
-  	janTotal + febTotal + marTotal + aprTotal + mayTotal as total
+    c.courseId, IFNULL(janTotal, 0) as janTotal, IFNULL(febTotal, 0) as febTotal, IFNULL(marTotal, 0) as marTotal, IFNULL(aprTotal, 0) as aprTotal,
+    IFNULL(mayTotal, 0) as mayTotal, IFNULL(janTotal, 0) + IFNULL(febTotal, 0) + IFNULL(marTotal, 0) + IFNULL(aprTotal, 0) + IFNULL(mayTotal, 0) as total
   FROM
   	(
-  	SELECT programId, courseList.courseId, IFNULL(SUM(jan.amountPaid), 0) as  janTotal, IFNULL(SUM(feb.amountPaid), 0) as febTotal,
-  	  IFNULL(SUM(mar.amountPaid), 0) as marTotal, IFNULL(SUM(apr.amountPaid), 0) as aprTotal, IFNULL(SUM(may.amountPaid), 0) as mayTotal
+  	SELECT programId, courseList.courseId, jan.totalPaid as janTotal, feb.totalPaid as febTotal,
+  	  mar.totalPaid as marTotal, apr.totalPaid as aprTotal, may.totalPaid as mayTotal
   	FROM
   		(
-  		SELECT p.programId, c.courseId, q.quotaId
+  		SELECT p.programId, c.courseId
   		FROM programs p
   		LEFT JOIN courses c ON c.programId = p.programId
-      LEFT JOIN quotas q ON q.courseId = c.courseId
-      WHERE p.name <> 'TESTING'
+		WHERE p.name <> 'TESTING'
+        UNION DISTINCT
+        SELECT 0, 0
   		) courseList
   	LEFT JOIN
    		(
-   		SELECT amountPaid, quotaId
-      FROM participantQuotas
-   		WHERE MONTH(paymentDate) = 1 AND (discount IS NULL OR discount = 0)
-   		) jan ON jan.quotaId = courseList.quotaId
+		SELECT SUM(pq.amountPaid) as totalPaid, c.courseId as 'courseId'
+        FROM courses c
+        LEFT JOIN quotas q ON q.courseId = c.courseId
+        JOIN participantQuotas pq ON pq.quotaId = q.quotaId
+		WHERE MONTH(pq.paymentDate) = 1 AND (pq.discount IS NULL OR pq.discount = 0)
+        GROUP BY c.courseId
+		WITH ROLLUP
+   		) jan ON jan.courseId = courseList.courseId
   	LEFT JOIN
   		(
-  		SELECT amountPaid, quotaId
-  		FROM participantQuotas
-  		WHERE MONTH(paymentDate) = 2 AND (discount IS NULL OR discount = 0)
-  		) feb ON feb.quotaId = courseList.quotaId
+  		SELECT SUM(pq.amountPaid) as totalPaid, IFNULL(c.courseId, 0) as 'courseId'
+        FROM courses c
+        LEFT JOIN quotas q ON q.courseId = c.courseId
+        JOIN participantQuotas pq ON pq.quotaId = q.quotaId
+		WHERE MONTH(pq.paymentDate) = 2 AND (pq.discount IS NULL OR pq.discount = 0)
+        GROUP BY c.courseId
+        WITH ROLLUP
+   		) feb ON feb.courseId = courseList.courseId
   	LEFT JOIN
   		(
-  		SELECT amountPaid, quotaId
-  		FROM participantQuotas
-  		WHERE MONTH(paymentDate) = 3 AND (discount IS NULL OR discount = 0)
-  		) mar ON mar.quotaId = courseList.quotaId
+  		SELECT SUM(pq.amountPaid) as totalPaid, IFNULL(c.courseId, 0) as 'courseId'
+        FROM courses c
+        LEFT JOIN quotas q ON q.courseId = c.courseId
+        JOIN participantQuotas pq ON pq.quotaId = q.quotaId
+		WHERE MONTH(pq.paymentDate) = 3 AND (pq.discount IS NULL OR pq.discount = 0)
+        GROUP BY c.courseId
+        WITH ROLLUP
+   		) mar ON mar.courseId = courseList.courseId
   	LEFT JOIN
   		(
-  		SELECT amountPaid, quotaId
-  		FROM participantQuotas
-  		WHERE MONTH(paymentDate) = 4 AND (discount IS NULL OR discount = 0)
-  		) apr ON apr.quotaId = courseList.quotaId
+  		SELECT SUM(pq.amountPaid) as totalPaid, IFNULL(c.courseId, 0) as 'courseId'
+        FROM courses c
+        LEFT JOIN quotas q ON q.courseId = c.courseId
+        JOIN participantQuotas pq ON pq.quotaId = q.quotaId
+		WHERE MONTH(pq.paymentDate) = 4 AND (pq.discount IS NULL OR pq.discount = 0)
+        GROUP BY c.courseId
+        WITH ROLLUP
+   		) apr ON apr.courseId = courseList.courseId
   	LEFT JOIN
   		(
-  		SELECT amountPaid, quotaId
-  		FROM participantQuotas
-  		WHERE MONTH(paymentDate) = 5 AND (discount IS NULL OR discount = 0)
-  		) may ON may.quotaId = courseList.quotaId
-  	GROUP BY courseList.programId, courseList.courseId WITH ROLLUP
+  		SELECT SUM(pq.amountPaid) as totalPaid, IFNULL(c.courseId, 0) as 'courseId'
+        FROM courses c
+        LEFT JOIN quotas q ON q.courseId = c.courseId
+        JOIN participantQuotas pq ON pq.quotaId = q.quotaId
+		WHERE MONTH(pq.paymentDate) = 5 AND (pq.discount IS NULL OR pq.discount = 0)
+        GROUP BY c.courseId
+        WITH ROLLUP
+   		) may ON may.courseId = courseList.courseId
       ) numbers
   LEFT JOIN
   	(
